@@ -1,0 +1,62 @@
+<!-- HEADER -->
+<div class="mb-1">
+    <div class="d-flex align-items-center justify-content-center p-4 bg-white border-radius-table-header box-shadow">
+        <h5 class="m-0 cls_title">{{ "voucher_printer_title" | translate }}</h5>
+    </div>
+</div>
+<!-- ./HEADER -->
+
+<!-- VOUCHER_FILTER_LIST -->
+<shared-voucher-list-filter *ngIf="isEnabled()"
+        [titleFirstAction]="'print' | translate"
+        [classFirstAction]="'btn-icon-option'"
+        [iconFirstAction]="'pi pi-print'"
+        (commandFirstAction)="onClickEditVoucher($event)"
+        [titleSecondAction]="'detail' | translate"
+        [classSecondAction]="'p-button-outlined btn-icon-option-secondary'"
+        [iconsSecondAction]="'pi pi-eye'"
+        (commandSecondAction)="onClickViewVoucher($event)"
+        [onlyStatusVoucher]="STATUS_VOUCHER.CREADO"
+        [currentTypesOptions]="currentTypesOptions"
+></shared-voucher-list-filter>
+<!-- ./VOUCHER_FILTER_LIST -->
+
+<!-- MODAL -->
+<p-dialog
+        *ngIf="voucherToView"
+        [header]="'voucher_renovate_detail' | translate"
+        [(visible)]="displayDialog"
+        [modal]="true"
+        (close)="onClickCloseDialog()"
+        [style]="{ width: '700px' }">
+    <div class="ui-fluid">
+
+        <div class="card card-without-box-shadow p-0 m-0" *ngIf="voucherToView">
+            <div class="grid p-fluid">
+                <div class="col-12">
+                    <shared-voucher-cut *ngIf="voucherToView.corteId && displayDialog"
+                                        [voucherModel]="voucherToView"
+                                        [voucherCutModel]="parseVoucherCut(voucherToView)"
+                                        (eventEmitterChangeVoucherCut)="onEventChangeVoucherCutValue($event)"
+                                        [showCounterPrinterComponents]="false"
+                    ></shared-voucher-cut>
+                </div>
+            </div>
+        </div>
+        <p-footer>
+            <div class="cls_center">
+                <div class="DIB">
+                    <button
+                            type="button"
+                            pButton
+                            icon="pi pi-times"
+                            (click)="onClickCloseDialog()"
+                            label="{{ 'close' | translate }}"
+                            class="p-button-outlined"
+                    ></button>
+                </div>
+            </div>
+        </p-footer>
+    </div>
+</p-dialog>
+<!-- ./MODAL -->

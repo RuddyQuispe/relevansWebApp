@@ -1,0 +1,788 @@
+<!-- HEADER -->
+<div class="mb-1">
+    <div class="d-flex align-items-center justify-content-center p-4 bg-white border-radius-table-header box-shadow"
+         style="position: relative; padding: 1.5rem;">
+        <h5 class="m-0 cls_title" style="text-align: end;">{{ 'sai_parameters_title'| translate }}</h5>
+    </div>
+</div>
+<!-- ./HEADER -->
+
+<!-- FORM_SAI_PARAMS -->
+<form #formElement="ngForm" (ngSubmit)="onSubmitSaveSaiParams()">
+    <div class="row d-flex justify-content-center mt-3">
+        <div class="col-12 md:col-12 lg:col-4">
+            <!-- FIRST_FIELDSET -->
+            <fieldset class="card mt-4" style="position:relative;">
+                <legend style="position: absolute; top: -30px;">
+                    <h4 class="color_primario">{{ 'sai_parameters_title_detail' | translate }}</h4>
+                </legend>
+                <div class="grid p-fluid mt-0 justify-content-center">
+                    <!-- USER_CODE -->
+                    <div class="col-12 lg:col-10 d-flex pb-0 mb-0">
+                        <label for="user_system_code"
+                               class="label-input-multiple">{{ "sai_parameters_user_system" | translate }}</label>
+                    </div>
+                    <div class="col-12 lg:col-10 d-flex">
+                        <input #userSystemCode="ngModel"
+                               type="text"
+                               id="user_system_code"
+                               name="user_system_code"
+                               [(ngModel)]="saiParametersModel.usuarioId"
+                               minlength="1"
+                               required
+                               autocomplete="off"
+                               style="width: 15%;"
+                               maxlength="10"
+                               pInputText
+                               validateNumeric
+                        />
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-search"
+                                class="btn-primary mx-2"
+                                (click)="onClickOpenDialogFindCodeUserSystem()"
+                                [title]="'sale_client_btn_search' | translate">
+                        </button>
+                        <i class="pi pi-user d-flex align-items-center" style="font-size: 1.5rem"></i>&nbsp;
+                        <input type="text"
+                               id="user_system_code_desc"
+                               name="user_system_code_desc"
+                               autocomplete="off"
+                               required
+                               minlength="5"
+                               style="width: 75%;"
+                               [(ngModel)]="saiParametersModel.usuarioIdDesc"
+                               maxlength="200"
+                               pInputText>&nbsp;
+                        <button
+                                pButton
+                                type="button"
+                                class="btn-primary"
+                                (click)="onClickCleanUserSystem()"
+                                [title]="'btn_clean' | translate"
+                                icon="pi pi-trash">
+                        </button>
+                    </div>
+                    <div class="col-12 lg:col-8 py-0 my-0">
+                        <div *ngIf="!userSystemCode.valid && (userSystemCode.dirty || userSystemCode.touched)">
+                            <p-message
+                                    class="d-block"
+                                    *ngIf="userSystemCode.hasError('required')"
+                                    severity="error"
+                                    text="{{ cmpReq }}"
+                            ></p-message>
+                            <p-message
+                                    class="d-block"
+                                    *ngIf="userSystemCode.errors?.['minlength']"
+                                    severity="error"
+                                    text="{{ cmpMin }} 1"
+                            ></p-message>
+                        </div>
+                    </div>
+                    <!-- ./USER_CODE -->
+                    <!-- AUTHORIZER_PROFILE -->
+                    <div class="col-12 d-flex pb-0 mb-0">
+                        <label for="profileAuthorization" class="label-input-multiple">Perfíl autorizador</label>
+                    </div>
+                    <div class="col-12">
+                        <div style="width: 100%;">
+                            <p-dropdown
+                                #profileAuthorization="ngModel"
+                                [options]="authorizationProfilesOptions"
+                                id="profileAuthorization"
+                                [(ngModel)]="saiParametersModel.perfilAutorizadorId"
+                                [required]="true"
+                                [filter]="true"
+                                filterBy="label"
+                                [showClear]="true"
+                                name="profileAuthorization">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-12 py-0 my-0">
+                        <div *ngIf="!profileAuthorization.valid && (profileAuthorization.dirty || profileAuthorization.touched)">
+                            <p-message
+                                    class="d-block"
+                                    *ngIf="profileAuthorization.hasError('required')"
+                                    severity="error"
+                                    text="{{ cmpReq }}"
+                            ></p-message>
+                            <p-message
+                                    class="d-block"
+                                    *ngIf="profileAuthorization.errors?.['minlength']"
+                                    severity="error"
+                                    text="{{ cmpMin }} 1"
+                            ></p-message>
+                        </div>
+                    </div>
+                    <!-- ./AUTHORIZER_PROFILE -->
+                    <!-- USER_PARAM_SAI -->
+                    <div class="col-12 d-flex pb-0 mb-0">
+                        <label for="user_para_sai"
+                               class="label-input-multiple">{{ "sai_parameters_agenda_code" | translate }}</label>
+                    </div>
+                    <div class="col-12 d-flex pb-0 mb-0">
+                        <input #codeUserSAI="ngModel"
+                               type="text"
+                               id="user_para_sai"
+                               name="user_para_sai"
+                               [(ngModel)]="saiParametersModel.codigoUsuarioSai"
+                               minlength="1"
+                               required
+                               autocomplete="off"
+                               style="width: 15%;"
+                               maxlength="10"
+                               pInputText
+                               validateNumeric
+                        />
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-search"
+                                class="btn-primary mx-2"
+                                (click)="onClickOpenDialogFindCodeUserSAI()"
+                                [title]="'sale_client_btn_search' | translate">
+                        </button>
+                        <input type="text"
+                               id="user_para_sai_desc"
+                               name="user_para_sai_desc"
+                               autocomplete="off"
+                               required
+                               minlength="5"
+                               style="width: 75%;"
+                               [(ngModel)]="saiParametersModel.codigoUsuarioSaiDesc"
+                               maxlength="200"
+                               pInputText>&nbsp;
+                        <button
+                                pButton
+                                type="button"
+                                class="btn-primary"
+                                (click)="onClickCleanUserCodeSai()"
+                                icon="pi pi-trash"
+                                [title]="'btn_clean' | translate">
+                        </button>
+                    </div>
+                    <div class="col-12 py-0 my-0">
+                        <div *ngIf="!codeUserSAI.valid && (codeUserSAI.dirty || codeUserSAI.touched)">
+                            <p-message
+                                    class="d-block"
+                                    *ngIf="codeUserSAI.hasError('required')"
+                                    severity="error"
+                                    text="{{ cmpReq }}"
+                            ></p-message>
+                            <p-message
+                                    class="d-block"
+                                    *ngIf="codeUserSAI.errors?.['minlength']"
+                                    severity="error"
+                                    text="{{ cmpMin }} 1"
+                            ></p-message>
+                        </div>
+                    </div>
+                    <!-- ./USER_PARAM_SAI -->
+                    <!-- TYPE_CxC -->
+                    <!--<div class="col-12 d-flex pb-0 mb-0">-->
+                    <!--    <label class="label-input-multiple" for="account_type_by_payment">{{ "sai_parameters_account_type_by_payment_label" | translate }}</label>-->
+                    <!--</div>-->
+                    <!--<div class="col-12 d-flex pb-0 mb-0">-->
+                    <!--    <input #codeTipoCxC="ngModel"-->
+                    <!--           type="text"-->
+                    <!--           id="account_type_by_payment"-->
+                    <!--           name="account_type_by_payment"-->
+                    <!--           [(ngModel)]="saiParametersModel.tipoCxC"-->
+                    <!--           minlength="1"-->
+                    <!--           required-->
+                    <!--           autocomplete="off"-->
+                    <!--           style="width: 15%;"-->
+                    <!--           maxlength="10"-->
+                    <!--           pInputText-->
+                    <!--           validateNumeric-->
+                    <!--    />-->
+                    <!--    <button-->
+                    <!--            pButton-->
+                    <!--            type="button"-->
+                    <!--            icon="pi pi-search"-->
+                    <!--            class="btn-primary mx-2"-->
+                    <!--            (click)="onClickOpenDialogFindCxCType()"-->
+                    <!--            [title]="'sale_client_btn_search' | translate">-->
+                    <!--    </button>-->
+                    <!--    <input type="text"-->
+                    <!--           id="account_type_by_payment_desc"-->
+                    <!--           name="account_type_by_payment_desc"-->
+                    <!--           autocomplete="off"-->
+                    <!--           required-->
+                    <!--           minlength="5"-->
+                    <!--           style="width: 75%;"-->
+                    <!--           [(ngModel)]="saiParametersModel.tipoCxCDesc"-->
+                    <!--           maxlength="200"-->
+                    <!--           pInputText>&nbsp;-->
+                    <!--    <button-->
+                    <!--            pButton-->
+                    <!--            type="button"-->
+                    <!--            class="btn-primary"-->
+                    <!--            (click)="onClickCleanCxCType()"-->
+                    <!--            icon="pi pi-trash"-->
+                    <!--            [title]="'btn_clean' | translate">-->
+                    <!--    </button>-->
+                    <!--</div>-->
+                    <!--<div class="col-12 py-0 my-0">-->
+                    <!--    <div *ngIf="!codeTipoCxC.valid && (codeTipoCxC.dirty || codeTipoCxC.touched)">-->
+                    <!--        <p-message-->
+                    <!--                class="d-block"-->
+                    <!--                *ngIf="codeTipoCxC.hasError('required')"-->
+                    <!--                severity="error"-->
+                    <!--                text="{{ cmpReq }}"-->
+                    <!--        ></p-message>-->
+                    <!--        <p-message-->
+                    <!--                class="d-block"-->
+                    <!--                *ngIf="codeTipoCxC.errors?.['minlength']"-->
+                    <!--                severity="error"-->
+                    <!--                text="{{ cmpMin }} 1"-->
+                    <!--        ></p-message>-->
+                    <!--    </div>-->
+                    <!--</div>-->
+                    <!-- ./TYPE_CxC -->
+                    <!-- TYPE_CxP -->
+                    <div class="col-12 d-flex pb-0 mb-0">
+                        <label for="account_type_by_collected"
+                               class="label-input-multiple">{{ "sai_parameters_account_type_by_collected_label" | translate }}</label>
+                    </div>
+                    <div class="col-12 d-flex pb-0 mb-0">
+                        <input #codeTipoCxP="ngModel"
+                               type="text"
+                               id="account_type_by_collected"
+                               name="account_type_by_collected"
+                               [(ngModel)]="saiParametersModel.tipoCxP"
+                               minlength="1"
+                               required
+                               autocomplete="off"
+                               maxlength="20"
+                               style="width: 15%;"
+                               pInputText
+                               validateNumeric/>
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-search"
+                                class="btn-primary mx-2"
+                                (click)="onClickOpenDialogFindCxPType()"
+                                [title]="'sale_client_btn_search' | translate">
+                        </button>
+                        <input type="text"
+                               id="account_type_by_collected_desc"
+                               name="account_type_by_collected_desc"
+                               autocomplete="off"
+                               required
+                               minlength="5"
+                               style="width: 75%;"
+                               [(ngModel)]="saiParametersModel.tipoCxPDesc"
+                               maxlength="200"
+                               pInputText>&nbsp;
+                        <button
+                                pButton
+                                type="button"
+                                class="btn-primary"
+                                (click)="onClickCleanCxPType()"
+                                icon="pi pi-trash"
+                                [title]="'btn_clean' | translate">
+                        </button>
+                    </div>
+                    <div class="col-12 py-0 my-0">
+                        <div *ngIf="!codeTipoCxP.valid && (codeTipoCxP.dirty || codeTipoCxP.touched)">
+                            <p-message
+                                    class="d-block"
+                                    *ngIf="codeTipoCxP.hasError('required')"
+                                    severity="error"
+                                    text="{{ cmpReq }}"
+                            ></p-message>
+                            <p-message
+                                    class="d-block"
+                                    *ngIf="codeTipoCxP.errors?.['minlength']"
+                                    severity="error"
+                                    text="{{ cmpMin }} 1"
+                            ></p-message>
+                        </div>
+                    </div>
+                    <!-- ./TYPE_CxP -->
+                    <!-- APPLICATION_CxC -->
+                    <div class="col-12 d-flex pb-0 mb-0">
+                        <label for="account_application_by_payment"
+                               class="label-input-multiple">{{ "sai_parameters_account_application_by_payment_label" | translate }}</label>
+                    </div>
+                    <div class="col-12 d-flex pb-0 mb-0">
+                        <input #applicationCxC="ngModel"
+                               type="text"
+                               id="account_application_by_payment"
+                               name="account_application_by_payment"
+                               [(ngModel)]="saiParametersModel.aplicacionCxC"
+                               minlength="1"
+                               required
+                               autocomplete="off"
+                               maxlength="10"
+                               style="width: 15%;"
+                               pInputText
+                               validateNumeric/>
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-search"
+                                class="btn-primary mx-2"
+                                (click)="onClickOpenDialogFindCxCApplication()"
+                                [title]="'sale_client_btn_search' | translate">
+                        </button>
+                        <input type="text"
+                               id="account_application_by_payment_desc"
+                               name="account_application_by_payment_desc"
+                               autocomplete="off"
+                               required
+                               minlength="5 "
+                               style="width: 75%;"
+                               [(ngModel)]="saiParametersModel.aplicacionCxCDesc"
+                               maxlength="200"
+                               pInputText>&nbsp;
+                        <button
+                                pButton
+                                type="button"
+                                class="btn-primary"
+                                (click)="onClickCleanCxCApplication()"
+                                icon="pi pi-trash"
+                                [title]="'btn_clean' | translate">
+                        </button>
+                    </div>
+                    <div class="col-12 py-0 my-0">
+                        <div *ngIf="!applicationCxC.valid && (applicationCxC.dirty || applicationCxC.touched)">
+                            <p-message
+                                    class="d-block"
+                                    *ngIf="applicationCxC.hasError('required')"
+                                    severity="error"
+                                    text="{{ cmpReq }}"
+                            ></p-message>
+                            <p-message
+                                    class="d-block"
+                                    *ngIf="applicationCxC.errors?.['minlength']"
+                                    severity="error"
+                                    text="{{ cmpMin }} 1"
+                            ></p-message>
+                        </div>
+                    </div>
+                    <!-- ./APPLICATION_CxC -->
+                    <!-- APPLICATION_CxP -->
+                    <div class="col-12 d-flex pb-0 mb-0">
+                        <label for="accounts_receivable_app_label"
+                               class="label-input-multiple">{{ "sai_parameters_accounts_receivable_app_label" | translate }}</label>
+                    </div>
+                    <div class="col-12 d-flex pb-0 mb-0">
+                        <input #applicationCxP="ngModel"
+                               type="text"
+                               id="accounts_receivable_app_label"
+                               name="accounts_receivable_app_label"
+                               [(ngModel)]="saiParametersModel.aplicacionCxP"
+                               minlength="1"
+                               required
+                               autocomplete="off"
+                               maxlength="20"
+                               style="width: 15%;"
+                               pInputText
+                               validateNumeric/>
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-search"
+                                class="btn-primary mx-2"
+                                (click)="onClickOpenDialogFindApplicationCxP()"
+                                [title]="'sale_client_btn_search' | translate">
+                        </button>
+                        <input type="text"
+                               id="accounts_receivable_app_label_desc"
+                               name="accounts_receivable_app_label_desc"
+                               autocomplete="off"
+                               required
+                               minlength="5"
+                               style="width: 75%;"
+                               [(ngModel)]="saiParametersModel.aplicacionCxPDesc"
+                               maxlength="200"
+                               pInputText>&nbsp;
+                        <button
+                                pButton
+                                type="button"
+                                class="btn-primary"
+                                (click)="onClickCleanApplicationCxP()"
+                                icon="pi pi-trash"
+                                [title]="'btn_clean' | translate">
+                        </button>
+                    </div>
+                    <div class="col-12 py-0 my-0">
+                        <div *ngIf="!applicationCxP.valid && (applicationCxP.dirty || applicationCxP.touched)">
+                            <p-message
+                                    class="d-block"
+                                    *ngIf="applicationCxP.hasError('required')"
+                                    severity="error"
+                                    text="{{ cmpReq }}"
+                            ></p-message>
+                            <p-message
+                                    class="d-block"
+                                    *ngIf="applicationCxP.errors?.['minlength']"
+                                    severity="error"
+                                    text="{{ cmpMin }} 1"
+                            ></p-message>
+                        </div>
+                    </div>
+                    <!-- ./APPLICATION_CxP -->
+                    <!-- VIA_DE_PAGO_POR_CONSUMO_DE_VALE -->
+                    <div class="col-12 d-flex pb-0 mb-0">
+                        <label for="pay_via_method"
+                               class="label-input-multiple">{{ "sai_parameters_pay_via_method_label" | translate }}</label>
+                    </div>
+                    <div class="col-12 d-flex pb-0 mb-0">
+                        <input #viaDePagoPorConsumoDeVale="ngModel"
+                               type="text"
+                               id="pay_via_method"
+                               name="pay_via_method"
+                               [(ngModel)]="saiParametersModel.viaPagoxConsumo"
+                               minlength="1"
+                               required
+                               autocomplete="off"
+                               maxlength="20"
+                               style="width: 15%;"
+                               pInputText
+                               validateNumeric/>
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-search"
+                                class="btn-primary mx-2"
+                                (click)="onClickOpenDialogFindViaPxCDeVale()"
+                                [title]="'sale_client_btn_search' | translate">
+                        </button>
+                        <input type="text"
+                               id="pay_via_method_desc"
+                               name="pay_via_method_desc"
+                               autocomplete="off"
+                               required
+                               minlength="5"
+                               style="width: 75%;"
+                               [(ngModel)]="saiParametersModel.viaPagoxConsumoDesc"
+                               maxlength="200"
+                               pInputText>&nbsp;
+                        <button
+                                pButton
+                                type="button"
+                                class="btn-primary"
+                                (click)="onClickCleanViaPxCDeVale()"
+                                icon="pi pi-trash"
+                                [title]="'btn_clean' | translate">
+                        </button>
+                    </div>
+                    <div class="col-12 py-0 my-0">
+                        <div *ngIf="!viaDePagoPorConsumoDeVale.valid && (viaDePagoPorConsumoDeVale.dirty || viaDePagoPorConsumoDeVale.touched)">
+                            <p-message
+                                    class="d-block"
+                                    *ngIf="viaDePagoPorConsumoDeVale.hasError('required')"
+                                    severity="error"
+                                    text="{{ cmpReq }}"
+                            ></p-message>
+                            <p-message
+                                    class="d-block"
+                                    *ngIf="viaDePagoPorConsumoDeVale.errors?.['minlength']"
+                                    severity="error"
+                                    text="{{ cmpMin }} 1"
+                            ></p-message>
+                        </div>
+                    </div>
+                    <!-- ./VIA_DE_PAGO_POR_CONSUMO_DE_VALE -->
+                    <!-- VIA_CxD -->
+                    <div class="col-12 d-flex pb-0 mb-0">
+                        <label for="discount_collection_method"
+                               class="label-input-multiple">{{ "sai_parameters_discount_collection_method_label" | translate }}</label>
+                    </div>
+                    <div class="col-12 d-flex pb-0 mb-0">
+                        <input #viaCxD="ngModel"
+                               type="text"
+                               id="discount_collection_method"
+                               name="discount_collection_method"
+                               [(ngModel)]="saiParametersModel.viaCobroxDescuento"
+                               minlength="1"
+                               required
+                               autocomplete="off"
+                               style="width: 15%;"
+                               maxlength="20"
+                               pInputText
+                               validateNumeric/>
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-search"
+                                class="btn-primary mx-2"
+                                (click)="onClickOpenDialogFindViaCxD()"
+                                [title]="'sale_client_btn_search' | translate">
+                        </button>
+                        <input type="text"
+                               id="discount_collection_method_desc"
+                               name="discount_collection_method_desc"
+                               autocomplete="off"
+                               required
+                               minlength="5"
+                               style="width: 75%;"
+                               [(ngModel)]="saiParametersModel.viaCobroxDescuentoDesc"
+                               maxlength="200"
+                               pInputText>&nbsp;
+                        <button
+                                pButton
+                                type="button"
+                                class="btn-primary"
+                                (click)="onClickCleanViaCxD()"
+                                icon="pi pi-trash"
+                                [title]="'btn_clean' | translate">
+                        </button>
+                    </div>
+                    <div class="col-12 py-0 my-0">
+                        <div *ngIf="!viaCxD.valid && (viaCxD.dirty || viaCxD.touched)">
+                            <p-message
+                                    class="d-block"
+                                    *ngIf="viaCxD.hasError('required')"
+                                    severity="error"
+                                    text="{{ cmpReq }}"
+                            ></p-message>
+                            <p-message
+                                    class="d-block"
+                                    *ngIf="viaCxD.errors?.['minlength']"
+                                    severity="error"
+                                    text="{{ cmpMin }} 1"
+                            ></p-message>
+                        </div>
+                    </div>
+                    <!-- ./VIA_CxD -->
+                    <!-- VIA_DE_PAGO_POR_CASTIGO -->
+                    <div class="col-12 d-flex pb-0 mb-0">
+                        <label for="viaPagoXCastigo"
+                               class="label-input-multiple">{{ "sai_parameters_way_of_payment_for_punishment_label" | translate }}</label>
+                    </div>
+                    <div class="col-12 d-flex pb-0 mb-0">
+                        <input #viaPagoXCastigo="ngModel"
+                               type="text"
+                               id="viaPagoXCastigo"
+                               name="viaPagoXCastigo"
+                               [(ngModel)]="saiParametersModel.viaPagoxCastigo"
+                               minlength="1"
+                               required
+                               autocomplete="off"
+                               style="width: 15%;"
+                               maxlength="20"
+                               pInputText
+                               validateNumeric/>
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-search"
+                                class="btn-primary mx-2"
+                                (click)="onClickOpenDialogFindViaPxCastigo()"
+                                [title]="'sale_client_btn_search' | translate">
+                        </button>
+                        <input type="text"
+                               id="viaPagoXCastigo_desc"
+                               name="viaPagoXCastigo_desc"
+                               autocomplete="off"
+                               required
+                               minlength="5"
+                               style="width: 75%;"
+                               [(ngModel)]="saiParametersModel.viaPagoxCastigoDesc"
+                               maxlength="200"
+                               pInputText>&nbsp;
+                        <button
+                                pButton
+                                type="button"
+                                class="btn-primary"
+                                (click)="onClickCleanViaPxCastigo()"
+                                icon="pi pi-trash"
+                                [title]="'btn_clean' | translate">
+                        </button>
+                    </div>
+                    <div class="col-12 py-0 my-0">
+                        <div *ngIf="!viaPagoXCastigo.valid && (viaPagoXCastigo.dirty || viaPagoXCastigo.touched)">
+                            <p-message
+                                    class="d-block"
+                                    *ngIf="viaPagoXCastigo.hasError('required')"
+                                    severity="error"
+                                    text="{{ cmpReq }}"
+                            ></p-message>
+                            <p-message
+                                    class="d-block"
+                                    *ngIf="viaPagoXCastigo.errors?.['minlength']"
+                                    severity="error"
+                                    text="{{ cmpMin }} 1"
+                            ></p-message>
+                        </div>
+                    </div>
+                    <!-- ./VIA_DE_PAGO_POR_CASTIGO -->
+                </div>
+            </fieldset>
+            <!-- ./FIRST_FIELDSET -->
+        </div>
+        <div class="col-12 md:col-12 lg:col-4">
+            <!-- SECOND_FIELDSET -->
+            <fieldset class="card mt-4" style="position: relative;">
+                <legend style="position: absolute; top: -30px;">
+                    <h4 class="color_primario">{{ 'sai_parameters_first_fieldset' | translate }}</h4>
+                </legend>
+                <div class="col-12">
+                    <button type="button"
+                            pButton
+                            icon="pi pi-plus"
+                            class="btn-primary border-radius-button"
+                            (click)="onClickSearchAndAddBusinessUnit()"
+                            label="{{ 'sai_parameters_btn_add_business_unit' | translate }}"
+                            title="{{ 'sai_parameters_btn_add_business_unit' | translate }}"
+                    ></button>
+                </div>
+                <div class="col-12">
+                    <p-table
+                        #dt
+                        [value]="saiParametersModel.userUnidadNegocioDtoList"
+                        [globalFilterFields]="['code', 'description']"
+                        [paginator]="false"
+                        [rows]="rowsTables"
+                        [responsive]="true"
+                        [rowHover]="true"
+                        [showCurrentPageReport]="true"
+                        [loading]="loading"
+                        styleClass="p-datatable-gridlines">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th [pSortableColumn]="'codigoSai'">
+                                    {{ "sai_parameters_table_header_code" | translate }}
+                                    <p-sortIcon [field]="'codigoSai'"></p-sortIcon>
+                                </th>
+                                <th [pSortableColumn]="'descripcion'">
+                                    {{ "sai_parameters_table_header_description" | translate }}
+                                    <p-sortIcon [field]="'descripcion'"></p-sortIcon>
+                                </th>
+                                <th class="cls_center" style="width: 50px;"></th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData>
+                            <tr [pSelectableRow]="rowData">
+                                <td>{{ rowData.codigoSai }}</td>
+                                <td>{{ rowData.descripcion }}</td>
+                                <td>
+                                    <button
+                                            pButton
+                                            type="button"
+                                            icon="pi pi-times"
+                                            class="btn-icon-option"
+                                            [title]="'btn_remove' | translate"
+                                            (click)="onClickRemoveBusinessUnits(rowData)"
+                                    ></button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </fieldset>
+            <fieldset class="card mt-6" style="position: relative;">
+                <legend style="position: absolute; top: -30px;">
+                    <h4 class="color_primario">{{ 'sai_parameters_account_type_by_payment_label' | translate }}</h4>
+                </legend>
+                <div class="col-12">
+                    <button type="button"
+                            pButton
+                            icon="pi pi-plus"
+                            class="btn-primary border-radius-button"
+                            (click)="onClickOpenDialogFindCxCType()"
+                            label="{{ 'sai_parameters_btn_add_business_unit' | translate }}"
+                            title="{{ 'sai_parameters_btn_add_business_unit' | translate }}"
+                    ></button>
+                </div>
+                <div class="col-12">
+                    <p-table
+                        #dt
+                        [value]="saiParametersModel.tipoCxCDtoList"
+                        [globalFilterFields]="['code', 'description']"
+                        [paginator]="false"
+                        [rows]="rowsTables"
+                        [responsive]="true"
+                        [rowHover]="true"
+                        [showCurrentPageReport]="true"
+                        [loading]="loading"
+                        styleClass="p-datatable-gridlines">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th [pSortableColumn]="'codigoSai'">
+                                    {{ "sai_parameters_table_header_code" | translate }}
+                                    <p-sortIcon [field]="'codigoSai'"></p-sortIcon>
+                                </th>
+                                <th [pSortableColumn]="'descripcion'">
+                                    {{ "sai_parameters_table_header_description" | translate }}
+                                    <p-sortIcon [field]="'descripcion'"></p-sortIcon>
+                                </th>
+                                <th class="cls_center" style="width: 50px;"></th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData>
+                            <tr [pSelectableRow]="rowData">
+                                <td>{{ rowData.codigoSai }}</td>
+                                <td>{{ rowData.descripcion }}</td>
+                                <td>
+                                    <!--TODO: ELIMINAR TIPO CXC SELECCIONADO-->
+                                    <button
+                                            pButton
+                                            type="button"
+                                            icon="pi pi-times"
+                                            class="btn-icon-option"
+                                            [title]="'btn_remove' | translate"
+                                            (click)="onClickRemoveCxCType(rowData)"
+                                    ></button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </fieldset>
+            <!-- ./SECOND_FIELDSET -->
+        </div>
+        <!-- ACTION_BUTTONS -->
+        <div class="col-12 md:col-12 lg:col-2">
+            <div class="d-grid mt-4" style="row-gap: 15px;">
+                <button
+                        pButton
+                        type="button"
+                        class="btn-secondary border-radius-button"
+                        icon="pi pi-arrow-left"
+                        [label]="'btn_back' | translate"
+                        (click)="onClickBack()"
+                        [title]="'edit' | translate">
+                </button>
+                <button
+                        type="submit"
+                        pButton
+                        class="btn-primary border-radius-button"
+                        icon="pi pi-check"
+                        label="{{ 'sai_parameters_btn_save' | translate }}"
+                ></button>
+            </div>
+        </div>
+        <!-- ./ACTION_BUTTONS -->
+    </div>
+</form>
+<!-- ./FORM_SAI_PARAMS -->
+
+<!-- DIALOG_FIND_GENERIC -->
+<shared-dialog-generic-search
+        [titleDialog]="titleDialog"
+        [typeSearch]="SEARCH_TYPE_PARAM"
+        [id]="SEARCH_TYPE[SEARCH_TYPE_PARAM]+'-'+titleDialog.replace(' ','-')"
+        [visible]="isVisibleDialogGeneric"
+        [code]="genericParamToSearch.codigo"
+        [description]="genericParamToSearch.descripcion"
+        (eventClose)="eventCloseDialogGeneric($event)"
+        (eventSelectResponse)="eventSelectDialogResponse($event)"
+></shared-dialog-generic-search>
+<!-- ./DIALOG_FIND_GENERIC -->
+
+<!-- CONFIRM_DIALOG -->
+<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}"
+                 [acceptButtonStyleClass]="'btn-primary'"
+                 [acceptLabel]="'yes' | translate"
+                 [rejectLabel]="'not' | translate"
+                 [rejectButtonStyleClass]="'btn-secondary'">
+</p-confirmDialog>
+<!-- ./CONFIRM_DIALOG -->

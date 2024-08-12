@@ -1,0 +1,105 @@
+@import "master";
+
+.card-login-center-main {
+  background-color: $color_white !important;
+  display: flex;
+  justify-content: space-between;
+}
+
+.card-login-content {
+  background-color: $color_white !important;
+  border-radius: 70px;
+  margin: 2rem;
+  width: 60%;
+  box-shadow: 0px 0px 26px -3px rgba(0, 0, 0, 0.4);
+}
+
+.login-body .login-panel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) !important;
+  background-color: $color_primario_hiper !important;
+  width: 40% !important;
+  padding: 0 !important;
+  border-radius: 70px;
+  height: 70% !important;
+}
+
+.login-content {
+  //display: flex !important;
+  justify-content: center !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  padding: 1rem;
+}
+
+.login-input {
+  > input {
+    border: 1px solid $color_primario_hiper !important;
+    padding: 1rem !important;
+    border-radius: 10px;
+  }
+
+  > input:hover, > input:focus, > input:active {
+    border: 1px solid $color_primario_hiper !important;
+    box-shadow: 0px 0px 37px -8px $color_primario_hiper_transparente !important;
+  }
+
+  i {
+    color: $color_primario_hiper !important;
+  }
+}
+
+.login-body .login-panel button {
+  margin-top: 0;
+  background-color: $color_primario !important;
+  color: $color_white !important;
+  padding: 1rem !important;
+  border-color: $color_primario;
+  border-radius: 10px !important;
+}
+
+.login-body .login-panel button:enabled:hover,
+.login-body .login-panel button:enabled:focus {
+  box-shadow: 0px 0px 37px -8px $color_primario !important;
+}
+.login-body .login-panel a {
+  color: $color_primario !important;
+  text-decoration: underline;
+}
+.login-body .login-panel .forgetpassword-container{
+  text-align: center;
+}
+
+.btn-forgot {
+  display: flex !important;
+  justify-content: center;
+}
+
+/* CARD-DYNAMIC-STYLE */
+.card-dynamic-hipermaxi {
+  width: 30%;
+  margin-left: -30px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.card-dynamic-hipermaxi-body {
+  border-radius: 70px;
+  height: auto;
+}
+
+/* ./CARD-DYNAMIC-STYLE */
+
+//@media only screen and (min-width: 768px) and (max-width: 1023px)
+@media only screen and (max-width: 1023px) {
+  .login-body .login-panel {
+    width: 90% !important;
+  }
+
+  .card-dynamic-hipermaxi {
+    margin-left: 15px;
+  }
+}

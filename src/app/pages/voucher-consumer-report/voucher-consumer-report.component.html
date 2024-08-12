@@ -1,0 +1,204 @@
+<!-- HEADER -->
+<div class="mb-1">
+    <div class="d-flex align-items-center justify-content-center p-4 bg-white border-radius-table-header box-shadow">
+        <h5 class="m-0 cls_title">{{ "voucher_consumer_report_title" | translate }}</h5>
+    </div>
+</div>
+<!-- ./HEADER -->
+<!-- FILTERS -->
+<div class="row d-flex justify-content-center">
+    <div class="col-12">
+        <div class="my-3 card " style="padding-top: 2.5rem; padding-bottom: 1rem; border-radius: 20px;">
+            <form class="grid p-fluid justify-content-center" #formElement="ngForm"
+                  (ngSubmit)="onSubmitFilterVouchers()">
+                <div class="col-12 md:col-12 lg:col-3 d-grid">
+                    <samp class="p-float-label">
+                        <p-calendar #_fechaInicio="ngModel"
+                                    name="idfechaFin"
+                                    id="idfechaInicio"
+                                    required
+                                    [showIcon]="true"
+                                    [(ngModel)]="filterConsumerVoucher._fechaInicioDate"
+                                    [maxDate]="filterConsumerVoucher._fechaFinDate"
+                                    [placeholder]="'vale_list_filter_init_date' | translate"
+                                    dateFormat="dd/mm/yy">
+                        </p-calendar>
+                        <label for="idfechaInicio">{{ "vale_list_filter_init_date" | translate }}</label>
+                    </samp>
+                </div>
+                <div class="col-12 md:col-12 lg:col-3 d-grid">
+                    <samp class="p-float-label">
+                        <p-calendar #_fechaFin="ngModel"
+                                    name="idfechaFin"
+                                    id="idfechaFin"
+                                    required
+                                    [showIcon]="true"
+                                    [(ngModel)]="filterConsumerVoucher._fechaFinDate"
+                                    [minDate]="filterConsumerVoucher._fechaInicioDate"
+                                    [placeholder]="'vale_list_filter_end_date' | translate"
+                                    dateFormat="dd/mm/yy">
+                        </p-calendar>
+                        <label for="idfechaFin">{{ "vale_list_filter_end_date" | translate }}</label>
+                    </samp>
+                </div>
+                <div class="col-12 md:col-12 lg:col-3">
+                    <samp class="p-float-label">
+                        <input idTransaction="ngModel"
+                               type="text"
+                               id="_idTransaction"
+                               name="_idTransaction"
+                               autocomplete="off"
+                               placeholder="{{'voucher_consumer_head_id_transaction_se' | translate}}"
+                               [maxLength]="30"
+                               [(ngModel)]="filterConsumerVoucher.idTransaction"
+                               pInputText/>
+                        <label for="_idTransaction">{{ "voucher_consumer_head_id_transaction_se" | translate }}&nbsp;
+                            <i class="pi pi-ticket color_primario"></i></label>
+                    </samp>
+                </div>
+                <div class="col-12 md:col-12 lg:col-3">
+                    <samp class="p-float-label">
+                        <input
+                            #_cajero="ngModel"
+                            type="text"
+                            id="_cajero"
+                            [(ngModel)]="filterConsumerVoucher.cajero"
+                            name="_cajero"
+                            autocomplete="off"
+                            placeholder="{{'voucher_consumer_head_cajero' | translate}}"
+                            [maxLength]="30"
+                            pInputText/>
+                        <label for="_cajero">{{ "voucher_consumer_head_cajero" | translate }}</label>
+                    </samp>
+                </div>
+                <div class="col-12 md:col-12 lg:col-3">
+                    <samp class="p-float-label">
+                        <input _caja="ngModel"
+                               [(ngModel)]="filterConsumerVoucher.caja"
+                               type="text"
+                               id="_caja"
+                               name="_caja"
+                               autocomplete="off"
+                               placeholder="{{'voucher_consumer_head_caja' | translate}}"
+                               [maxLength]="30"
+                               pInputText/>
+                        <label for="_caja">{{ "voucher_consumer_head_caja" | translate }}</label>
+                    </samp>
+                </div>
+                <div class="col-12 md:col-12 lg:col-3">
+                    <samp class="p-float-label">
+                        <input _responseSAI="ngModel"
+                               [(ngModel)]="filterConsumerVoucher.responseSAI"
+                               type="text"
+                               id="_responseSAI"
+                               name="_responseSAI"
+                               autocomplete="off"
+                               placeholder="{{'voucher_consumer_head_response_sai' | translate}}"
+                               [min]="0"
+                               [maxLength]="9999"
+                               pInputText/>
+                        <label for="_caja">{{ "voucher_consumer_head_response_sai" | translate }}</label>
+                    </samp>
+                </div>
+                <div class="col-12 md:col-12 lg:col-3 d-flex">
+                    <button
+                            type="submit"
+                            pButton
+                            style="width: 85%;"
+                            icon="pi pi-filter"
+                            class="btn-primary border-radius-button"
+                            title="{{ 'vale_btn_filter' | translate }}"
+                            label="{{ 'vale_btn_filter' | translate }}">
+                    </button>&nbsp;
+                    <button type="button"
+                            pButton
+                            style="width: 15%;"
+                            icon="pi pi-replay"
+                            (click)="onClickClearFilterVouchers()"
+                            class="p-button-outlined border-radius-button">
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- ./FILTERS -->
+
+<!-- TABLE -->
+<div class="d-flex justify-content-center">
+    <div class="col-12">
+        <p-table
+            #dt
+            [value]="reportConsumerVoucherReport.contenido"
+            [globalFilterFields]="['valeId', 'empresa', 'fechaEmision']"
+            [paginator]="true"
+            [rows]="rowsTables"
+            [responsive]="true"
+            [rowHover]="true"
+            [showCurrentPageReport]="true"
+            [loading]="loading"
+            [totalRecords]="sizeConsumers"
+            [lazy]="true"
+            (onLazyLoad)="onChangePageTable($event)"
+            currentPageReportTemplate="{first} a {last} de {totalRecords} consumo de vales"
+            styleClass="p-datatable-gridlines">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th [pSortableColumn]="'consumoId'">
+                        {{ "voucher_consumer_table_head_no" | translate }}
+                        <p-sortIcon [field]="'consumoId'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center">{{ "voucher_consumer_table_head_id_trans" | translate }}</th>
+                    <th class="cls_center">{{ "voucher_consumer_table_head_caja" | translate }}</th>
+                    <th class="cls_center">{{ "voucher_consumer_head_cajero" | translate }}</th>
+                    <th [pSortableColumn]="'npag'">
+                        {{ "voucher_consumer_table_head_response_sai" | translate }}
+                        <p-sortIcon [field]="'npag'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'fecha'">
+                        {{ "voucher_consumer_table_head_date_process" | translate }}
+                        <p-sortIcon [field]="'fecha'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'cvia'">
+                        {{ "voucher_consumer_table_head_cvia" | translate }}
+                        <p-sortIcon [field]="'cvia'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'login'">
+                        {{ "voucher_consumer_table_head_user" | translate }}
+                        <p-sortIcon [field]="'login'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center">{{ "voucher_consumer_table_head_beneficiary" | translate }}</th>
+                    <th class="cls_center">{{ "voucher_consumer_table_head_business" | translate }}</th>
+                    <th class="cls_center">{{ "voucher_consumer_table_head_identification" | translate }}</th>
+                    <th [pSortableColumn]="'factura'">
+                        {{ "voucher_consumer_table_head_invoice" | translate }}
+                        <p-sortIcon [field]="'factura'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'importe'">
+                        {{ "voucher_consumer_table_head_amount" | translate }}
+                        <p-sortIcon [field]="'importe'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center">{{ "voucher_consumer_table_head_current" | translate }}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData>
+                <tr>
+                    <td>{{ rowData.consumoId }}</td>
+                    <td>{{ rowData.idTransaccionSE }}</td>
+                    <td>{{ rowData.caja }}</td>
+                    <td>{{ rowData.cajero }}</td>
+                    <td>{{ rowData.npag }}</td>
+                    <td>{{ rowData.fecha | date: 'dd/MM/yyyy' }}</td>
+                    <td>{{ rowData.cvia }}</td>
+                    <td>{{ rowData.login }}</td>
+                    <td>{{ rowData.vale.beneficiario }}</td>
+                    <td>{{ rowData.vale.empresa }}</td>
+                    <td>{{ rowData.vale.identificadorQR }}</td>
+                    <td>{{ rowData.factura }}</td>
+                    <td>{{ rowData.importe.toFixed(2) }}</td>
+                    <td>{{ rowData.vale.moneda | currentType: currentTypesOptions }}</td>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<!-- ./TABLE -->

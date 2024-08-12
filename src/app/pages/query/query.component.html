@@ -1,0 +1,237 @@
+<!-- HEADER -->
+<div class="mb-5">
+    <div class="flex align-items-center justify-content-end p-4 bg-white border-radius-table-header box-shadow">
+        <h5 class="m-0 title-center cls_title">{{ "query_title" | translate }}</h5>
+        <span class="p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input pInputText
+               type="text"
+               (input)="dt.filterGlobal($event.target.value, 'contains')"
+               placeholder="{{ 'table_search' | translate }}"/>
+      </span>
+    </div>
+</div>
+<!-- ./HEADER -->
+<!-- TABLE -->
+<div class="d-flex justify-content-center">
+    <div class="col-12 lg:col-8">
+        <p-table
+            #dt
+            [value]="list"
+            [globalFilterFields]="['code', 'description']"
+            [(selection)]="entitySelect"
+            [paginator]="true"
+            [rows]="rowsTables"
+            [responsive]="true"
+            [rowHover]="true"
+            [showCurrentPageReport]="true"
+            [loading]="loading"
+            styleClass="p-datatable-gridlines"
+            currentPageReportTemplate="{first} a {last} de {totalRecords} queries">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th [pSortableColumn]="'code'">
+                        {{ "query_t_code" | translate }}
+                        <p-sortIcon [field]="'code'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'description'">
+                        {{ "query_t_description" | translate }}
+                    </th>
+                    <th style="width: 100px" class="cls_center">
+                        {{ "actions" | translate }}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData>
+                <tr>
+                    <td>
+                        {{ rowData.code }}
+                    </td>
+                    <td>
+                        {{ rowData.description }}
+                    </td>
+                    <td class="cls_center">
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-pencil"
+                                [title]="'edit' | translate"
+                                (click)="showDialogToEdit($event, rowData)"
+                                class="btn-icon-option"
+                        ></button>
+
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-eye"
+                                [title]="'detail' | translate"
+                                (click)="showDialogToView($event, rowData)"
+                                class="p-button-outlined btn-icon-option-secondary"
+                                style="margin-left: 5px"
+                        ></button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<!-- ./TABLE -->
+<!-- MODAL -->
+<p-dialog
+        [header]="(isView ? 'detail': 'edit') | translate"
+        [(visible)]="displayDialog"
+        (onHide)="frm.reset()"
+        [modal]="true"
+        [style]="{ width: '1000px' }"
+>
+    <form #frm="ngForm" (ngSubmit)="onSubmit()">
+        <div class="card" *ngIf="entity">
+            <div class="grid p-fluid">
+                <div class="col-12 md:col-6">
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input
+                                #code="ngModel"
+                                type="text"
+                                id="idcode"
+                                [(ngModel)]="entity.code"
+                                name="code"
+                                required
+                                autocomplete="off"
+                                minlength="2"
+                                maxlength="50"
+                                [readOnly]="isView"
+                                pInputText
+                            />
+                            <label for="idcode">{{ "query_t_code" | translate }} (*)</label>
+                        </samp>
+                        <div *ngIf="!code.valid && (code.dirty || code.touched)">
+                            <p-message
+                                    *ngIf="code.hasError('required')"
+                                    severity="error"
+                                    text="{{ cmpReq }}"
+                            ></p-message>
+                            <p-message
+                                    *ngIf="code.errors?.['minlength']"
+                                    severity="error"
+                                    text="{{ cmpMin }} 2"
+                            ></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input
+                                #description="ngModel"
+                                type="text"
+                                id="iddescription"
+                                [(ngModel)]="entity.description"
+                                name="description"
+                                required
+                                validateAlphaNumericSpace
+                                autocomplete="off"
+                                minlength="5"
+                                maxlength="200"
+                                [readOnly]="isView"
+                                pInputText
+                            />
+                            <label for="iddescription"
+                            >{{ "query_t_description" | translate }} (*)</label
+                            >
+                        </samp>
+                        <div *ngIf="!description.valid && (description.dirty || description.touched)">
+                            <p-message
+                                    *ngIf="description.hasError('required')"
+                                    severity="error"
+                                    text="{{ cmpReq }}"
+                            ></p-message>
+                            <p-message
+                                    *ngIf="description.errors?.['minlength']"
+                                    severity="error"
+                                    text="{{ cmpMin }} 2"
+                            ></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label class="ColorLabel" for="iddefinition">{{
+                                "query_queryJson" | translate
+                            }}</label>
+                        <textarea
+                            #definition="ngModel"
+                            id="iddefinition"
+                            [(ngModel)]="entity.definition"
+                            name="definition"
+                            required
+                            autocomplete="off"
+                            minlength="5"
+                            rows="10"
+                            [readOnly]="isView"
+                            pInputTextarea
+                        >
+            </textarea>
+                        <div *ngIf="!definition.valid && (definition.dirty || definition.touched)">
+                            <p-message
+                                    *ngIf="definition.hasError('required')"
+                                    severity="error"
+                                    text="{{ cmpReq }}"
+                            ></p-message>
+                            <p-message
+                                    *ngIf="definition.errors?.['minlength']"
+                                    severity="error"
+                                    text="{{ cmpMin }} 5"
+                            ></p-message>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 md:col-6">
+                    <div class="col-12">
+                        <label class="ColorLabel">{{ "query_viewJson" | translate }}</label>
+                        <textarea
+                                rows="17"
+                                data-value="{{ jsonResultado }}"
+                                [readOnly]="isView"
+                                pInputTextarea
+                        ></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p-footer>
+            <div class="cls_center">
+                <div class="DIB">
+                    <button
+                            type="button"
+                            pButton
+                            icon="pi pi-caret-right"
+                            (click)="validateJson($event, entity)"
+                            [disabled]="submitted"
+                            label="{{ 'query_validateJsonQuery' | translate }}"
+                            class="p-button-outlined"
+                            style="margin-right: 0.25em"
+                    ></button>
+                </div>
+                <div class="DIB" *ngIf="!isView">
+                    <button
+                            type="submit"
+                            pButton
+                            icon="pi pi-check"
+                            label="{{ 'save' | translate }}"
+                            [disabled]="!frm.valid || submitted"
+                            class="btn-primary"
+                            style="margin-right: 0.25em"
+                    ></button>
+                </div>
+                <div class="DIB">
+                    <button
+                            type="button"
+                            pButton
+                            icon="pi pi-times"
+                            (click)="close()"
+                            label="{{ 'cancel' | translate }}"
+                            class="p-button-outlined"
+                    ></button>
+                </div>
+            </div>
+        </p-footer>
+    </form>
+</p-dialog>
+<!-- ./MODAL -->

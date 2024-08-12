@@ -1,0 +1,430 @@
+<!-- HEADER -->
+<div class="mb-5">
+    <div class="flex align-items-center justify-content-between p-4 bg-white border-radius-table-header box-shadow">
+        <div style="text-align: left">
+            <button
+                    type="button"
+                    pButton
+                    icon="pi pi-plus"
+                    class="btn-primary border-radius-button"
+                    (click)="showDialogToAdd()"
+                    label="{{ 'btn_add' | translate }}">
+            </button>
+        </div>
+        <h5 class="m-0 cls_title">{{ "job_title" | translate }}</h5>
+        <span class="p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input
+                pInputText
+                type="text"
+                (input)="tt.filterGlobal($event.target.value, 'contains')"
+                placeholder="{{ 'table_search' | translate }}"
+        />
+      </span>
+    </div>
+</div>
+<!-- ./HEADER -->
+<!-- TABLE -->
+<div class="d-flex justify-content-center">
+    <div class="col-12 lg:col-10">
+        <p-table
+            #tt
+            [value]="list"
+            [globalFilterFields]="['code', 'reference', 'schedule']"
+            [(selection)]="selectJob"
+            [paginator]="true"
+            [rows]="rowsTables"
+            [responsive]="true"
+            [rowHover]="true"
+            [showCurrentPageReport]="true"
+            [loading]="loading"
+            styleClass="p-datatable-gridlines"
+            currentPageReportTemplate="{first} a {last} de {totalRecords} tareas">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th [pSortableColumn]="'code'">
+                        {{ "job_t_code" | translate }}
+                        <p-sortIcon [field]="'code'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'reference'">
+                        {{ "job_t_reference" | translate }}
+                        <p-sortIcon [field]="'reference'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'schedule'">
+                        {{ "job_t_sched" | translate }}
+                        <p-sortIcon [field]="'schedule'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center" style="width: 90px">{{ "job_t_maxThreads" | translate }}</th>
+                    <th class="cls_center" style="width: 90px">{{ "job_t_maxRetry" | translate }}</th>
+                    <th class="cls_center" style="width: 90px">{{ "job_t_enabled" | translate }}</th>
+                    <th class="cls_center" style="width: 100px">{{ "actions" | translate }}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData>
+                <tr>
+                    <td>
+                        {{ rowData.code }}
+                    </td>
+                    <td>
+                        {{ rowData.reference }}
+                    </td>
+                    <td>
+                        {{ rowData.schedule }}
+                    </td>
+
+                    <td class="cls_center">
+                        {{ rowData.maxThreads }}
+                    </td>
+                    <td class="cls_center">
+                        {{ rowData.maxRetry }}
+                    </td>
+                    <td class="cls_center">
+                        <div
+                                class="{{ rowData.enabled ? 'status_active' : 'status_inactive' }}"
+                        >
+                            {{ rowData.enabled ? ("yes" | translate) : ("not" | translate) }}
+                        </div>
+                    </td>
+                    <td class="cls_center">
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-pencil"
+                                class="btn-icon-option"
+                                [title]="'edit' | translate"
+                                (click)="showEdit($event, rowData)"
+                        ></button>
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-eye"
+                                [title]="'detail' | translate"
+                                (click)="showView($event, rowData)"
+                                class="p-button-outlined btn-icon-option-secondary"
+                                style="margin-left: 4px"
+                        ></button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<!-- ./TABLE -->
+<!-- MODAL -->
+<p-dialog
+        *ngIf="auxJob"
+        [header]="(!isView ? (auxJob.jobId==null? 'register': 'edit') :'detail') | translate"
+        [(visible)]="displayDialog"
+        [modal]="true"
+        [style]="{ width: '750px' }"
+        (onHide)="formJob.reset()"
+>
+    <form #formJob="ngForm" (submit)="onSubmit()">
+        <div class="card" *ngIf="auxJob">
+            <div class="grid p-fluid">
+                <div class="col-6">
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input
+                                #code="ngModel"
+                                type="text"
+                                id="code"
+                                maxlength="300"
+                                [(ngModel)]="auxJob.code"
+                                minlength="3"
+                                [readonly]="isView"
+                                autocomplete="off"
+                                required
+                                name="code"
+                                pInputText
+                            />
+                            <label for="code">{{ "job_t_code" | translate }} (*)</label>
+                        </samp>
+                        <div *ngIf="!code.valid && (code.dirty || code.touched)">
+                            <p-message
+                                    *ngIf="code.hasError('required')"
+                                    severity="error"
+                                    text="{{ cmpReq }}"
+                            ></p-message>
+                            <p-message
+                                    *ngIf="code.errors?.['minlength']"
+                                    severity="error"
+                                    text="{{ cmpMin }} 3"
+                            ></p-message>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input
+                                #referencia="ngModel"
+                                type="text"
+                                id="idreference"
+                                maxlength="300"
+                                [(ngModel)]="auxJob.reference"
+                                minlength="3"
+                                [readonly]="isView"
+                                autocomplete="off"
+                                required
+                                name="reference"
+                                pInputText
+                            />
+                            <label for="idreference"
+                            >{{ "job_t_reference" | translate }} (*)</label
+                            >
+                        </samp>
+                        <div *ngIf="!referencia.valid && (referencia.dirty || referencia.touched)">
+                            <p-message
+                                    *ngIf="referencia.hasError('required')"
+                                    severity="error"
+                                    text="{{ cmpReq }}"
+                            ></p-message>
+                            <p-message
+                                    *ngIf="referencia.errors?.['minlength']"
+                                    severity="error"
+                                    text="{{ cmpMin }} 3"
+                            ></p-message>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input
+                                #configuracion="ngModel"
+                                type="text"
+                                id="idconfig"
+                                [(ngModel)]="auxJob.schedule"
+                                name="sched"
+                                required
+                                [readonly]="isView"
+                                [disabled]="day"
+                                autocomplete="off"
+                                minlength="3"
+                                maxlength="30"
+                                pInputText
+                            />
+                            <label for="idconfig">{{ "job_t_sched" | translate }} (*)</label>
+                        </samp>
+                        <div *ngIf="!configuracion.valid && (configuracion.dirty || configuracion.touched)">
+                            <p-message
+                                    *ngIf="configuracion.hasError('required')"
+                                    severity="error"
+                                    text="{{ cmpReq }}"
+                            ></p-message>
+                            <p-message
+                                    *ngIf="configuracion.errors?.['minlength']"
+                                    severity="error"
+                                    text="{{ cmpMin }} 3"
+                            ></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12 MT-15">
+                        <label class="ColorLabel">{{ "job_t_enabled" | translate }} (*)</label>
+                        <div class="H3p"></div>
+                        <p-selectButton
+                                [disabled]="isView"
+                                name="enabled"
+                                [options]="enable"
+                                [(ngModel)]="auxJob.enabled"
+                        ></p-selectButton>
+                    </div>
+                    <!--<div class="col-12 MT-15">
+                                  <label class="ColorLabel">{{'job_t_configAvance' | translate}}</label>
+                                  <div class="H3p"></div>
+                                  <p-selectButton [disabled]="isView" name="habilitado" [options]="optionsConfig"
+                                                  [(ngModel)]="day"
+                                  ></p-selectButton>
+                              </div>-->
+                </div>
+
+                <div class="col-6">
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input
+                                    id="idnumberThreads"
+                                    [value]="auxJob.maxThreads"
+                                    type="text"
+                                    pInputText
+                                    readonly
+                            />
+                            <label for="idnumberThreads"
+                            >{{ "job_t_maxThreads" | translate }} (*)</label
+                            >
+                        </samp>
+                        <p-slider
+                                [(ngModel)]="auxJob.maxThreads"
+                                [disabled]="isView"
+                                [max]="15"
+                                name="maxThread"
+                        ></p-slider>
+                    </div>
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input
+                                #maxRetry="ngModel"
+                                type="number"
+                                id="idmaxRetry"
+                                [(ngModel)]="auxJob.maxRetry"
+                                name="maxRetry"
+                                required
+                                [readonly]="isView"
+                                [disabled]="isView"
+                                autocomplete="off"
+                                [min]="0"
+                                [max]="999"
+                                validateNumeric
+                                pInputText
+                            />
+                            <label for="idmaxRetry"
+                            >{{ "job_t_maxRetry" | translate }} (*)</label
+                            >
+                        </samp>
+                        <div
+                                *ngIf="!maxRetry.valid && (maxRetry.dirty || maxRetry.touched)"
+                        >
+                            <p-message
+                                    *ngIf="maxRetry.hasError('required')"
+                                    severity="error"
+                                    text="{{ cmpReq }}"
+                            ></p-message>
+                            <p-message
+                                    *ngIf="maxRetry.errors?.['max']"
+                                    severity="error"
+                                    text="{{ valueMax }} 999"
+                            ></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12 MT-15">
+                        <label class="ColorLabel"
+                        >{{ "job_t_concurrent" | translate }} (*)</label
+                        >
+                        <div class="H3p"></div>
+                        <p-selectButton
+                                [disabled]="isView"
+                                name="concurrent"
+                                [options]="concurrent"
+                                [(ngModel)]="auxJob.concurrent"
+                        ></p-selectButton>
+                    </div>
+                </div>
+
+                <div class="col-12" *ngIf="day">
+                    <div class="col-12 cls_center">
+                        <div class="grid">
+                            <div class="p-col">
+                                <p-checkbox
+                                        name="su"
+                                        value="1"
+                                        label="Lunes"
+                                        (click)="onChangeType()"
+                                        [(ngModel)]="selectedDay"
+                                        inputId="su"
+                                ></p-checkbox>
+                            </div>
+                            <div class="p-col">
+                                <p-checkbox
+                                        name="mo"
+                                        value="2"
+                                        label="Martes"
+                                        (click)="onChangeType()"
+                                        [(ngModel)]="selectedDay"
+                                        inputId="mo"
+                                ></p-checkbox>
+                            </div>
+                            <div class="p-col">
+                                <p-checkbox
+                                        name="tu"
+                                        value="3"
+                                        label="Miercoles"
+                                        (click)="onChangeType()"
+                                        [(ngModel)]="selectedDay"
+                                        inputId="tu"
+                                ></p-checkbox>
+                            </div>
+                            <div class="p-col">
+                                <p-checkbox
+                                        name="we"
+                                        value="4"
+                                        label="Jueves"
+                                        (click)="onChangeType()"
+                                        [(ngModel)]="selectedDay"
+                                        inputId="we"
+                                ></p-checkbox>
+                            </div>
+                            <div class="p-col">
+                                <p-checkbox
+                                        name="th"
+                                        value="5"
+                                        label="Viernes"
+                                        (click)="onChangeType()"
+                                        [(ngModel)]="selectedDay"
+                                        inputId="th"
+                                ></p-checkbox>
+                            </div>
+                            <div class="p-col">
+                                <p-checkbox
+                                        name="fr"
+                                        value="6"
+                                        label="Sabado"
+                                        (click)="onChangeType()"
+                                        [(ngModel)]="selectedDay"
+                                        inputId="fr"
+                                ></p-checkbox>
+                            </div>
+                            <div class="p-col">
+                                <p-checkbox
+                                        name="sa"
+                                        value="0"
+                                        label="Domingo"
+                                        (click)="onChangeType()"
+                                        [(ngModel)]="selectedDay"
+                                        inputId="sa"
+                                ></p-checkbox>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label class="ColorLabel">{{ "job_t_setDate" | translate }}</label>
+                        <p-calendar
+                            #calendar="ngModel"
+                            timeOnly="true"
+                            [showSeconds]="true"
+                            (onBlur)="onBlurTime()"
+                            readonlyInput="true"
+                            name="time"
+                            [(ngModel)]="time"
+                            hourFormat="24"
+                        ></p-calendar>
+                    </div>
+                </div>
+            </div>
+            <p-footer>
+                <div class="cls_center">
+                    <div class="DIB" *ngIf="!isView">
+                        <button
+                                pButton
+                                type="submit"
+                                [disabled]="!formJob.valid || submitted"
+                                label="{{ 'save' | translate }}"
+                                icon="pi pi-check"
+                                class="btn-primary"
+                                style="margin-right: 0.25em"
+                        ></button>
+                    </div>
+
+                    <div class="DIB">
+                        <button
+                                pButton
+                                type="button"
+                                label="{{ 'cancel' | translate }}"
+                                icon="pi pi-times"
+                                (click)="displayDialog = false"
+                                class="p-button-outlined"
+                        ></button>
+                    </div>
+                </div>
+            </p-footer>
+        </div>
+    </form>
+</p-dialog>
+<!-- ./MODAL -->

@@ -1,0 +1,157 @@
+<!-- HEADER -->
+<div class="mb-5">
+    <div class="flex align-items-center justify-content-between bg-white border-radius-table-header box-shadow"
+         style="padding: 1.5rem;">
+        <div style="text-align: left">
+            <button
+                    type="button"
+                    pButton
+                    icon="pi pi-plus-circle"
+                    class="btn-primary border-radius-button"
+                    [routerLink]="'/iglesia/evento'"
+                    label="Volver atras"
+            ></button>
+        </div>
+        <h5 class="m-0 cls_title">EVENTO</h5>
+        <div style="text-align: left">
+            <button
+                    type="submit"
+                    pButton
+                    icon="pi pi-save"
+                    class="btn-primary border-radius-button"
+                    form="formEvento"
+                    label="Guardar evento"
+            ></button>
+        </div>
+    </div>
+</div>
+<!-- ./HEADER -->
+
+<!-- FORM -->
+<div class="row d-flex justify-content-center">
+    <div class="col-12 md:col-10 sm:col-12 lg:col-10">
+        <form class="grid p-fluid" #formEvento="ngForm" id="formEvento" (submit)="onSubmitEvento()">
+            <!-- VOUCHER_DETAIL -->
+            <div class="col-12 lg:col-4">
+                <p-fieldset [legend]="'Detalle del evento'">
+                    <!-- VOUCHER -->
+
+                    <fieldset class="fieldset-subtitle">
+                        <legend>
+                            <h4 class="color_primario">{{ "sale_client" | translate }}: &nbsp;</h4>
+                        </legend>
+                        <div class="col-12">
+                            <samp class="p-float-label">
+                                <input
+                                    #nombreEven="ngModel"
+                                    type="text"
+                                    id="nombreEven"
+                                    [(ngModel)]="evento.nombre"
+                                    name="nombreEven"
+                                    pInputText
+                                    required
+                                    autocomplete="off"
+                                    minlength="4"
+                                    maxlength="50"
+                                    [readOnly]="isView"/>
+                                <label for="nombreEven">Nombre (*)</label>
+                            </samp>
+                            <div *ngIf="!nombreEven.valid && (nombreEven.dirty || nombreEven.touched)">
+                                <p-message *ngIf="nombreEven.hasError('required')"
+                                           severity="error"
+                                           text="{{ 'cmpReq'|translate }}"></p-message>
+                                <p-message *ngIf="nombreEven.errors?.['minlength']"
+                                           severity="error"
+                                           text="{{ 'cmpMin'|translate }} 4"></p-message>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <samp class="p-float-label">
+                                <p-calendar #fechaEven="ngModel"
+                                            name="fechaEven"
+                                            required
+                                            id="fechaEven"
+                                            [showIcon]="true"
+                                            [showTime]="true"
+                                            [showSeconds]="true"
+                                            [(ngModel)]="evento.fechaDate">
+                                </p-calendar>
+                                <label for="fechaEven">Fecha (*)</label>
+                            </samp>
+                            <div *ngIf="!fechaEven.valid && (fechaEven.dirty || fechaEven.touched)">
+                                <p-message *ngIf="fechaEven.hasError('required')" severity="error"
+                                           [text]="'cmpReq' | translate"></p-message>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <samp class="p-float-label">
+                            <textarea
+                                    [rows]="10"
+                                    #descripcionEven="ngModel"
+                                    type="text"
+                                    [(ngModel)]="evento.descripcion"
+                                    minlength="1"
+                                    maxlength="400"
+                                    id="descripcionEven"
+                                    [readOnly]="isView"
+                                    required
+                                    autocomplete="off"
+                                    name="descripcionEven"
+                                    pInputTextarea
+                            ></textarea>
+                                <label for="descripcionEven">Descripción (*)</label>
+                            </samp>
+                            <div *ngIf="!descripcionEven.valid && (descripcionEven.dirty || descripcionEven.touched)">
+                                <p-message *ngIf="descripcionEven.hasError('required')"
+                                           severity="error"
+                                           text="{{ 'cmpReq' | translate }}"></p-message>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <!-- ./VOUCHER -->
+                </p-fieldset>
+            </div>
+            <!-- ./VOUCHER_DETAIL -->
+            <!-- VOUCHER_CUTS -->
+            <div class="col-12 lg:col-8">
+                <p-fieldset [legend]="'Seleccion de ministerios'">
+                    <div class="grid p-fluid">
+                        <div class="col-12">
+                            <p-pickList [source]="ministeriosOptions" [target]="evento.ministerios"
+                                        sourceHeader="Available" targetHeader="Selected" [dragdrop]="true"
+                                        [responsive]="true" filterBy="nombre"
+                                        sourceFilterPlaceholder="Busqueda por nombre"
+                                        targetFilterPlaceholder="Busqueda por nombre">
+                                <ng-template let-ministerio pTemplate="item">
+                                    <div class="product-item">
+                                        <div class="image-container">
+                                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfpQm696EYU_pbFHVZ3Nbo746QUnqP2sx9zA&s"
+                                                 [alt]="ministerio.nombre" class="product-image"/>
+                                        </div>
+                                        <div class="product-list-detail">
+                                            <h5 class="mb-2">{{ ministerio.nombre }}</h5>
+                                            <i class="pi pi-tag product-category-icon"></i>
+                                            <span class="product-category">{{ ministerio.descripcion }}</span>
+                                        </div>
+                                        <!--                                        <div class="product-list-action">-->
+                                        <!--                                            <h6 class="mb-2">${{product.price}}</h6>-->
+                                        <!--                                            <span [class]="'product-badge status-' + product.inventoryStatus.toLowerCase()">{{product.inventoryStatus}}</span>-->
+                                        <!--                                        </div>-->
+                                    </div>
+                                </ng-template>
+                            </p-pickList>
+                        </div>
+                    </div>
+                </p-fieldset>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- ./FORM -->
+
+<!-- CONFIRM_DIALOG -->
+<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}"
+                 [acceptButtonStyleClass]="'btn-primary'" [rejectButtonStyleClass]="'btn-secondary'"
+                 [acceptLabel]="'yes' | translate" [rejectLabel]="'not' | translate">
+</p-confirmDialog>
+<!-- ./CONFIRM_DIALOG -->

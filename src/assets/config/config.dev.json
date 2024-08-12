@@ -1,0 +1,8 @@
+{
+  "path": {
+    "url_root_admin": "http://192.168.100.146:8080",
+    "url_root_conf": "http://192.168.100.146:8081",
+    "url_root_report": "http://192.168.100.146:8083",
+    "url_root_hiper_vales": "http://192.168.100.146:8082"
+  }
+}

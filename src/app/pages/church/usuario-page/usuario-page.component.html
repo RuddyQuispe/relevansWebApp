@@ -1,0 +1,260 @@
+<!-- HEADER -->
+<div class="mb-5">
+    <div class="flex align-items-center justify-content-between bg-white border-radius-table-header box-shadow"
+         style="padding: 1.5rem;">
+        <div style="text-align: left">
+            <button
+                    type="button"
+                    pButton
+                    icon="pi pi-plus-circle"
+                    class="btn-primary border-radius-button"
+                    (click)="onClickAddUsuario()"
+                    label="Agregar Usuario"
+            ></button>
+        </div>
+        <h5 class="m-0 cls_title">{{ "user_title" | translate }}</h5>
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input pInputText
+                   type="text"
+                   (input)="dt.filterGlobal($event.target.value, 'contains')"
+                   placeholder="{{ 'table_search' | translate }}"/>
+        </span>
+    </div>
+</div>
+<!-- ./HEADER -->
+<!-- TABLE -->
+<div class="d-flex justify-content-center">
+    <div class="col-12 lg:col-10">
+        <p-table
+            #dt
+            [value]="usuarios"
+            [paginator]="true"
+            [rows]="rowsTables"
+            [responsive]="true"
+            [rowHover]="true"
+            [showCurrentPageReport]="true"
+            [loading]="loading"
+            styleClass="p-datatable-gridlines"
+            currentPageReportTemplate="{first} a {last} de {totalRecords} usuarios">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="cls_center" [pSortableColumn]="'idUser'">
+                        Nro.
+                        <p-sortIcon [field]="'idUser'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center" [pSortableColumn]="'username'">
+                        Username
+                        <p-sortIcon [field]="'username'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center" [pSortableColumn]="'email'">
+                        Email
+                        <p-sortIcon [field]="'email'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center">
+                        Dispositivo
+                    </th>
+                    <th class="cls_center">
+                        # de ministerios
+                    </th>
+                    <th style="width: 100px" class="cls_center">
+                        Acciones
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-usuario let-i="index">
+                <tr>
+                    <td [ngClass]="{'box-shadow': i==usuarios.length-1}">
+                        {{ usuario.idUser }}
+                    </td>
+                    <td [ngClass]="{'box-shadow': i==usuarios.length-1}">
+                        {{ usuario.username }}
+                    </td>
+                    <td [ngClass]="{'box-shadow': i==usuarios.length-1}">
+                        {{ usuario.email }}
+                    </td>
+                    <td [ngClass]="{'box-shadow': i==usuarios.length-1}">
+                        {{ usuario.idDevice }}
+                    </td>
+                    <td [ngClass]="{'box-shadow': i==usuarios.length-1}">
+                        {{ usuario.ministerios.length }}
+                    </td>
+                    <td [ngClass]="{'box-shadow': i==usuarios.length-1}">
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-pencil"
+                                [title]="'Editar usuario'"
+                                class="btn-icon-option"
+                                (click)="showDialogToEdit(usuario)"
+                        ></button>
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-eye"
+                                [title]="'Detalle de usuario'"
+                                (click)="showDialogToView(usuario)"
+                                class="p-button-outlined btn-icon-option-secondary"
+                                style="margin-left: 5px"
+                        ></button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<!-- ./TABLE -->
+<!-- MODAL -->
+<p-dialog
+        *ngIf="usuario"
+        [header]="isView ? 'Detalle de usuario': (usuario.idUser==null? 'Registrar usuario': 'Editar usuario')"
+        [(visible)]="displayDialog"
+        [modal]="true"
+        (close)="closeDialog()"
+        [style]="{ width: '700px' }">
+    <div class="ui-fluid">
+        <form #frm="ngForm" (ngSubmit)="onSubmitUsuario()">
+            <div class="card card-without-box-shadow">
+                <div class="grid p-fluid">
+                    <div class="col-12">
+                        <div class="col-12">
+                            <samp class="p-float-label">
+                                <input
+                                    #username="ngModel"
+                                    type="text"
+                                    id="username"
+                                    [(ngModel)]="usuario.username"
+                                    name="username"
+                                    pInputText
+                                    required
+                                    autocomplete="off"
+                                    validateLoginUser
+                                    minlength="4"
+                                    maxlength="20"
+                                    [readOnly]="isView"/>
+                                <label for="username">Username (*)</label>
+                            </samp>
+                            <div *ngIf="!username.valid && (username.dirty || username.touched)">
+                                <p-message
+                                        *ngIf="username.hasError('required')"
+                                        severity="error"
+                                        text="{{ 'cmpReq'|translate }}"
+                                ></p-message>
+                                <p-message
+                                        *ngIf="username.errors?.['minlength']"
+                                        severity="error"
+                                        text="{{ 'cmpMin'|translate }} 4"
+                                ></p-message>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <samp class="p-float-label">
+                                <input
+                                    #email="ngModel"
+                                    type="email"
+                                    id="email"
+                                    [(ngModel)]="usuario.email"
+                                    name="email"
+                                    pInputText
+                                    required
+                                    autocomplete="off"
+                                    minlength="4"
+                                    maxlength="50"
+                                    [readOnly]="isView"/>
+                                <label for="email">Email (*)</label>
+                            </samp>
+                            <div *ngIf="!email.valid && (email.dirty || email.touched)">
+                                <p-message
+                                        *ngIf="email.hasError('required')"
+                                        severity="error"
+                                        text="{{ 'cmpReq'|translate }}"
+                                ></p-message>
+                                <p-message
+                                        *ngIf="email.errors?.['minlength']"
+                                        severity="error"
+                                        text="{{ 'cmpMin'|translate }} 4"
+                                ></p-message>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label>{{ 'lgn_pass' | translate }}</label>
+                            <div class="login-input">
+                                <input #password="ngModel"
+                                       [(ngModel)]="usuario.password"
+                                       name="pass"
+                                       [type]="eyePass? 'text' : 'password'"
+                                       id="idpass"
+                                       pPassword
+                                       required
+                                       maxlength="30"
+                                       autocomplete="off">
+                                <i *ngIf="eyePass"
+                                   (click)="togogleEyePass()"
+                                   class="pi pi-eye cls_hover cls_eye"></i>
+                                <i *ngIf="!eyePass"
+                                   (click)="togogleEyePass()"
+                                   class="pi pi-eye-slash cls_hover cls_eye"></i>
+                            </div>
+                            <div *ngIf="!password.valid && (password.dirty || password.touched)">
+                                <p-message *ngIf="password.hasError('required')" severity="error"
+                                           text="{{ 'cmpReq'|translate }}"></p-message>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="ColorLabel">{{ "user_t_profile" | translate }} (*)</label>
+                            <div class="H3p"></div>
+                            <p-multiSelect
+                                #profileId="ngModel"
+                                [options]="ministeriosOptions"
+                                id="profileId"
+                                [(ngModel)]="usuario.ministerios"
+                                [readonly]="isView"
+                                [required]="true"
+                                [filter]="true"
+                                filterBy="label"
+                                [showClear]="true"
+                                name="profileId">
+                            </p-multiSelect>
+                            <div *ngIf="!profileId.valid && (profileId.dirty || profileId.touched)">
+                                <p-message
+                                        *ngIf="profileId.hasError('required')"
+                                        severity="error"
+                                        text="{{ 'cmpReq'|translate }}"></p-message>
+                                <p-message
+                                        *ngIf="profileId.errors?.['minlength']"
+                                        severity="error"
+                                        text="{{ 'cmpMin'|translate }} 4"></p-message>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p-footer>
+                <div class="cls_center">
+                    <div class="DIB" *ngIf="!isView">
+                        <button
+                                type="submit"
+                                pButton
+                                icon="pi pi-check"
+                                label="Guardar"
+                                [disabled]="!frm.valid"
+                                style="margin-right: 0.25em"
+                                class="btn-primary"
+                        ></button>
+                    </div>
+                    <div class="DIB">
+                        <button
+                                type="button"
+                                pButton
+                                icon="pi pi-times"
+                                (click)="onClickCancelDialog()"
+                                label="Cancelar"
+                                class="p-button-outlined p-button-outlined-hover"
+                        ></button>
+                    </div>
+                </div>
+            </p-footer>
+        </form>
+    </div>
+</p-dialog>
+<!-- ./MODAL -->

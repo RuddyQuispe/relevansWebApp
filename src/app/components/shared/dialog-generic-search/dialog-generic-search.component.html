@@ -1,0 +1,91 @@
+<p-dialog [header]="titleDialog" [(visible)]="visible" [modal]="true"
+          [style]="{ width: '50vw' }" [draggable]="true"
+          [resizable]="false" [dismissableMask]="true" (onHide)="closeDialog()">
+    <p-table
+        #tableFilterSearch
+        [value]="data"
+        [dataKey]="id"
+        [rows]="rowsTables"
+        [showCurrentPageReport]="true"
+        [loading]="loading"
+        [paginator]="true"
+        [globalFilterFields]="['codigo', 'descripcion']"
+        [selectionMode]="'single'"
+        [(selection)]="dataSelected"
+        [class]="'p-datatable-sm'"
+        [totalRecords]="sizeOrders"
+        [lazy]="this.typeSearch !== SEARCH_TYPE.SYSTEM_USER"
+        (onLazyLoad)="onChangePageTable($event)"
+        currentPageReportTemplate="{currentPage} de {{sizeOrders}} items"
+    >
+        <ng-template pTemplate="header" let-client>
+            <tr>
+                <th style="width:50%">{{ "shared_dialog_find_clients_header_code" | translate }}</th>
+                <th style="width:50%">{{ "shared_dialog_find_clients_header_name" | translate }}</th>
+            </tr>
+            <tr>
+                <th>
+                    <p-columnFilter type="text" field="codigo" [showMenu]="false" [showClearButton]="false">
+                        <ng-template pTemplate="filter">
+                            <input type="number" pInputText [value]="code"
+                                   (change)="onChangeCodeFilter($event)" class="p-inputtext"
+                                   placeholder="Buscar código">
+                        </ng-template>
+                    </p-columnFilter>
+                </th>
+                <th>
+                    <p-columnFilter type="text" field="descripcion" [showMenu]="false" [showClearButton]="false">
+                        <ng-template pTemplate="filter">
+                            <input type="text" pInputText [ngModel]="description"
+                                   (change)="onChangeDescriptionFilter($event)" class="p-inputtext"
+                                   placeholder="Buscar nombre">
+                        </ng-template>
+                    </p-columnFilter>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-data>
+            <tr [pSelectableRow]="data" class="row-uncolor-selectable"
+                [ngClass]="{'row-selected': data?.codigo == dataSelected?.codigo}"
+                (dblclick)="onDoubleClickItemSelection(data)">
+                <td>
+                    {{ data.codigo }}
+                </td>
+                <td>
+                    {{ data.descripcion }}
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="5">{{ "shared_dialog_find_items_not_found" | translate }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <p-footer>
+        <div class="cls_center">
+            <div class="DIB">
+                <button
+                        type="submit"
+                        pButton
+                        icon="pi pi-check"
+                        label="{{ 'accept' | translate }}"
+                        class="btn-primary"
+                        style="margin-right: 0.25em"
+                        [disabled]="!dataSelected"
+                        (click)="onClickDataSelected()"
+                ></button>
+            </div>
+            <div class="DIB">
+                <button
+                        type="button"
+                        pButton
+                        icon="pi pi-times"
+                        label="{{ 'cancel' | translate }}"
+                        class="p-button-outlined"
+                        (click)="onClickCancelSearch()"
+                ></button>
+            </div>
+        </div>
+    </p-footer>
+</p-dialog>

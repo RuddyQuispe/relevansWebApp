@@ -1,0 +1,205 @@
+<!-- HEADER -->
+<div class="mb-5">
+    <div class="flex align-items-center justify-content-between bg-white box-shadow border-radius-table-header"
+         style="padding: 1.5rem;">
+        <div style="text-align:left">
+            <button type="button"
+                    pButton
+                    icon="pi pi-plus"
+                    (click)="onClickShowDialogToAddMenuApi()"
+                    [label]="'menu_api_btn_add_menu'| translate"
+                    [title]="'menu_api_btn_add_menu' | translate"
+                    class="btn-primary border-radius-button"
+            >
+            </button>
+        </div>
+        <h5 class="m-0 cls_title">{{ 'menu_api_title'| translate }}</h5>
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text"
+                   (input)="dt.filterGlobal($event.target.value, 'contains')"
+                   placeholder="{{'menu_api_search_by_name'| translate}}"/>
+        </span>
+    </div>
+</div>
+<!-- ./HEADER -->
+
+<!-- TABLE -->
+<div class="d-flex justify-content-center">
+    <div class="col-12 lg:col-8">
+        <p-table #dt
+                 [value]="menuApiResponse.contenido"
+                 [resizableColumns]="true"
+                 [globalFilterFields]="['name','path','enabled']"
+                 [paginator]="true"
+                 [rows]="rowsTables"
+                 [responsive]="true"
+                 [rowHover]="true"
+                 [showCurrentPageReport]="true"
+                 [loading]="loading"
+                 [totalRecords]="sizeRecordsTable"
+                 [lazy]="true"
+                 (onLazyLoad)="onChangePageTableMenu($event)"
+                 styleClass="p-datatable-gridlines"
+                 currentPageReportTemplate="{first} a {last} de {totalRecords} menúes">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th [pSortableColumn]="'name'">
+                        {{ 'menu_api_table_head_name' | translate }}
+                        <p-sortIcon [field]="'name'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'path'">
+                        {{ 'menu_api_table_head_path' | translate }}
+                        <p-sortIcon [field]="'path'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'enabled'" style="text-align: center; width: 120px;">
+                        {{ 'menu_api_table_head_enabled' | translate }}
+                        <p-sortIcon [field]="'enabled'"></p-sortIcon>
+                    </th>
+                    <th style="width: 10%;" class="cls_center">{{ 'actions' | translate }}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                <tr>
+                    <td [ngClass]="{'bg-secondary-row': (rowIndex % 2 !== 0)}">
+                        {{ rowData.name }}
+                    </td>
+                    <td [ngClass]="{'bg-secondary-row': (rowIndex % 2 !== 0)}">
+                        {{ rowData.path }}
+                    </td>
+                    <td class="cls_center" [ngClass]="{'bg-secondary-row': rowIndex % 2 !== 0}">
+                        <div class="{{rowData.enabled? 'status_active':'status_inactive'}}">
+                            {{ (rowData.enabled ? 'yes' : 'not') | translate }}
+                        </div>
+                    </td>
+                    <td class="cls_center" [ngClass]="{'bg-secondary-row': rowIndex % 2 !== 0}">
+                        <button pButton type="button" icon="pi pi-pencil"
+                                [title]="'edit' | translate"
+                                class="btn-icon-option"
+                                (click)="onClickShowDialogToEdit($event, rowData)"></button>
+                        <button pButton type="button" icon="pi pi-search"
+                                [title]="'detail' | translate"
+                                (click)="onClickShowDialogToView($event, rowData)"
+                                class="p-button-outlined btn-icon-option-secondary"
+                                style="margin-left: 5px;"></button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="4"><b>{{ "menu_api_table_access" | translate }}</b></td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<!-- ./TABLE -->
+
+<!-- DIALOG_FORM -->
+<p-dialog *ngIf="menuApiModel"
+          [header]="(!isViewMenuApiDialog? (!menuApiModel.menuId? 'menu_api_title_register': 'menu_api_title_edit') : 'menu_api_title_detail') | translate"
+          [(visible)]="displayDialogMenuApi"
+          (onHide)="frmMenuApi.reset()"
+          (close)="onClickCloseDialogMenuApi()"
+          [modal]="true"
+          [style]="{width: '767px'}">
+    <form #frmMenuApi="ngForm" (ngSubmit)="onSubmitMenuApi()">
+        <div class="card card-without-box-shadow" *ngIf="menuApiModel">
+            <div class="grid p-fluid">
+                <div class="col-12">
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input #name="ngModel"
+                                   type="text"
+                                   id="nameMenu"
+                                   [(ngModel)]="menuApiModel.name"
+                                   name="nameMenu"
+                                   pInputText
+                                   required
+                                   autocomplete="off"
+                                   minlength="4"
+                                   maxlength="30"
+                                   [readOnly]="isViewMenuApiDialog">
+                            <label for="nameMenu">{{ 'menu_api_table_head_name' | translate }} *</label>
+                        </samp>
+                        <div *ngIf="!name.valid && (name.dirty || name.touched)">
+                            <p-message *ngIf="name.hasError('required')" severity="error"
+                                       text="{{'cmpReq'|translate}}"></p-message>
+                            <p-message *ngIf="name.errors?.['minlength']" severity="error"
+                                       text="{{'cmpMin'|translate}} 4"></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input #path="ngModel"
+                                   type="text"
+                                   id="pathMenu"
+                                   [(ngModel)]="menuApiModel.path"
+                                   name="pathMenu"
+                                   pInputText
+                                   required
+                                   autocomplete="off"
+                                   minlength="4"
+                                   maxlength="100"
+                                   [readOnly]="isViewMenuApiDialog">
+                            <label for="pathMenu">{{ 'menu_api_table_head_path' | translate }} *</label>
+                        </samp>
+                        <div *ngIf="!name.valid && (name.dirty || name.touched)">
+                            <p-message *ngIf="name.hasError('required')" severity="error"
+                                       text="{{'cmpReq'|translate}}"></p-message>
+                            <p-message *ngIf="name.errors?.['minlength']" severity="error"
+                                       text="{{'cmpMin'|translate}} 4"></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label for="enabledMenu" class="ColorLabel">
+                            {{ 'external_system_table_head_status' | translate }} (*)</label>
+                        <div class="H3p"></div>
+                        <p-selectButton #enabled="ngModel"
+                                        id="enabledMenu"
+                                        [options]="[{ label: 'yes' | translate, value: true },
+                                                    { label: 'not' | translate, value: false }]"
+                                        [(ngModel)]="menuApiModel.enabled"
+                                        [disabled]="isViewMenuApiDialog"
+                                        required
+                                        name="enabledMenu">
+                        </p-selectButton>
+                        <div *ngIf="!enabled.valid && (enabled.dirty || enabled.touched)">
+                            <p-message *ngIf="enabled.hasError('required')" severity="error"
+                                       text="{{'cmpReq'|translate}}"></p-message>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p-footer>
+            <div class="cls_center d-flex justify-content-center" style="column-gap: 1rem;">
+                <div class="DIB" *ngIf="!isViewMenuApiDialog">
+                    <button type="submit"
+                            pButton
+                            icon="pi pi-check"
+                            label="{{'save' | translate}}"
+                            style="margin-right: .25em"
+                            class="btn-primary"
+                            [disabled]="!frmMenuApi.valid"></button>
+                </div>
+                <div class="DIB">
+                    <button type="button"
+                            pButton
+                            icon="pi pi-times"
+                            (click)="onClickCloseDialogMenuApi()"
+                            label="{{'cancel' | translate}}"
+                            class="p-button-outlined p-button-outlined-hover"></button>
+                </div>
+            </div>
+        </p-footer>
+    </form>
+</p-dialog>
+<!-- ./DIALOG_FORM -->
+
+<!-- CONFIRM_DIALOG -->
+<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}"
+                 [acceptButtonStyleClass]="'btn-primary'"
+                 [rejectButtonStyleClass]="'btn-secondary'"
+                 [acceptLabel]="'yes' | translate" [rejectLabel]="'not' | translate"></p-confirmDialog>
+<!-- ./CONFIRM_DIALOG -->

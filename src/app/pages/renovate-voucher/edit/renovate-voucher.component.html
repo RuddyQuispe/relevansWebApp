@@ -1,0 +1,128 @@
+<!-- HEADER -->
+<div class="mb-1">
+    <div class="d-flex align-items-center justify-content-center p-4 bg-white border-radius-table-header box-shadow">
+        <h5 class="m-0 cls_title">{{ "voucher_renovate_title" | translate }}</h5>
+    </div>
+</div>
+<!-- ./HEADER -->
+
+<!-- FORM -->
+<div class="row d-flex justify-content-center">
+    <div class="col-12 md:col-10 sm:col-12 lg:col-8">
+        <form #formVoucher="ngForm" (ngSubmit)="onSubmitToRenovateVoucher()" class="row d-flex">
+            <div class="col-12 lg:col-5">
+                <p-fieldset legend="{{'voucher_renovate_detail' | translate}}">
+                    <!-- VOUCHER -->
+                    <div class="col-12">
+                        <fieldset class="fieldset-subtitle">
+                            <legend><h4 class="color_primario">{{ "sale_client" | translate }}: &nbsp;</h4>
+                            </legend>
+                            <div class="col-12 p-1 d-flex">
+                                <label class="color_primario">{{ "voucher_renovate_code" | translate }}:&nbsp;</label>
+                                <p>{{ voucherModalEdit.identificadorQR }}</p>
+                            </div>
+                            <div class="col-12 p-1 d-flex">
+                                <label class="color_primario">{{ "voucher_renovate_beneficiary" | translate }}
+                                    :&nbsp;</label>
+                                <p>{{ voucherModalEdit.beneficiario }}</p>
+                            </div>
+                            <div class="col-12 p-1 d-flex">
+                                <label class="color_primario">{{ "voucher_renovate_company" | translate }}
+                                    :&nbsp;</label>
+                                <p>{{ voucherModalEdit.empresa }}</p>
+                            </div>
+                            <div class="col-12 p-1 d-flex">
+                                <label class="color_primario">{{ "voucher_renovate_amount" | translate }}:&nbsp;</label>
+                                <p>{{ voucherModalEdit.monto?.toFixed(2) ?? 0 }} {{ voucherModalEdit.moneda | currentType: currentTypesOptions }}</p>
+                            </div>
+                            <div class="col-12 p-1 d-flex">
+                                <label class="color_primario">{{ "voucher_renovate_status" | translate }}
+                                    :&nbsp;</label>
+                                <p>{{ voucherModalEdit.estado }}</p>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <!-- ./VOUCHER -->
+                    <!-- DATE_VOUCHER -->
+                    <div class="col-12">
+                        <fieldset class="fieldset-subtitle">
+                            <legend><h4 class="color_primario">{{ "voucher_renovate_date_header" | translate }}</h4>
+                            </legend>
+                            <div class="col-12 p-1 d-flex">
+                                <label class="color_primario">{{ "voucher_renovate_date_emission" | translate }}
+                                    :&nbsp;</label>
+                                <p>{{
+                                        parseDateStringToDate(voucherModalEdit.fechaEmision).toLocaleDateString('es-ES', {
+                                            day: 'numeric',
+                                            month: 'long',
+                                            year: 'numeric'
+                                        })
+                                    }}</p>
+                            </div>
+                            <div class="col-12 p-1 d-flex">
+                                <label class="color_primario">{{ "voucher_renovate_date_limit" | translate }}
+                                    :&nbsp;</label>
+                                <p>{{
+                                        parseDateStringToDate(voucherModalEdit.fechaVigencia).toLocaleDateString('es-ES', {
+                                            day: 'numeric',
+                                            month: 'long',
+                                            year: 'numeric'
+                                        })
+                                    }}</p>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <!-- ./DATE_VOUCHER -->
+                </p-fieldset>
+            </div>
+            <!-- NEW_LIMIT_DATE -->
+            <div class="col-12 lg:col-4 p-fluid">
+                <p-fieldset legend="{{'voucher_renovate_new_limit_date' | translate}}">
+                    <div class="col-12 d-grid">
+                        <samp class="p-float-label">
+                            <p-calendar #_fechaVigencia="ngModel"
+                                        [(ngModel)]="voucherModalEdit.fechaVigenciaDate"
+                                        name="idFechaVigencia"
+                                        id="idFechaVigencia"
+                                        required
+                                        [showIcon]="true"
+                                        [placeholder]="'voucher_renovate_limit_date' | translate"
+                                        dateFormat="dd/mm/yy"></p-calendar>
+                            <label for="idFechaVigencia">{{ "voucher_renovate_limit_date" | translate }}</label>
+                        </samp>
+                    </div>
+                </p-fieldset>
+            </div>
+            <!-- ./NEW_LIMIT_DATE -->
+            <div class="col-12 lg:col-2 mt-4">
+                <div class="d-grid">
+                    <button
+                            type="button"
+                            pButton
+                            class="btn-secondary mb-2 border-radius-button"
+                            (click)="onClickBack()"
+                            label="{{ 'btn_back' | translate }}"
+                            title="{{ 'btn_back' | translate }}">
+                    </button>
+                    <button
+                            type="submit"
+                            pButton
+                            class="btn-primary border-radius-button"
+                            label="{{ 'register' | translate }}"
+                            title="{{ 'register' | translate }}"
+                            [disabled]="!formVoucher.valid || submitted || isView">
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- ./FORM -->
+
+<!-- CONFIRM_DIALOG -->
+<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}"
+                 [acceptButtonStyleClass]="'btn-primary'"
+                 [rejectButtonStyleClass]="'btn-secondary'"
+                 [acceptLabel]="'yes' | translate" [rejectLabel]="'not' | translate">
+</p-confirmDialog>
+<!-- ./CONFIRM_DIALOG -->

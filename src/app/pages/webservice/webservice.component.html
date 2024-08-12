@@ -1,0 +1,385 @@
+<!-- HEADER -->
+<div class="mb-5">
+    <div class="flex align-items-center justify-content-end p-4 bg-white border-radius-table-header box-shadow">
+        <h5 class="m-0 title-center cls_title">{{ "ws_title" | translate }}</h5>
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input pInputText
+                 type="text"
+                 (input)="tt.filterGlobal($event.target.value, 'contains')"
+                 placeholder="{{ 'table_search' | translate }}"/>
+        </span>
+    </div>
+</div>
+<!-- ./HEADER -->
+
+<!-- TABLE -->
+<div class="d-flex justify-content-center">
+    <div class="col-12 lg:col-10">
+        <!--        [totalRecords]="sizeOrders"-->
+        <!--        [lazy]="true"-->
+        <!--        (onLazyLoad)="onChangePageTable($event)"-->
+        <p-table
+            #tt
+            [value]="list"
+            [globalFilterFields]="['code', 'reference', 'url']"
+            [(selection)]="webServiceFilterModel"
+            [resizableColumns]="true"
+            [paginator]="true"
+            [rows]="rowsTables"
+            [responsive]="true"
+            [rowHover]="true"
+            [showCurrentPageReport]="true"
+            [loading]="loading"
+            styleClass="p-datatable-gridlines"
+            currentPageReportTemplate="{first} a {last} de {totalRecords} webservices">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th [pSortableColumn]="'code'">
+                        {{ "ws_t_code" | translate }}
+                        <p-sortIcon [field]="'code'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'reference'">
+                        {{ "ws_t_reference" | translate }}
+                        <p-sortIcon [field]="'reference'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'url'">
+                        {{ "ws_t_url" | translate }}
+                        <p-sortIcon [field]="'url'"></p-sortIcon>
+                    </th>
+                    <th style="width: 120px" [pSortableColumn]="'enabled'">
+                        {{ "ws_t_enabled" | translate }}
+                        <p-sortIcon [field]="'url'"></p-sortIcon>
+                    </th>
+                    <th style="width: 100px" class="cls_center">
+                        {{ "actions" | translate }}
+                    </th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-rowData>
+                <tr>
+                    <td>{{ rowData.code }}</td>
+                    <td>{{ rowData.reference }}</td>
+                    <td>{{ rowData.url }}</td>
+                    <td class="cls_center">
+                        <div class="{{ rowData.enabled ? 'status_active' : 'status_inactive' }}">
+                            {{ rowData.enabled ? ("yes" | translate) : ("not" | translate) }}
+                        </div>
+                    </td>
+                    <td class="cls_center">
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-pencil"
+                                class="btn-icon-option"
+                                [title]="'edit' | translate"
+                                (click)="showEdit($event, rowData)"
+                        ></button>
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-eye"
+                                [title]="'detail' | translate"
+                                (click)="showView($event, rowData)"
+                                style="margin-left: 4px"
+                                class="p-button-outlined btn-icon-option-secondary"
+                        ></button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<!-- ./TABLE -->
+
+<!-- DIALOG -->
+<p-dialog
+        [(visible)]="editDialog"
+        [header]="(!isView ? 'edit' : 'detail') | translate"
+        [responsive]="true"
+        (onHide)="formws.reset()"
+        [resizable]="true"
+        [modal]="true"
+        [style]="{ width: '1000px' }">
+    <form #formws="ngForm" (submit)="onSave(webServiceModelToEdit)">
+        <div class="card PT20" *ngIf="webServiceModelToEdit">
+            <div class="grid p-fluid">
+                <div class="col-12 md:col-6">
+                    <samp class="p-float-label">
+                        <input
+                            #code="ngModel"
+                            type="text"
+                            id="idcode"
+                            [(ngModel)]="webServiceModelToEdit.code"
+                            name="code"
+                            required
+                            autocomplete="off"
+                            [readonly]="isView"
+                            validateAlphaNumeric
+                            minlength="2"
+                            maxlength="50"
+                            pInputText
+                        />
+                        <label for="idcode">{{ "ws_t_code" | translate }} (*)</label>
+                    </samp>
+                    <div *ngIf="!code.valid && (code.dirty || code.touched)">
+                        <p-message
+                                *ngIf="code.hasError('required')"
+                                severity="error"
+                                text="{{ cmpReq }}"
+                        ></p-message>
+                        <p-message
+                                *ngIf="code.errors?.['minlength']"
+                                severity="error"
+                                text="{{ cmpMin }} 2"
+                        ></p-message>
+                    </div>
+                </div>
+                <div class="col-12 md:col-6">
+                    <samp class="p-float-label">
+                        <input
+                            #reference="ngModel"
+                            type="text"
+                            id="idreference"
+                            [(ngModel)]="webServiceModelToEdit.reference"
+                            name="reference"
+                            required
+                            autocomplete="off"
+                            [readonly]="isView"
+                            minlength="5"
+                            maxlength="200"
+                            pInputText
+                        />
+                        <label for="idcode">{{ "ws_t_reference" | translate }} (*)</label>
+                    </samp>
+                    <div *ngIf="!reference.valid && (reference.dirty || reference.touched)">
+                        <p-message
+                                *ngIf="reference.hasError('required')"
+                                severity="error"
+                                text="{{ cmpReq }}"
+                        ></p-message>
+                        <p-message
+                                *ngIf="reference.errors?.['minlength']"
+                                severity="error"
+                                text="{{ cmpMin }} 5"
+                        ></p-message>
+                    </div>
+                </div>
+                <div class="col-12 md:col-6">
+                    <samp class="p-float-label">
+                        <input
+                            #wsdl="ngModel"
+                            type="text"
+                            id="idwsdl"
+                            [(ngModel)]="webServiceModelToEdit.url"
+                            name="wsdl"
+                            required
+                            autocomplete="off"
+                            [readonly]="isView"
+                            minlength="5"
+                            maxlength="500"
+                            pInputText
+                        />
+                        <label for="idcode">{{ "ws_t_wsdl" | translate }} (*)</label>
+                    </samp>
+                    <div *ngIf="!wsdl.valid && (wsdl.dirty || wsdl.touched)">
+                        <p-message
+                                *ngIf="wsdl.hasError('required')"
+                                severity="error"
+                                text="{{ cmpReq }}"
+                        ></p-message>
+                        <p-message
+                                *ngIf="wsdl.errors?.['minlength']"
+                                severity="error"
+                                text="{{ cmpMin }} 5"
+                        ></p-message>
+                    </div>
+                </div>
+                <div class="col-12 md:col-6">
+                    <samp class="p-float-label">
+                        <input
+                            #namespace="ngModel"
+                            type="text"
+                            id="idnamespace"
+                            [(ngModel)]="webServiceModelToEdit.namespace"
+                            name="namespace"
+                            required
+                            autocomplete="off"
+                            [readonly]="isView"
+                            minlength="5"
+                            maxlength="200"
+                            pInputText
+                        />
+                        <label for="idcode">{{ "ws_t_namespace" | translate }} (*)</label>
+                    </samp>
+                    <div *ngIf="!namespace.valid && (namespace.dirty || namespace.touched)">
+                        <p-message
+                                *ngIf="namespace.hasError('required')"
+                                severity="error"
+                                text="{{ cmpReq }}"
+                        ></p-message>
+                        <p-message
+                                *ngIf="namespace.errors?.['minlength']"
+                                severity="error"
+                                text="{{ cmpMin }} 5"
+                        ></p-message>
+                    </div>
+                </div>
+                <div class="col-12 md:col-6">
+                    <samp class="p-float-label">
+                        <input
+                            #servicename="ngModel"
+                            type="text"
+                            id="idservicename"
+                            [(ngModel)]="webServiceModelToEdit.servicename"
+                            name="servicename"
+                            required
+                            autocomplete="off"
+                            [readonly]="isView"
+                            minlength="5"
+                            maxlength="200"
+                            pInputText
+                        />
+                        <label for="idcode">{{ "ws_t_servicename" | translate }} (*)</label>
+                    </samp>
+                    <div *ngIf="!servicename.valid && (servicename.dirty || servicename.touched)">
+                        <p-message
+                                *ngIf="servicename.hasError('required')"
+                                severity="error"
+                                text="{{ cmpReq }}"
+                        ></p-message>
+                        <p-message
+                                *ngIf="servicename.errors?.['minlength']"
+                                severity="error"
+                                text="{{ cmpMin }} 5"
+                        ></p-message>
+                    </div>
+                </div>
+                <div class="col-12 md:col-6">
+                    <samp class="p-float-label">
+                        <input
+                            #connectTimeout="ngModel"
+                            type="text"
+                            id="idconnectTimeout"
+                            [(ngModel)]="webServiceModelToEdit.connectTimeout"
+                            name="connectTimeout"
+                            required
+                            autocomplete="off"
+                            [readonly]="isView"
+                            validateNumeric
+                            minlength="1"
+                            maxlength="10"
+                            pInputText
+                        />
+                        <label for="idcode"
+                        >{{ "ws_t_connectTimeout" | translate }} (*)</label
+                        >
+                    </samp>
+                    <div *ngIf="!connectTimeout.valid &&(connectTimeout.dirty || connectTimeout.touched)">
+                        <p-message
+                                *ngIf="connectTimeout.hasError('required')"
+                                severity="error"
+                                text="{{ cmpReq }}"
+                        ></p-message>
+                    </div>
+                </div>
+                <div class="col-12 md:col-6">
+                    <samp class="p-float-label">
+                        <input
+                            #callTimeout="ngModel"
+                            type="text"
+                            id="idcallTimeout"
+                            [(ngModel)]="webServiceModelToEdit.callTimeout"
+                            name="callTimeout"
+                            required
+                            autocomplete="off"
+                            validateNumeric
+                            [readonly]="isView"
+                            minlength="1"
+                            maxlength="10"
+                            pInputText
+                        />
+                        <label for="idcode">{{ "ws_t_callTimeout" | translate }} (*)</label>
+                    </samp>
+                    <div *ngIf="!callTimeout.valid && (callTimeout.dirty || callTimeout.touched)">
+                        <p-message
+                                *ngIf="callTimeout.hasError('required')"
+                                severity="error"
+                                text="{{ cmpReq }}"
+                        ></p-message>
+                    </div>
+                </div>
+                <div class="col-12 md:col-6">
+                    <samp class="p-float-label">
+                        <input
+                            #maxRetry="ngModel"
+                            type="text"
+                            id="idMaxretry"
+                            [(ngModel)]="webServiceModelToEdit.maxRetry"
+                            name="maxRetry"
+                            required
+                            autocomplete="off"
+                            validateNumeric
+                            [readonly]="isView"
+                            minlength="1"
+                            maxlength="10"
+                            pInputText
+                        />
+                        <label for="idcode">{{ "ws_t_maxRetry" | translate }} (*)</label>
+                    </samp>
+                    <div *ngIf="!maxRetry.valid && (maxRetry.dirty || maxRetry.touched)">
+                        <p-message
+                                *ngIf="maxRetry.hasError('required')"
+                                severity="error"
+                                text="{{ cmpReq }}"
+                        ></p-message>
+                    </div>
+                </div>
+                <div class="col-12 md:col-6">
+                    <div class="MT-15">
+                        <label class="ColorLabel">{{ "ws_t_enabled" | translate }}</label>
+                        <div class="H3p"></div>
+                        <p-selectButton
+                                id="idenable"
+                                [disabled]="isView"
+                                [options]="[
+                                               {label: 'yes'|translate, value: true},
+                                               {label: 'not'|translate, value: false}
+                                           ]"
+                                [(ngModel)]="webServiceModelToEdit.enabled"
+                                name="enabled"
+                        ></p-selectButton>
+                    </div>
+                </div>
+            </div>
+
+            <p-footer>
+                <div class="cls_center">
+                    <div class="DIB" *ngIf="!isView">
+                        <button
+                                pButton
+                                type="submit"
+                                [disabled]="!formws.valid || submitted"
+                                label="{{ 'save' | translate }}"
+                                icon="pi pi-check"
+                                class="btn-primary"
+                                style="margin-right: 0.25em"
+                        ></button>
+                    </div>
+                    <div class="DIB">
+                        <button
+                                pButton
+                                type="button"
+                                label="{{ 'cancel' | translate }}"
+                                icon="pi pi-times"
+                                (click)="editDialog = false"
+                                class="p-button-outlined"
+                        ></button>
+                    </div>
+                </div>
+            </p-footer>
+        </div>
+    </form>
+</p-dialog>
+<!-- ./DIALOG -->

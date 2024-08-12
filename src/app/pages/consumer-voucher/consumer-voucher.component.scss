@@ -1,0 +1,19 @@
+@import "master";
+
+.border-primary {
+  border: 1px solid $color_primario !important;
+  border-radius: 20px !important;
+}
+
+.input-hash {
+  width: 0% !important;
+  height: 0% !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+.input-hash:focus-visible {
+  outline-color: transparent !important;
+  outline-style: none !important;
+  outline-width: 0;
+}

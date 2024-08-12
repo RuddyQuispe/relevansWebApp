@@ -1,0 +1,306 @@
+<!-- HEADER -->
+<div class="mb-5">
+    <div class="flex align-items-center justify-content-between bg-white box-shadow border-radius-table-header"
+         style="padding: 1.5rem;">
+        <div style="text-align:left">
+            <button type="button"
+                    pButton
+                    icon="pi pi-plus"
+                    (click)="onClickShowDialogToAdd()"
+                    label="{{'btn_add'| translate}}"
+                    class="btn-primary border-radius-button"
+            >
+            </button>
+        </div>
+        <h5 class="m-0 cls_title">{{ 'external_system_title'| translate }}</h5>
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text"
+                   (input)="dt.filterGlobal($event.target.value, 'contains')"
+                   placeholder="{{'external_system_search_by_code'| translate}}"/>
+        </span>
+    </div>
+</div>
+<!-- ./HEADER -->
+<!-- TABLE -->
+<div class="d-flex justify-content-center">
+    <div class="col-12 lg:col-10">
+        <p-table #dt
+                 [value]="externalSystems.contenido"
+                 [(selection)]="externalSystemSelected"
+                 [resizableColumns]="true"
+                 [globalFilterFields]="['codigo','descripcion','estado']"
+                 [paginator]="true"
+                 [rows]="rowsTables"
+                 [responsive]="true"
+                 [rowHover]="true"
+                 [showCurrentPageReport]="true"
+                 [loading]="loading"
+                 [totalRecords]="sizeRecordsTable"
+                 [lazy]="true"
+                 (onLazyLoad)="onChangePageTableAccess($event)"
+                 styleClass="p-datatable-gridlines"
+                 currentPageReportTemplate="{first} a {last} de {totalRecords} accesos">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th [pSortableColumn]="'codigo'" style="width: 20%;">
+                        {{ 'external_system_table_head_code' | translate }}
+                        <p-sortIcon [field]="'codigo'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'descripcion'">
+                        {{ 'external_system_table_head_description' | translate }}
+                        <p-sortIcon [field]="'descripcion'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'estado'" style="text-align: center; width: 120px;">
+                        {{ 'external_system_table_head_status' | translate }}
+                        <p-sortIcon [field]="'estado'"></p-sortIcon>
+                    </th>
+                    <th style="width: 10%;" class="cls_center">{{ 'actions' | translate }}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                <tr>
+                    <td [ngClass]="{'bg-secondary-row': (rowIndex % 2 !== 0)}">
+                        {{ rowData.codigo }}
+                    </td>
+                    <td [ngClass]="{'bg-secondary-row': (rowIndex % 2 !== 0)}">
+                        {{ rowData.descripcion }}
+                    </td>
+                    <td class="cls_center" [ngClass]="{'bg-secondary-row': rowIndex % 2 !== 0}">
+                        <div class="{{rowData.estado? 'status_active':'status_inactive'}}">
+                            {{ (rowData.estado ? 'yes' : 'not') | translate }}
+                        </div>
+                    </td>
+                    <td class="cls_center" [ngClass]="{'bg-secondary-row': rowIndex % 2 !== 0}">
+                        <button pButton type="button" icon="pi pi-pencil"
+                                [title]="'edit' | translate"
+                                class="btn-icon-option"
+                                (click)="onClickShowDialogToEdit($event, rowData)"></button>
+                        <button pButton type="button" icon="pi pi-search"
+                                [title]="'detail' | translate"
+                                (click)="onClickShowDialogToView($event, rowData)"
+                                class="p-button-outlined btn-icon-option-secondary"
+                                style="margin-left: 5px;"></button>
+                        <button pButton type="button" icon="pi pi-users"
+                                [title]="'external_system_accounts' | translate"
+                                (click)="onClickShowDialogToAddAccount($event, rowData)"
+                                class="p-button-outlined btn-icon-option-secondary"
+                                style="margin-left: 5px;"></button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="4"><b>{{ "external_system_table_access" | translate }}</b></td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<!-- ./TABLE -->
+<!-- MODAL_ADD_ACCESS -->
+<p-dialog *ngIf="externalSystemSelected"
+          [header]="(!isView? (!externalSystemSelected.sistemaExternoId? 'register': 'edit') : 'detail') | translate"
+          [(visible)]="displayDialogAddAccess"
+          (onHide)="frm.reset()"
+          (close)="onClickCloseDialogAddExternalSystem()"
+          [modal]="true"
+          [style]="{width: '767px'}"
+>
+    <form #frm="ngForm" (ngSubmit)="onSubmitToAddExternalSystem()">
+        <div class="card card-without-box-shadow" *ngIf="externalSystemSelected">
+            <div class="grid p-fluid">
+                <div class="col-12">
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input #code="ngModel"
+                                   type="text"
+                                   id="codeAccess"
+                                   [(ngModel)]="externalSystemSelected.codigo"
+                                   name="codeAccess"
+                                   pInputText
+                                   required
+                                   autocomplete="off"
+                                   minlength="4"
+                                   maxlength="30"
+                                   [readOnly]="isView">
+                            <label for="codeAccess">{{ 'external_system_table_head_code' | translate }} *</label>
+                        </samp>
+                        <div *ngIf="!code.valid && (code.dirty || code.touched)">
+                            <p-message *ngIf="code.hasError('required')" severity="error"
+                                       text="{{'cmpReq'|translate}}"></p-message>
+                            <p-message *ngIf="code.errors?.['minlength']" severity="error"
+                                       text="{{'cmpMin'|translate}} 4"></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input #description="ngModel"
+                                   type="text"
+                                   id="descriptionAccess"
+                                   [(ngModel)]="externalSystemSelected.descripcion"
+                                   name="descriptionAccess"
+                                   pInputText
+                                   minlength="4"
+                                   autocomplete="off"
+                                   validateAlphaNumericSpace
+                                   maxlength="200"
+                                   [readOnly]="isView">
+                            <label for="descriptionAccess">{{ 'external_system_table_head_description' | translate }}</label>
+                        </samp>
+                        <div *ngIf="!description.valid && (description.dirty || description.touched)">
+                            <p-message *ngIf="description.errors?.['minlength']" severity="error"
+                                       text="{{'cmpMin'|translate}} 4"></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label for="statusAccess"
+                               class="ColorLabel">{{ 'external_system_table_head_status' | translate }} (*)</label>
+                        <div class="H3p"></div>
+                        <p-selectButton #status="ngModel"
+                                        id="statusAccess"
+                                        [options]="[{label: 'yes'|translate, value: true},
+                                                    {label: 'not'|translate, value: false}]"
+                                        [(ngModel)]="externalSystemSelected.estado"
+                                        [disabled]="isView"
+                                        required
+                                        name="statusAccess">
+                        </p-selectButton>
+                        <div *ngIf="!status.valid && (status.dirty || status.touched)">
+                            <p-message *ngIf="status.hasError('required')" severity="error"
+                                       text="{{'cmpReq'|translate}}"></p-message>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p-footer>
+            <div class="cls_center">
+                <div class="DIB" *ngIf="!isView">
+                    <button type="submit"
+                            pButton
+                            icon="pi pi-check"
+                            label="{{'save' | translate}}"
+                            style="margin-right: .25em"
+                            class="btn-primary"
+                            [disabled]="!frm.valid||submittedAddAccess"></button>
+                </div>
+                <div class="DIB">
+                    <button type="button"
+                            pButton
+                            icon="pi pi-times"
+                            (click)="onClickCloseDialogAddExternalSystem()"
+                            label="{{'cancel' | translate}}"
+                            class="p-button-outlined p-button-outlined-hover"></button>
+                </div>
+            </div>
+        </p-footer>
+    </form>
+</p-dialog>
+<!-- ./MODAL_ADD_ACCESS -->
+<!-- MODAL_LIST_ACCOUNT -->
+<p-dialog *ngIf="externalSystemSelected"
+          [header]="'external_system_accounts' | translate"
+          [(visible)]="displayDialogAddAccount"
+          (onHide)="frm.reset()"
+          [modal]="true"
+          [style]="{width: '1000px'}"
+          (close)="onClickCloseDialogAddUserAccount()">
+    <form #frm="ngForm" (ngSubmit)="onSubmitToAddUserAccount()">
+        <div class="card card-without-box-shadow" *ngIf="externalSystemSelected">
+            <div class="grid p-fluid">
+                <div class="col-12">
+                    <p-table #dtAccount
+                             [value]="externalSystemSelected.usuarios"
+                             [resizableColumns]="true"
+                             [globalFilterFields]="['usuario','contrasenia']"
+                             [paginator]="true"
+                             [rows]="rowsTables"
+                             [responsive]="true"
+                             [rowHover]="true"
+                             [showCurrentPageReport]="true"
+                             [loading]="loading"
+                             styleClass="p-datatable-gridlines"
+                             currentPageReportTemplate="{first} a {last} de {totalRecords} cuentas">
+                        <ng-template pTemplate="caption">
+                            <div class="flex align-items-center justify-content-between">
+                                <div style="text-align:left">
+                                    <button type="submit"
+                                            pButton
+                                            icon="pi pi-check"
+                                            label="{{'external_system_account_btn_add' | translate}}"
+                                            style="margin-right: .25em"
+                                            class="btn-primary border-radius-button"
+                                            [disabled]="!frm.valid||submittedAddAccess"></button>
+                                </div>
+                                <span class="p-input-icon-left" style="width: auto;">
+                                    <i class="pi pi-search"></i>
+                                    <input pInputText type="text"
+                                           (input)="dtAccount.filterGlobal($event.target.value, 'contains')"
+                                           placeholder="{{'table_search'| translate}}"/>
+                                </span>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th [pSortableColumn]="'userLogin'">
+                                    {{ 'external_system_table_account_head_user' | translate }}
+                                    <p-sortIcon [field]="'userLogin'"></p-sortIcon>
+                                </th>
+                                <th class="cls_center">
+                                    {{ 'external_system_table_account_head_password' | translate }}
+                                </th>
+                                <th [pSortableColumn]="'inactive'" style="width: 15%;">
+                                    {{ 'external_system_table_head_status' | translate }}
+                                    <p-sortIcon [field]="'inactive'"></p-sortIcon>
+                                </th>
+                                <th style="width: 10%;" class="cls_center">{{ 'actions' | translate }}</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                            <tr>
+                                <td [ngClass]="{'bg-secondary-row': rowIndex % 2 !== 0}">
+                                    {{ rowData.userLogin }}
+                                </td>
+                                <td [ngClass]="{'bg-secondary-row': rowIndex % 2 !== 0}">
+                                    {{ rowData.userPwd }}
+                                </td>
+                                <td class="cls_center" [ngClass]="{'bg-secondary-row': rowIndex % 2 !== 0}">
+                                    <div class="{{rowData.inactive? 'status_active':'status_inactive'}}">
+                                        {{ (rowData.inactive ? 'yes' : 'not') | translate }}
+                                    </div>
+                                </td>
+                                <td class="cls_center" [ngClass]="{'bg-secondary-row': rowIndex % 2 !== 0}">
+                                    <button pButton type="button"
+                                            [icon]="rowData.inactive? 'pi pi-lock': 'pi pi-lock-open'"
+                                            [title]="rowData.inactive? 'Inhabilitar': 'Habilitar'"
+                                            class="p-button-outlined btn-icon-option-secondary"
+                                            (click)="onClickChangeStatusUserAccountExternalSystem($event, rowData, !rowData.inactive)"></button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="4"><b>{{ "external_system_table_account" | translate }}</b></td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+        <!--<p-footer>-->
+        <!--    <div class="cls_center">-->
+        <!--        <div class="DIB" *ngIf="!isView">-->
+        <!--        </div>-->
+        <!--    </div>-->
+        <!--</p-footer>-->
+    </form>
+</p-dialog>
+<!-- ./MODAL_LIST_ACCOUNT -->
+<!-- CONFIRM_DIALOG -->
+<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}"
+                 [acceptButtonStyleClass]="'btn-primary'"
+                 [rejectButtonStyleClass]="'btn-secondary'"
+                 [acceptLabel]="'yes' | translate" [rejectLabel]="'not' | translate">
+</p-confirmDialog>
+<!-- ./CONFIRM_DIALOG -->

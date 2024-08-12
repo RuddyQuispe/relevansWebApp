@@ -1,0 +1,116 @@
+<!-- HEADER -->
+<div class="mb-1">
+    <div class="d-flex align-items-center justify-content-center p-4 bg-white border-radius-table-header box-shadow">
+        <h5 class="m-0 cls_title">{{ "sales_printer_title" | translate }}</h5>
+    </div>
+</div>
+<!-- ./HEADER -->
+<!-- FORM -->
+<form #frm="ngForm" (ngSubmit)="onSubmit()">
+    <div class="grid p-fluid justify-content-center mt-3">
+        <div class="col-12 lg:col-5">
+            <div class="card border-primary" style="height: 100%;">
+                <fieldset class="fieldset-subtitle">
+                    <legend><h2 class="color_primario">{{ "sale_client" | translate }}</h2></legend>
+                    <div class="col-12 d-flex p-1">
+                        <label class="color_primario">{{ "sale_client_code" | translate }}:&nbsp;</label>
+                        <p>{{ saleModel.clienteCodigo }}</p>
+                    </div>
+                    <div class="col-12 d-flex p-1">
+                        <label class="color_primario">{{ "sale_client_name" | translate }}:&nbsp;</label>
+                        <p>{{ saleModel.clienteNombre }}</p>
+                    </div>
+                    <div class="col-12 d-flex p-1">
+                        <label class="color_primario">{{ "sale_client_contact" | translate }}:&nbsp;</label>
+                        <p>{{ saleModel.clienteContacto }}</p>
+                    </div>
+                    <div class="col-12 d-flex p-1">
+                        <label class="color_primario">{{ "sale_amount" | translate }}:&nbsp;</label>
+                        <p>{{ saleModel.totalPagar.toFixed(2) }} {{ saleModel.moneda | currentType: currentTypesOptions }}</p>
+                    </div>
+                    <div class="col-12 pb-0 px-0">
+                        <p-table [responsive]="true"
+                                 [rowHover]="true"
+                                 [paginator]="true"
+                                 [showCurrentPageReport]="true"
+                                 [loading]="loading"
+                                 [value]="saleModel.corteVale"
+                                 [selectionMode]="'multiple'"
+                                 [rows]="rowsTables"
+                                 [dataKey]="'ventaCorteId'"
+                                 [(selection)]="voucherCutsSelected"
+                                 styleClass="p-datatable-gridlines"
+                                 currentPageReportTemplate="{first} a {last} de {totalRecords} cortes de vales">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th class="cls_center p-2" style="width: 4rem">
+                                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                    </th>
+                                    <th class="cls_center p-2">{{ "sale_voucher_cuts_count" | translate }}</th>
+                                    <th class="cls_center p-2">{{ "sale_voucher_cuts_amount" | translate }} {{ saleModel.moneda | currentType: currentTypesOptions }}</th>
+                                    <th class="cls_center p-2">{{ "sale_voucher_cuts_total" | translate }} {{ saleModel.moneda | currentType: currentTypesOptions }}</th>
+                                    <th class="cls_center p-2">{{ "sale_voucher_cuts_printed" | translate }}</th>
+                                    <th class="cls_center p-2">{{ "sale_voucher_cuts_no_printed" | translate }}</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData>
+                                <tr>
+                                    <td>
+                                        <p-tableCheckbox [value]="rowData"
+                                                         [disabled]="rowData.cantidad-rowData.impreso==0"></p-tableCheckbox>
+                                    </td>
+                                    <td class="cls_center">{{ rowData.cantidad }}</td>
+                                    <td class="cls_center">{{ (rowData.monto + rowData.montoPorDescuento).toFixed(2) }}</td>
+                                    <td class="cls_center">{{ (rowData.cantidad * (rowData.monto + rowData.montoPorDescuento)).toFixed(2) }}</td>
+                                    <td class="cls_center">{{ rowData.impreso || 0 }}</td>
+                                    <td class="cls_center">{{ rowData.cantidad - (rowData.impreso || 0) }}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        <div class="col-12 lg:col-4">
+            <div class="card border-radius-table-header scrollbar-voucher-cuts">
+                <div class="mb-4" *ngFor="let voucherCut of voucherCutsSelected">
+                    <shared-voucher-cut
+                            [voucherModel]="parseVoucherModel(voucherCut)"
+                            [voucherCutModel]="voucherCut"
+                            [typeCurrent]="saleModel.moneda | currentType: currentTypesOptions"
+                            (eventEmitterChangeVoucherCut)="onEventChangeVoucherCutValue($event)"
+                    ></shared-voucher-cut>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 lg:col-2">
+            <div class="d-grid">
+                <button
+                        type="button"
+                        icon="pi pi-arrow-left"
+                        pButton
+                        class="btn-secondary mb-2 border-radius-button"
+                        (click)="onClickBack()"
+                        label="{{ 'btn_back' | translate }}">
+                </button>
+                <button
+                        type="submit"
+                        pButton
+                        icon="pi pi-print"
+                        class="btn-primary border-radius-button"
+                        label="{{ 'sales_printer_btn_print' | translate }}">
+                </button>
+                <a id="iddownloaddocs" href="#" download="{{pdfName}}" style="visibility: hidden;"></a>
+            </div>
+        </div>
+    </div>
+</form>
+<!-- ./FORM -->
+
+<!-- CONFIRM_DIALOG -->
+<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}"
+                 [acceptButtonStyleClass]="'btn-primary'"
+                 [rejectButtonStyleClass]="'btn-secondary'"
+                 [acceptLabel]="'yes' | translate" [rejectLabel]="'not' | translate">
+</p-confirmDialog>
+<!-- ./CONFIRM_DIALOG -->

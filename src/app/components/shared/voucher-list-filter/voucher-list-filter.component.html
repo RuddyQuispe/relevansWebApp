@@ -1,0 +1,261 @@
+<!-- FILTERS -->
+<div class="row d-flex justify-content-center">
+    <div class="col-11 md:col-10 sm:col-12">
+        <div class="my-3 card " style="padding-top: 2.5rem; padding-bottom: 1rem; border-radius: 20px;">
+            <form class="grid p-fluid justify-content-center" #formElement="ngForm"
+                  (ngSubmit)="onSubmitFilterVouchers()">
+                <div class="col-12 md:col-12 lg:col-3 d-grid">
+                    <samp class="p-float-label">
+                        <p-calendar #_fechaInicio="ngModel"
+                                    name="idfechaFin"
+                                    id="idfechaInicio"
+                                    required
+                                    [showIcon]="true"
+                                    [(ngModel)]="filterVoucher.fechaInicioDate"
+                                    [maxDate]="filterVoucher.fechaFinDate"
+                                    [placeholder]="'vale_list_filter_init_date' | translate"
+                                    dateFormat="dd/mm/yy">
+                        </p-calendar>
+                        <label for="idfechaInicio">{{ "vale_list_filter_init_date" | translate }}</label>
+                    </samp>
+                </div>
+                <div class="col-12 md:col-12 lg:col-3 d-grid">
+                    <samp class="p-float-label">
+                        <p-calendar #_fechaFin="ngModel"
+                                    name="idfechaFin"
+                                    id="idfechaFin"
+                                    required
+                                    [showIcon]="true"
+                                    [(ngModel)]="filterVoucher.fechaFinDate"
+                                    [minDate]="filterVoucher.fechaInicioDate"
+                                    [placeholder]="'vale_list_filter_end_date' | translate"
+                                    dateFormat="dd/mm/yy">
+                        </p-calendar>
+                        <label for="idfechaFin">{{ "vale_list_filter_end_date" | translate }}</label>
+                    </samp>
+                </div>
+                <div class="col-12 md:col-12 lg:col-3">
+                    <samp class="p-float-label">
+                        <input
+                            #_idVoucher="ngModel"
+                            type="text"
+                            id="_voucherNo"
+                            [(ngModel)]="filterVoucher.identificadorQr"
+                            name="_voucherNo"
+                            autocomplete="off"
+                            placeholder="{{'vale_list_filter_vale_identifier' | translate}}"
+                            [min]="0"
+                            [maxLength]="9999"
+                            pInputText/>
+                        <label for="_voucherNo">{{ "vale_list_filter_vale_identifier" | translate }}&nbsp;
+                            <i class="pi pi-ticket color_primario"></i></label>
+                    </samp>
+                </div>
+                <div class="col-12 md:col-12 lg:col-3" *ngIf="onlyStatusVoucher===OPTION_ALL">
+                    <samp class="p-float-label">
+                        <p-dropdown #_statusVoucher="ngModel"
+                                    [options]="[
+                                        { label: OPTION_ALL, value: ''},
+                                        { label: STATUS_VOUCHER.CREADO, value: STATUS_VOUCHER.CREADO},
+                                        { label: STATUS_VOUCHER.REVALIDADO,value: STATUS_VOUCHER.REVALIDADO},
+                                        { label: STATUS_VOUCHER.FRACCIONADO,value: STATUS_VOUCHER.FRACCIONADO},
+                                        { label: STATUS_VOUCHER.CASTIGADO,value: STATUS_VOUCHER.CASTIGADO},
+                                        { label: STATUS_VOUCHER.CONSUMIDO,value: STATUS_VOUCHER.CONSUMIDO},
+                                        { label: STATUS_VOUCHER.ANULADO,value: STATUS_VOUCHER.ANULADO}
+                                    ]"
+                                    [(ngModel)]="filterVoucher.estado"
+                                    id="_statusVoucher"
+                                    name="optionsPaymentType"></p-dropdown>
+                        <label for="_statusVoucher">{{ 'state' | translate }}</label>
+                    </samp>
+                </div>
+                <div class="col-12 md:col-12 lg:col-3">
+                    <samp class="p-float-label">
+                        <input
+                            #_importVoucher="ngModel"
+                            type="number"
+                            id="_importVoucher"
+                            [(ngModel)]="filterVoucher.importe"
+                            name="_importVoucher"
+                            autocomplete="off"
+                            placeholder="{{'vale_list_filter_import' | translate}}"
+                            [min]="0"
+                            [maxLength]="9999"
+                            pInputText/>
+                        <label for="_importVoucher">{{ "vale_list_filter_import" | translate }}</label>
+                    </samp>
+                </div>
+                <div class="col-12 md:col-12 lg:col-3">
+                    <samp class="p-float-label">
+                        <p-dropdown #_currentCoinVoucher="ngModel"
+                                    [options]="currentTypesOptions"
+                                    [(ngModel)]="filterVoucher.moneda"
+                                    id="_currentCoinVoucher"
+                                    name="optionsPaymentType"></p-dropdown>
+                        <label for="_currentCoinVoucher">{{ 'vale_list_filter_current' | translate }}</label>
+                    </samp>
+                </div>
+                <div class="col-12 md:col-12 lg:col-3">
+                    <samp class="p-float-label">
+                        <input
+                            #_beneficiaryVoucher="ngModel"
+                            type="text"
+                            id="_beneficiaryVoucher"
+                            [(ngModel)]="filterVoucher.beneficiario"
+                            name="_beneficiaryVoucher"
+                            autocomplete="off"
+                            placeholder="{{'vale_list_filter_beneficiary' | translate}}"
+                            [min]="0"
+                            [maxLength]="9999"
+                            pInputText/>
+                        <label for="_beneficiaryVoucher">{{ "vale_list_filter_beneficiary" | translate }}</label>
+                    </samp>
+                </div>
+                <div class="col-12 md:col-12 lg:col-3 d-flex">
+                    <button
+                            type="submit"
+                            pButton
+                            style="width: 85%;"
+                            icon="pi pi-filter"
+                            class="btn-primary border-radius-button"
+                            title="{{ 'vale_btn_filter' | translate }}"
+                            label="{{ 'vale_btn_filter' | translate }}">
+                    </button>&nbsp;
+                    <button type="button"
+                            pButton
+                            style="width: 15%;"
+                            icon="pi pi-replay"
+                            (click)="onClickClearFilterVouchers()"
+                            class="p-button-outlined border-radius-button">
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- ./FILTERS -->
+
+<!-- TABLE -->
+<div class="d-flex justify-content-center">
+    <div class="col-12 lg:col-10">
+        <p-table
+            #dt
+            [value]="vouchersResponse.contenido"
+            [globalFilterFields]="['valeId', 'empresa', 'fechaEmision']"
+            [paginator]="true"
+            [rows]="rowsTables"
+            [responsive]="true"
+            [rowHover]="true"
+            [showCurrentPageReport]="true"
+            [loading]="loading"
+            [totalRecords]="sizeVouchers"
+            [lazy]="true"
+            (onLazyLoad)="onChangePageTable($event)"
+            [selectionMode]="'multiple'"
+            [dataKey]="'valeId'"
+            [(selection)]="voucherSelected"
+            currentPageReportTemplate="{first} a {last} de {totalRecords} vales"
+            styleClass="p-datatable-gridlines">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th [pSortableColumn]="'identificadorQR'">
+                        {{ "voucher_table_vale_identifier" | translate }}
+                        <p-sortIcon [field]="'identificadorQR'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'beneficiario'">
+                        {{ "voucher_table_beneficiary" | translate }}
+                        <p-sortIcon [field]="'beneficiario'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'empresa'">
+                        {{ "voucher_table_company" | translate }}
+                        <p-sortIcon [field]="'empresa'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'monto'">
+                        {{ "voucher_table_import" | translate }}
+                        <p-sortIcon [field]="'monto'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'moneda'">
+                        {{ "voucher_table_current" | translate }}
+                        <p-sortIcon [field]="'moneda'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'fechaEmision'">
+                        {{ "voucher_table_date_emission" | translate }}
+                        <p-sortIcon [field]="'fechaEmision'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'fechaVigencia'">
+                        {{ "voucher_table_date_expire" | translate }}
+                        <p-sortIcon [field]="'fechaVigencia'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'estado'">
+                        {{ "voucher_table_status" | translate }}
+                        <p-sortIcon [field]="'estado'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center" style="width: 4rem" *ngIf="enableSelectionMultipleVouchers">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                    </th>
+                    <th style="width: 100px" class="cls_center">
+                        {{ "actions" | translate }}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData>
+                <tr>
+                    <td>{{ rowData.identificadorQR }}</td>
+                    <td>{{ rowData.beneficiario }}</td>
+                    <td>{{ rowData.empresa }}</td>
+                    <td>{{ rowData.monto.toFixed(2) }}</td>
+                    <td>{{ rowData.moneda | currentType: currentTypesOptions }}</td>
+                    <td>{{ rowData.fechaEmision | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+                    <td>{{ rowData.fechaVigencia | date: 'dd/MM/yyyy' }}</td>
+                    <td>{{ rowData.estado }}</td>
+                    <td *ngIf="enableSelectionMultipleVouchers">
+                        <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                    </td>
+                    <td class="cls_center">
+                        <button
+                                pButton
+                                type="button"
+                                [icon]="iconFirstAction"
+                                [class]="classFirstAction"
+                                [title]="titleFirstAction"
+                                (click)="onClickFirstAction($event, rowData)"
+                        ></button>
+                        <button *ngIf="titleSecondAction && iconsSecondAction && classSecondAction"
+                                pButton
+                                type="button"
+                                [icon]="iconsSecondAction"
+                                [title]="titleSecondAction"
+                                (click)="onClickSecondAction($event, rowData)"
+                                [class]="classSecondAction"
+                                style="margin-left: 5px"
+                        ></button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="footer" *ngIf="enableSelectionMultipleVouchers">
+                <tr class="border-none">
+                    <td colspan="8" class="background-transparent border-none"></td>
+                    <td colspan="2" class="background-transparent border-none px-0">
+                        <button
+                                type="button"
+                                pButton
+                                class="btn-primary border-radius-button"
+                                style="width: 100%;"
+                                [disabled]="vouchersResponse.contenido.length===0 || voucherSelected.length===0"
+                                (click)="onClickActionMultipleSelectedVouchers()"
+                                [title]="selectionMultipleButtonTitle"
+                                [label]="selectionMultipleButtonTitle">
+                        </button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td [colSpan]="enableSelectionMultipleVouchers? 10: 9">
+                        <b>{{ "voucher_table_empty_message" | translate }}</b></td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<!-- ./TABLE -->

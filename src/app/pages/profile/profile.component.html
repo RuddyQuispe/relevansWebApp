@@ -1,0 +1,213 @@
+<!-- HEADER -->
+<div class="mb-5">
+    <div class="flex align-items-center justify-content-between bg-white box-shadow border-radius-table-header"
+         style="padding: 1.5rem;">
+        <div style="text-align:left">
+            <button type="button"
+                    pButton
+                    icon="pi pi-plus"
+                    (click)="showDialogToAdd()"
+                    label="{{'btn_add'| translate}}"
+                    class="btn-primary border-radius-button"
+            >
+            </button>
+        </div>
+        <h5 class="m-0 cls_title">{{ 'pro_title'| translate }}</h5>
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                   placeholder="{{'table_search'| translate}}"/>
+        </span>
+    </div>
+</div>
+<!-- ./HEADER -->
+<!-- TABLE -->
+<div class="d-flex justify-content-center">
+    <div class="col-12 lg:col-10">
+        <p-table #dt [value]="list"
+                 [(selection)]="entitySelect"
+                 [resizableColumns]="true"
+                 [globalFilterFields]="['name','description']"
+                 [paginator]="true"
+                 [rows]="rowsTables"
+                 [responsive]="true"
+                 [rowHover]="true"
+                 [showCurrentPageReport]="true"
+                 [loading]="loading"
+                 styleClass="p-datatable-gridlines"
+                 currentPageReportTemplate="{first} a {last} de {totalRecords} perfiles">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th [pSortableColumn]="'name'">
+                        {{ 'pro_t_name' | translate }}
+                        <p-sortIcon [field]="'name'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'description'">
+                        {{ 'pro_t_description' | translate }}
+                    </th>
+                    <th [pSortableColumn]="'inactive'" style="text-align: center;width: 80px;">
+                        {{ 'pro_t_inactive' | translate }}
+                    </th>
+                    <th style="width: 100px;" class="cls_center">{{ 'actions' | translate }}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                <tr [pSelectableRow]="rowData">
+                    <td [ngClass]="{'bg-secondary-row': rowIndex % 2 !== 0}">
+                        {{ rowData.name }}
+                    </td>
+                    <td [ngClass]="{'bg-secondary-row': rowIndex % 2 !== 0}">
+                        {{ rowData.description }}
+                    </td>
+                    <td class="cls_center" [ngClass]="{'bg-secondary-row': rowIndex % 2 !== 0}">
+                        <div class="{{rowData.enabled? 'status_active':'status_inactive'}}">
+                            {{ rowData.enabled ? 'yes' : 'not' | translate }}
+                        </div>
+                    </td>
+                    <td class="cls_center" [ngClass]="{'bg-secondary-row': rowIndex % 2 !== 0}">
+                        <button pButton type="button" icon="pi pi-pencil"
+                                [title]="'edit' | translate"
+                                class="btn-icon-option"
+                                (click)="showDialogToEdit($event,rowData)"></button>
+                        <button pButton type="button" icon="pi pi-eye"
+                                [title]="'detail' | translate"
+                                (click)="showDialogToView($event,rowData)"
+                                class="p-button-outlined btn-icon-option-secondary"
+                                style="margin-left: 5px;"></button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<!-- ./TABLE -->
+<!-- MODAL -->
+<p-dialog *ngIf="entity"
+          [header]="(!isView? (entity.profileId==null? 'register': 'edit') : 'detail') | translate"
+          [(visible)]="displayDialog"
+          (onHide)="frm.reset()"
+          [modal]="true"
+          [style]="{width: '1000px'}">
+    <form #frm="ngForm" (ngSubmit)="onSubmit()">
+        <div class="card card-without-box-shadow" *ngIf="entity">
+            <div class="grid p-fluid">
+                <div class="col-12 md:col-7">
+                    <!-- <p-fieldset legend="{{'detail' | translate}}">-->
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input #name="ngModel"
+                                   type="text"
+                                   id="idname"
+                                   [(ngModel)]="entity.name"
+                                   name="name"
+                                   pInputText
+                                   required
+                                   validateAlphaNumericSpace
+                                   autocomplete="off"
+                                   minlength="4"
+                                   maxlength="30"
+                                   [readOnly]="isView">
+                            <label for="idname">{{ 'pro_t_name' | translate }} *</label>
+                        </samp>
+                        <div *ngIf="!name.valid && (name.dirty || name.touched)">
+                            <p-message *ngIf="name.hasError('required')" severity="error"
+                                       text="{{'cmpReq'|translate}}"></p-message>
+                            <p-message *ngIf="name.errors?.['minlength']" severity="error"
+                                       text="{{'cmpMin'|translate}} 4"></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input #description="ngModel"
+                                   type="text"
+                                   id="iddescription"
+                                   [(ngModel)]="entity.description"
+                                   name="description"
+                                   pInputText
+                                   minlength="4"
+                                   autocomplete="off"
+                                   validateAlphaNumericSpace
+                                   maxlength="200"
+                                   [readOnly]="isView">
+                            <label for="iddescription">{{ 'pro_t_description' | translate }}</label>
+                        </samp>
+                        <div *ngIf="!description.valid && (description.dirty || description.touched)">
+                            <p-message *ngIf="description.errors?.['minlength']" severity="error"
+                                       text="{{'cmpMin'|translate}} 4"></p-message>
+                        </div>
+                    </div>
+                    <!--                        <div class="col-12">-->
+                    <!--                            <label class="ColorLabel">{{'pro_t_dashboard' | translate}} (*)</label>-->
+                    <!--                            <div class="H3p"></div>-->
+                    <!--                            <p-selectButton #das="ngModel"-->
+                    <!--                                            id="iddashboard"-->
+                    <!--                                            [options]="[-->
+                    <!--                                                    {label: 'yes'|translate, value: true},-->
+                    <!--                                                    {label: 'not'|translate, value: false}-->
+                    <!--                                                ]"-->
+                    <!--                                            [(ngModel)]="entity.dashboard"-->
+                    <!--                                            required-->
+                    <!--                                            [disabled]="isView || entity.profileId > 0"-->
+                    <!--                                            name="dashboard">-->
+                    <!--                            </p-selectButton>-->
+                    <!--                            <div *ngIf="!das.valid && (das.dirty || das.touched)">-->
+                    <!--                                <p-message *ngIf="das.hasError('required')" severity="error"-->
+                    <!--                                           text="{{'cmpReq'|translate}}"></p-message>-->
+                    <!--                            </div>-->
+                    <!--                        </div>-->
+                    <div class="col-12">
+                        <label class="ColorLabel">{{ 'pro_t_inactive' | translate }} (*)</label>
+                        <div class="H3p"></div>
+                        <p-selectButton #enabled="ngModel"
+                                        id="idenabled"
+                                        [options]="[
+                                                    {label: 'yes'|translate, value: true},
+                                                    {label: 'not'|translate, value: false}
+                                                ]"
+                                        [(ngModel)]="entity.enabled"
+                                        [disabled]="isView"
+                                        required
+                                        name="enabled">
+                        </p-selectButton>
+                        <div *ngIf="!enabled.valid && (enabled.dirty || enabled.touched)">
+                            <p-message *ngIf="enabled.hasError('required')" severity="error"
+                                       text="{{'cmpReq'|translate}}"></p-message>
+                        </div>
+                    </div>
+                    <!-- </p-fieldset>-->
+                </div>
+                <div class="col-12 md:col-5">
+                    <label class="ColorLabel">{{ 'pro_t_selectAccess' | translate }}</label>
+                    <div class="H3p"></div>
+                    <p-tree [value]="access"
+                            selectionMode="checkbox"
+                            [(selection)]="selectedAccess"
+                            [style]="{'max-height':'330px','overflow':'auto'}">
+                    </p-tree>
+                </div>
+            </div>
+        </div>
+        <p-footer>
+            <div class="cls_center">
+                <div class="DIB" *ngIf="!isView">
+                    <button type="submit"
+                            pButton
+                            icon="pi pi-check"
+                            label="{{'save' | translate}}"
+                            style="margin-right: .25em"
+                            class="btn-primary"
+                            [disabled]="!frm.valid||submitted"></button>
+                </div>
+                <div class="DIB">
+                    <button type="button"
+                            pButton
+                            icon="pi pi-times"
+                            (click)="close()"
+                            label="{{'cancel' | translate}}"
+                            class="p-button-outlined p-button-outlined-hover"></button>
+                </div>
+            </div>
+        </p-footer>
+    </form>
+</p-dialog>
+<!-- ./MODAL -->

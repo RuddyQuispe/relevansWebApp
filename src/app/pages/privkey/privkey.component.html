@@ -1,0 +1,332 @@
+<p-fieldset *ngIf="companyId == null" legend="{{ 'pkey_title' | translate }}">
+    <form #formElement="ngForm" (submit)="onList()">
+        <div class="card">
+            <div class="grid p-fluid">
+                <div *ngIf="companyId === undefined || companyId == null" class="col-12 MT-20 md:col-3 sm:col-6">
+                    <label class="ColorLabel">{{ "user_t_company" | translate }}</label>
+                    <div class="H3p"></div>
+                    <p-dropdown
+                        #companyId="ngModel"
+                        [options]="companiesDropDownList"
+                        id="fcompanyId"
+                        [(ngModel)]="filterModel.companyId"
+                        name="companyId"
+                    >
+                    </p-dropdown>
+                </div>
+
+                <div class="col-12 md:col-3 sm:col-6">
+                    <div class="MarTop-15">
+                        <button
+                                type="submit"
+                                pButton
+                                icon="pi pi-filter"
+                                label="{{ 'filter' | translate }}"
+                                style="margin-right: 5px; width: 80px"
+                                [disabled]="!formElement.valid || submitted"
+                        ></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</p-fieldset>
+<p-table #dt [value]="list"
+         [globalFilterFields]="['keyname']"
+         [(selection)]="entitySelect"
+         [paginator]="true"
+         [rows]="rowsTables"
+         [responsive]="true"
+         [rowHover]="true"
+         [showCurrentPageReport]="true"
+         [loading]="loading"
+         styleClass="p-datatable-gridlines">
+    <ng-template pTemplate="caption">
+        <div class="flex align-items-center justify-content-between">
+            <div style="text-align:left">
+                <button type="button"
+                        pButton
+                        icon="pi pi-plus"
+                        (click)="showDialogToAdd()"
+                        label="{{'btn_add'| translate}}">
+                </button>
+            </div>
+            <h5 class="m-0 cls_title">{{ 'pkey_title'| translate }}</h5>
+            <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="dt.filterGlobal($event.target, 'contains')"
+                           placeholder="{{'table_search'| translate}}"/>
+            </span>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th [pSortableColumn]="'keyname'">
+                {{ 'pkey_t_keyname' | translate }}
+                <p-sortIcon [field]="'keyname'"></p-sortIcon>
+            </th>
+            <th [pSortableColumn]="'init_date'">
+                {{ 'pkey_t_init_date' | translate }}
+                <p-sortIcon [field]="'init_date'"></p-sortIcon>
+            </th>
+            <th [pSortableColumn]="'end_date'">
+                {{ 'pkey_t_init_date' | translate }}
+                <p-sortIcon [field]="'end_date'"></p-sortIcon>
+            </th>
+            <th [pSortableColumn]="'typeKey'">
+                {{ 'pkey_t_type' | translate }}
+            </th>
+            <th [pSortableColumn]="'enabled'">
+                {{ 'pkey_t_enabled' | translate }}
+            </th>
+            <th style="width: 100px;" class="cls_center">{{ 'actions' | translate }}</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData>
+        <tr [pSelectableRow]="rowData">
+            <td>
+                {{ rowData.keyname }}
+            </td>
+            <td>
+                {{ rowData.initDate | date: 'dd/MM/yyyy' }}
+            </td>
+            <td>
+                {{ rowData.endDate | date: 'dd/MM/yyyy' }}
+            </td>
+            <td>
+                {{ rowData.typeKey }}
+            </td>
+            <td class="cls_center">
+                <div class="{{rowData.enabled? 'status_active':'status_inactive'}}">
+                    {{ rowData.enabled ? 'yes' : 'not' | translate }}
+                </div>
+            </td>
+            <td class="cls_center">
+                <button pButton type="button" icon="pi pi-pencil"
+                        [title]="'edit' | translate"
+                        (click)="showDialogToEdit($event,rowData)"></button>
+                <button pButton type="button" icon="pi pi-search"
+                        (click)="showDialogToView($event,rowData)"
+                        [title]="'detail' | translate"
+                        class="p-button-outlined"
+                        style="margin-left: 5px;"></button>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+
+<p-dialog *ngIf="entity"
+          [header]="(!isView? 'register':'detail') | translate "
+          [(visible)]="displayDialog"
+          (onHide)="frm.reset()"
+          [modal]="true"
+          [style]="{width: '1000px'}">
+    <form #frm="ngForm" (ngSubmit)="onSubmit()">
+        <div class="card" *ngIf="entity">
+            <div class="grid p-fluid">
+                <div class="col-12 md:col-6">
+                    <div *ngIf="!companyId" class="col-12">
+                        <label class="ColorLabel"
+                        >{{ "user_t_company" | translate }} (*)</label
+                        >
+                        <div class="H3p"></div>
+                        <p-dropdown
+                            #companyId="ngModel"
+                            [options]="companiesDropDownList"
+                            id="companyId"
+                            [(ngModel)]="entity.companyId"
+                            [readonly]="isView"
+                            name="companyId"
+                            (onChange)="changeCompany()"
+                        >
+                        </p-dropdown>
+                    </div>
+                    <!-- CAMERA PARTY -->
+                    <div class="col-12">
+                        <label class="ColorLabel">
+                            {{ "pkey_t_camara" | translate }} (*)
+                        </label>
+                        <div class="H3p"></div>
+                        <p-dropdown
+                            #clearingHouse="ngModel"
+                            [options]="clearingHousesDropDownModel"
+                            id="idClearingHouse"
+                            [(ngModel)]="entity.clearinghouseId"
+                            [readonly]="isView"
+                            name="idClearingHouse"
+                        >
+                        </p-dropdown>
+                    </div>
+                    <!-- ./CAMERA PARTY -->
+                    <p-fieldset legend="{{'detail' | translate}}">
+                        <div class="col-12">
+                            <samp class="p-float-label">
+                                <input #keyname="ngModel"
+                                       type="text"
+                                       id="idkeyname"
+                                       [(ngModel)]="entity.keyname"
+                                       name="keyname"
+                                       minlength="2"
+                                       required
+                                       autocomplete="off"
+                                       maxlength="50"
+                                       [readOnly]="isView"
+                                       pInputText>
+                                <label for="idkeyname">{{ 'pkey_t_keyname' | translate }} (*)</label>
+                            </samp>
+                            <div *ngIf="!keyname.valid && (keyname.dirty || keyname.touched)">
+                                <p-message *ngIf="keyname.hasError('required')" severity="error"
+                                           text="{{'cmpReq'|translate}}"></p-message>
+                                <p-message *ngIf="keyname.errors?.['minlength']" severity="error"
+                                           text="{{'cmpMin'|translate}} 2"></p-message>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="ColorLabel">{{ 'pkey_t_type'|translate }} (*)</label>
+                            <div class="H3p"></div>
+                            <p-selectButton #inactive="ngModel"
+                                            id="idinactive"
+                                            [options]="[{label: 'pkey_t_type_pkey'|translate, value: TYPE_PRIVATE_KEY.PKEY}, {label: 'pkey_t_type_textkey'|translate, value: TYPE_PRIVATE_KEY.TEXTKEY}]"
+                                            [(ngModel)]="entity.typeKey"
+                                            [disabled]="isView"
+                                            name="inactive">
+                            </p-selectButton>
+                        </div>
+                        <div class="col-12">
+                            <label class="ColorLabel">{{ 'pkey_t_init_date' | translate }} *</label>
+                            <p-calendar #initDate="ngModel"
+                                        appendTo="body"
+                                        id="idinitDate"
+                                        [(ngModel)]="entity.initDate"
+                                        name="initDate"
+                                        required
+                                        [disabled]="isView"
+                                        [showIcon]="true">
+                            </p-calendar>
+                            <div *ngIf="!initDate.valid && (initDate.dirty || initDate.touched)">
+                                <p-message *ngIf="initDate.hasError('required')" severity="error"
+                                           text="{{'cmpReq'|translate}}"></p-message>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="ColorLabel">{{ 'pkey_t_end_date' | translate }} *</label>
+                            <p-calendar #endDate="ngModel"
+                                        appendTo="body"
+                                        id="idendDate"
+                                        [(ngModel)]="entity.endDate"
+                                        name="endDate"
+                                        required
+                                        dateFormat="dd/mm/yy"
+                                        [disabled]="isView"
+                                        [showIcon]="true">
+                            </p-calendar>
+                            <div *ngIf="!endDate.valid && (endDate.dirty || endDate.touched)">
+                                <p-message *ngIf="endDate.hasError('required')" severity="error"
+                                           text="{{'cmpReq'|translate}}"></p-message>
+                            </div>
+                        </div>
+                        <div class="col-12" *ngIf="entity.typeKey==='PKEY'">
+                            <label class="ColorLabel">{{ 'pkey_t_pass' | translate }} *</label>
+                            <input #passwd="ngModel"
+                                   [(ngModel)]="entity.passwd"
+                                   name="passwd"
+                                   [type]="eyePass? 'text' : 'password'"
+                                   id="idpasswd"
+                                   pPassword
+                                   maxlength="500"
+                                   autocomplete="off">
+                            <i *ngIf="eyePass"
+                               (click)="togogleEyePass()"
+                               class="pi pi-eye cls_hover cls_eye"></i>
+                            <i *ngIf="!eyePass"
+                               (click)="togogleEyePass()"
+                               class="pi pi-eye-slash cls_hover cls_eye"></i>
+                        </div>
+                        <!-- PRIVKEY ENABLED -->
+                        <div class="col-12">
+                            <label class="ColorLabel"
+                            >{{ "party_t_enable" | translate }} (*)</label
+                            >
+                            <div class="H3p"></div>
+                            <p-selectButton
+                                #enabled="ngModel"
+                                id="idenabled"
+                                [options]="[{label: 'yes'|translate, value: true},{label: 'not'|translate, value: false}]"
+                                [(ngModel)]="entity.enabled"
+                                [disabled]="isView"
+                                name="enabled"
+                            >
+                            </p-selectButton>
+                        </div>
+                        <!-- ./PRIVKEY ENABLED -->
+                    </p-fieldset>
+                </div>
+                <div class="col-12 md:col-6">
+                    <div class="col-12">
+                        <label *ngIf="entity.typeKey=='PKEY'" class="ColorLabel"
+                               for="idbody">{{ 'pkey_t_certificate' | translate }} *</label>
+                        <label *ngIf="entity.typeKey=='TEXTKEY'" class="ColorLabel"
+                               for="idbody">{{ 'pkey_t_text_key' | translate }} *</label>
+                        <div class="H3p"></div>
+                        <textarea #certificate="ngModel"
+                                  id="idbody"
+                                  [(ngModel)]="entity.certificate"
+                                  name="certificate"
+                                  required
+                                  autocomplete="off"
+                                  minlength="5"
+                                  rows="8"
+                                  [readOnly]="isView"
+                                  pInputTextarea>
+                        </textarea>
+                        <div *ngIf="!certificate.valid && (certificate.dirty || certificate.touched)">
+                            <p-message *ngIf="certificate.hasError('required')" severity="error"
+                                       text="{{'cmpReq'|translate}}"></p-message>
+                        </div>
+                    </div>
+
+                    <div class="col-12" *ngIf="entity.typeKey==='PKEY'">
+                        <label class="ColorLabel" for="idbody">{{ 'pkey_t_pkey' | translate }}</label>
+                        <div class="H3p"></div>
+                        <textarea #pkey="ngModel"
+                                  id="idpkey"
+                                  [(ngModel)]="entity.pkey"
+                                  name="pkey"
+                                  autocomplete="off"
+                                  minlength="5"
+                                  rows="8"
+                                  [readOnly]="isView"
+                                  pInputTextarea>
+                        </textarea>
+                        <div *ngIf="!pkey.valid && (pkey.dirty || pkey.touched)">
+                            <p-message *ngIf="pkey.hasError('required')" severity="error"
+                                       text="{{'cmpReq'|translate}}"></p-message>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p-footer>
+            <div class="cls_center">
+                <div class="DIB" *ngIf="!isView">
+                    <button type="submit"
+                            pButton
+                            icon="pi pi-check"
+                            label="{{'save' | translate}}"
+                            style="margin-right: .25em"
+                            [disabled]="!frm.valid||submitted"></button>
+                </div>
+                <div class="DIB">
+                    <button type="button"
+                            pButton
+                            icon="pi pi-times"
+                            (click)="close()"
+                            label="{{'cancel' | translate}}"
+                            class="p-button-outlined"></button>
+                </div>
+            </div>
+        </p-footer>
+    </form>
+</p-dialog>
+

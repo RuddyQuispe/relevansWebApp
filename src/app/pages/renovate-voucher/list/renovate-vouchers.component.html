@@ -1,0 +1,104 @@
+<!-- HEADER -->
+<div class="mb-1">
+    <div class="d-flex align-items-center justify-content-center p-4 bg-white border-radius-table-header box-shadow">
+        <h5 class="m-0 cls_title">{{ "voucher_renovate_title" | translate }}</h5>
+    </div>
+</div>
+<!-- ./HEADER -->
+
+<!-- VOUCHER_FILTER_LIST -->
+<shared-voucher-list-filter *ngIf="isEnabled()"
+        [titleFirstAction]="'edit' | translate"
+        [classFirstAction]="'btn-icon-option'"
+        [iconFirstAction]="'pi pi-pencil'"
+        (commandFirstAction)="onClickEditVoucher($event)"
+        [titleSecondAction]="'detail' | translate"
+        [classSecondAction]="'p-button-outlined btn-icon-option-secondary'"
+        [iconsSecondAction]="'pi pi-eye'"
+        (commandSecondAction)="onClickViewVoucher($event)"
+        [onlyStatusVoucher]="STATUS_VOUCHER.CREADO"
+        [currentTypesOptions]="currentTypesOptions"
+></shared-voucher-list-filter>
+<!-- ./VOUCHER_FILTER_LIST -->
+
+<!-- MODAL -->
+<p-dialog
+        *ngIf="voucherToView"
+        [header]="'voucher_renovate_detail' | translate"
+        [(visible)]="displayDialog"
+        [modal]="true"
+        [style]="{ width: '700px' }">
+    <div class="ui-fluid">
+
+        <div class="card card-without-box-shadow p-0 m-0" *ngIf="voucherToView">
+            <div class="grid p-fluid">
+                <div class="col-12">
+                    <!-- VOUCHER -->
+                    <div class="col-12">
+                        <fieldset class="fieldset-subtitle">
+                            <legend><h4 class="color_primario">{{ "sale_client" | translate }}: &nbsp;</h4>
+                            </legend>
+                            <div class="col-12 p-1 d-flex">
+                                <label class="color_primario">{{ "voucher_renovate_code" | translate }}:&nbsp;</label>
+                                <p>{{ voucherToView.identificadorQR }}</p>
+                            </div>
+                            <div class="col-12 p-1 d-flex">
+                                <label class="color_primario">{{ "voucher_renovate_beneficiary" | translate }}
+                                    :&nbsp;</label>
+                                <p>{{ voucherToView.beneficiario }}</p>
+                            </div>
+                            <div class="col-12 p-1 d-flex">
+                                <label class="color_primario">{{ "voucher_renovate_company" | translate }}
+                                    :&nbsp;</label>
+                                <p>{{ voucherToView.empresa }}</p>
+                            </div>
+                            <div class="col-12 p-1 d-flex">
+                                <label class="color_primario">{{ "voucher_renovate_amount" | translate }}:&nbsp;</label>
+                                <p>{{ voucherToView.monto }} {{ voucherToView.moneda | currentType: currentTypesOptions }}</p>
+                            </div>
+                            <div class="col-12 p-1 d-flex">
+                                <label class="color_primario">{{ "voucher_renovate_status" | translate }}
+                                    :&nbsp;</label>
+                                <p>{{ voucherToView.estado }}</p>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <!-- ./VOUCHER -->
+                    <!-- DATE_VOUCHER -->
+                    <div class="col-12">
+                        <fieldset class="fieldset-subtitle">
+                            <legend><h4 class="color_primario">{{ "voucher_renovate_date_header" | translate }}</h4>
+                            </legend>
+                            <div class="col-12 p-1 d-flex">
+                                <label class="color_primario">{{ "voucher_renovate_date_emission" | translate }}
+                                    :&nbsp;</label>
+                                <p>{{ voucherToView.fechaEmisionDate | date: 'dd/MM/yyyy HH:mm:ss' }}</p>
+                            </div>
+                            <div class="col-12 p-1 d-flex">
+                                <label class="color_primario">{{ "voucher_renovate_date_limit" | translate }}
+                                    :&nbsp;</label>
+                                <p>{{ voucherToView.fechaVigenciaDate| date: 'dd/MM/yyyy' }}</p>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <!-- ./DATE_VOUCHER -->
+                </div>
+            </div>
+        </div>
+        <p-footer>
+            <div class="cls_center">
+                <div class="DIB">
+                    <button
+                            type="button"
+                            pButton
+                            icon="pi pi-times"
+                            (click)="onClickCloseDialog()"
+                            label="{{ 'close' | translate }}"
+                            class="p-button-outlined"
+                    ></button>
+                </div>
+            </div>
+        </p-footer>
+    </div>
+</p-dialog>
+<!-- ./MODAL -->

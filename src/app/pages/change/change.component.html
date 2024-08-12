@@ -1,0 +1,155 @@
+<div class="login-body">
+    <app-loader></app-loader>
+    <div class="card login-panel p-fluid card-login-center-main" style="height: auto !important;">
+        <!-- CARD_HIPER -->
+        <div class="card-dynamic-hipermaxi">
+            <app-hiper-card [heigh]="'26vh'" [width]="'auto'"></app-hiper-card>
+        </div>
+        <!-- ./CARD_HIPER -->
+        <!-- FORM_RESTORE_ACCOUNT -->
+        <div class="card card-login-content" style="width: 70%;">
+            <div class="login-panel-content">
+                <form #frm="ngForm" (ngSubmit)="onChange()" class="">
+                    <div class="grid login-content">
+                        <!-- TITLE -->
+                        <div class="col-12 text-center">
+                            <h2 class="guest-sign-in">{{ 'change_title' | translate }}</h2>
+                        </div>
+                        <!-- ./TITLE -->
+                        <!-- USERNAME -->
+                        <div class="col-12 username-container">
+                            <label>{{ 'change_user' | translate }} *</label>
+                            <div class="login-input">
+                                <input #implogin="ngModel"
+                                       id="username"
+                                       [(ngModel)]="username"
+                                       name="implogin"
+                                       autocomplete="off"
+                                       validateLoginUser
+                                       required
+                                       maxlength="20"
+                                       type="text"
+                                       pInputText/>
+                            </div>
+                            <div *ngIf="!implogin.valid && (implogin.dirty || implogin.touched)">
+                                <p-message *ngIf="implogin.errors?.required" severity="error"
+                                           text="{{cmpReq}}"></p-message>
+                            </div>
+                        </div>
+                        <!-- ./USERNAME -->
+                        <!-- PASSWORD -->
+                        <div class="col-12 password-container">
+                            <label>{{ 'change_pass' | translate }} *</label>
+                            <div class="login-input">
+                                <input #imppass="ngModel"
+                                       [(ngModel)]="pass"
+                                       id="password"
+                                       name="imppass"
+                                       autocomplete="off"
+                                       minlength="4"
+                                       maxlength="40"
+                                       required
+                                       [promptLabel]="'change_pass1' | translate"
+                                       [weakLabel]="'change_pass2' | translate"
+                                       [mediumLabel]="'change_pass3' | translate"
+                                       [strongLabel]="'change_pass4' | translate"
+                                       pPassword
+                                       type="password"/>
+                            </div>
+                            <div *ngIf="!imppass.valid && (imppass.dirty || imppass.touched)">
+                                <p-message *ngIf="imppass.errors?.required"
+                                           severity="error" text="{{cmpReq}}"></p-message>
+                                <p-message *ngIf="imppass.errors?.['minlength']"
+                                           severity="error" text="{{cmpMin}} 4"></p-message>
+                            </div>
+                        </div>
+                        <!-- ./PASSWORD -->
+                        <!-- RETYPE_PASSWORD -->
+                        <div class="col-12 password-container">
+                            <label>{{ 'change_passConfirm' | translate }} *</label>
+                            <div class="login-input">
+                                <input #impconfirm="ngModel"
+                                       [(ngModel)]="confirm"
+                                       id="configpassword"
+                                       name="impconfirm"
+                                       autocomplete="off"
+                                       minlength="4"
+                                       maxlength="30"
+                                       required
+                                       [feedback]=false
+                                       pPassword
+                                       type="password"/>
+                            </div>
+                            <div *ngIf="!impconfirm.valid && (impconfirm.dirty || impconfirm.touched)">
+                                <p-message *ngIf="impconfirm.errors?.required"
+                                           severity="error" text="{{cmpReq}}"></p-message>
+                                <p-message *ngIf="impconfirm.errors?.['minlength']"
+                                           severity="error" text="{{cmpMin}} 4"></p-message>
+                            </div>
+                        </div>
+                        <!-- ./RETYPE_PASSWORD -->
+                        <!-- CODE_VERIFICATION -->
+                        <div class="col-12 password-container">
+                            <label>{{ 'change_code' | translate }} *</label>
+                            <div class="login-input">
+                                <input #impcode="ngModel"
+                                       [(ngModel)]="code"
+                                       name="impcode"
+                                       minlength="4"
+                                       autocomplete="off"
+                                       maxlength="30"
+                                       id="codigoverificacion"
+                                       required
+                                       [feedback]=false
+                                       pPassword type="text"/>
+                            </div>
+                            <div *ngIf="!impcode.valid && (impcode.dirty || impcode.touched)">
+                                <p-message *ngIf="impcode.errors?.required"
+                                           severity="error" text="{{cmpReq}}"></p-message>
+                                <p-message *ngIf="impcode.errors?.['minlength']"
+                                           severity="error" text="{{cmpMin}} 4"></p-message>
+                            </div>
+                        </div>
+                        <!-- ./CODE_VERIFICATION -->
+                        <div class="col-12">
+                            <div class="grid">
+                                <i name="cog" animation="spin"></i>
+                                <div class="col-6">
+                                    <button pButton
+                                            class="p-button-secondary"
+                                            type="button"
+                                            icon="pi pi-send"
+                                            (click)="onSendMail()"
+                                            [disabled]="!username || username===''"
+                                            label="{{'change_send_mail' | translate}}"
+                                            title="{{'change_send_mail_title' | translate}}">
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button pButton
+                                            [disabled]="!frm.valid"
+                                            type="submit"
+                                            icon="pi pi-save"
+                                            label="{{'save' | translate}}">
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- LOGO_TESABIZ -->
+                        <!--<div class="col-12 sm:col-6 md:col-6 logo-container p-0 m-0"-->
+                        <!--     style="display: flex; justify-content: center;">-->
+                        <!--    <img src="assets/images/logotipo.png"-->
+                        <!--         class="W70"/>-->
+                        <!--</div>-->
+                        <!-- ./LOGO_TESABIZ -->
+                        <div class="col-12 forgetpassword-container p-0 m-0">
+                            <a (click)="goLogin()" class="forget-password cls_hover">{{ 'toLogin' | translate }}</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- FORM_RESTORE_ACCOUNT -->
+    </div>
+</div>
+<p-toast></p-toast>

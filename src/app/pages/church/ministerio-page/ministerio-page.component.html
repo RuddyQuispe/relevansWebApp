@@ -1,0 +1,200 @@
+<!-- HEADER -->
+<div class="mb-5">
+    <div class="flex align-items-center justify-content-between bg-white border-radius-table-header box-shadow"
+         style="padding: 1.5rem;">
+        <div style="text-align: left">
+            <button
+                    type="button"
+                    pButton
+                    icon="pi pi-plus-circle"
+                    class="btn-primary border-radius-button"
+                    (click)="onClickAddMinisterio()"
+                    label="Agregar Ministerio"
+            ></button>
+        </div>
+        <h5 class="m-0 cls_title">MINISTERIOS</h5>
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input pInputText
+                   type="text"
+                   (input)="dt.filterGlobal($event.target.value, 'contains')"
+                   placeholder="Buscar por nombre..."/>
+        </span>
+    </div>
+</div>
+<!-- ./HEADER -->
+<!-- TABLE -->
+<div class="d-flex justify-content-center">
+    <div class="col-12 lg:col-10">
+        <p-table
+            #dt
+            [value]="ministerios"
+            [paginator]="true"
+            [rows]="rowsTables"
+            [responsive]="true"
+            [rowHover]="true"
+            [showCurrentPageReport]="true"
+            [loading]="loading"
+            styleClass="p-datatable-gridlines"
+            currentPageReportTemplate="{first} a {last} de {totalRecords} ministerios">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="cls_center" [pSortableColumn]="'idMinisterio'">
+                        Nro.
+                        <p-sortIcon [field]="'idMinisterio'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center" [pSortableColumn]="'nombre'">
+                        Nombre
+                        <p-sortIcon [field]="'nombre'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center" [pSortableColumn]="'descripcion'">
+                        Descripción
+                        <p-sortIcon [field]="'descripcion'"></p-sortIcon>
+                    </th>
+                    <th style="width: 100px" class="cls_center">Acciones</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-ministerio let-i="index">
+                <tr>
+                    <td [ngClass]="{'box-shadow': i==ministerio.length-1}">
+                        {{ ministerio.idMinisterio }}
+                    </td>
+                    <td [ngClass]="{'box-shadow': i==ministerio.length-1}">
+                        {{ ministerio.nombre }}
+                    </td>
+                    <td [ngClass]="{'box-shadow': i==ministerio.length-1}">
+                        {{ ministerio.descripcion }}
+                    </td>
+                    <td [ngClass]="{'box-shadow': i==ministerio.length-1}">
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-pencil"
+                                [title]="'Editar usuario'"
+                                class="btn-icon-option"
+                                (click)="onClickShowDialogToEdit(ministerio)"
+                        ></button>
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-eye"
+                                [title]="'Detalle de usuario'"
+                                (click)="onClickShowDialogToView(ministerio)"
+                                class="p-button-outlined btn-icon-option-secondary"
+                                style="margin-left: 5px"
+                        ></button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<!-- ./TABLE -->
+<!-- MODAL -->
+<p-dialog
+        *ngIf="ministerio"
+        [header]="isView ? 'Detalle ministerio': (ministerio.idMinisterio==null? 'Registrar ministerio': 'Editar ministerio')"
+        [(visible)]="displayDialog"
+        [modal]="true"
+        (close)="closeDialog()"
+        [style]="{ width: '700px' }">
+    <div class="ui-fluid">
+        <form #frm="ngForm" (ngSubmit)="onSubmitMinisterio()">
+            <div class="card card-without-box-shadow">
+                <div class="grid p-fluid">
+                    <div class="col-12">
+                        <div class="col-12">
+                            <samp class="p-float-label">
+                                <input
+                                    #nombreMin="ngModel"
+                                    type="text"
+                                    id="nombreMin"
+                                    [(ngModel)]="ministerio.nombre"
+                                    name="nombreMin"
+                                    pInputText
+                                    required
+                                    autocomplete="off"
+                                    minlength="4"
+                                    maxlength="50"
+                                    [readOnly]="isView"/>
+                                <label for="nombreMin">Nombre (*)</label>
+                            </samp>
+                            <div *ngIf="!nombreMin.valid && (nombreMin.dirty || nombreMin.touched)">
+                                <p-message
+                                        *ngIf="nombreMin.hasError('required')"
+                                        severity="error"
+                                        text="{{ 'cmpReq'|translate }}"
+                                ></p-message>
+                                <p-message
+                                        *ngIf="nombreMin.errors?.['minlength']"
+                                        severity="error"
+                                        text="{{ 'cmpMin'|translate }} 4"
+                                ></p-message>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <samp class="p-float-label">
+                                <input
+                                    #descripcionMin="ngModel"
+                                    type="text"
+                                    id="descripcionMin"
+                                    [(ngModel)]="ministerio.descripcion"
+                                    name="descripcionMin"
+                                    pInputText
+                                    autocomplete="off"
+                                    maxlength="200"
+                                    [readOnly]="isView"/>
+                                <label for="descripcionMin">Descripcion (*)</label>
+                            </samp>
+                            <div *ngIf="!descripcionMin.valid && (descripcionMin.dirty || descripcionMin.touched)">
+                                <p-message
+                                        *ngIf="descripcionMin.hasError('required')"
+                                        severity="error"
+                                        text="{{ 'cmpReq'|translate }}"
+                                ></p-message>
+                                <p-message
+                                        *ngIf="descripcionMin.errors?.['minlength']"
+                                        severity="error"
+                                        text="{{ 'cmpMin'|translate }} 4"
+                                ></p-message>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p-footer>
+                <div class="cls_center">
+                    <div class="DIB" *ngIf="!isView">
+                        <button
+                                type="submit"
+                                pButton
+                                icon="pi pi-check"
+                                label="Guardar"
+                                [disabled]="!frm.valid"
+                                style="margin-right: 0.25em"
+                                class="btn-primary"
+                        ></button>
+                    </div>
+                    <div class="DIB">
+                        <button
+                                type="button"
+                                pButton
+                                icon="pi pi-times"
+                                (click)="onClickCancelDialog()"
+                                label="Cancelar"
+                                class="p-button-outlined p-button-outlined-hover"
+                        ></button>
+                    </div>
+                </div>
+            </p-footer>
+        </form>
+    </div>
+</p-dialog>
+<!-- ./MODAL -->
+<!-- CONFIRM_DIALOG -->
+<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}"
+                 [acceptButtonStyleClass]="'btn-primary'"
+                 [rejectButtonStyleClass]="'btn-secondary'" [acceptLabel]="'yes' | translate"
+                 [rejectLabel]="'not' | translate">
+</p-confirmDialog>
+<!-- ./CONFIRM_DIALOG -->

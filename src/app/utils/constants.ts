@@ -1,0 +1,118 @@
+// export enum TIPO_MONEDA {
+//     BOLIVIANDOS = 1
+// }
+
+export enum DIRECTION_ORDER_BY {
+    ASC = 'ASC',
+    DESC = 'DESC'
+}
+
+export const STATUS_SALE_AUTHORIZATION = {
+    APROBADO: true,
+    RECHAZADO: false
+};
+
+export enum T_DOMAIN_TBZ {
+    CURRENT_TYPE = 'CURRENT_TYPE',
+    STATUS_SALE = 'STATUS_SALE',
+    CONFIG_SALE = 'CONFIG_SALE',
+    SAI_PARAMETERS = "SAI_PARAMETERS"
+}
+
+export enum T_DOMAIN_NAME {
+    VIGENCIA_DE_VALES_DEFAULT = 'VIGENCIA_DE_VALES_DEFAULT',
+
+    APLICACION_CXC = "APLICACION_CXC",
+    APLICACION_CXP = "APLICACION_CXP",
+    TIPO_CXC = "TIPO_CXC",
+    TIPO_CXP = "TIPO_CXP",
+    UNIDAD_NEGOCIO = "UNIDAD_NEGOCIO",
+    VIA_COBRO_X_DESCUENTO = "VIA_COBRO_X_DESCUENTO",
+    VIA_PAGO_X_CASTIGO = "VIA_PAGO_X_CASTIGO",
+    VIA_PAGO_X_CONSUMO = "VIA_PAGO_X_CONSUMO"
+}
+
+export const OPTION_ALL: string = 'TODOS';
+
+export enum SEARCH_TYPE {
+    SYSTEM_USER = -1,
+    AGENDA = 0,
+    UNIDAD_NEGOCIO = 1,
+    TYPE_CXC = 2,
+    TYPE_CXP = 3,
+    APPLICATION_CXC = 4,
+    APPLICATION_CXP = 5,
+    VIA_COBRO_X_DESCUENTO = 6,
+    VIA_PAGO_X_CONSUMO_DE_VALE = 7,
+    VIA_PAGO_X_CASTIGO = 8
+};
+
+
+export const ITEM = {
+    ONLY_VIEW: true,
+    EDITABLE: false
+};
+
+export enum FORM_DISCOUNT_SALE {
+    TYPE_APPLY_DISCOUNT_ON_PAYMENT_AMOUNT = "Descuento sobre el monto de pago",
+    TYPE_APPLY_DISCOUNT_ADDITIONAL_VOUCHER_DISCOUNT = "Descuento Vale adicional",
+    TYPE_APPLY_DISCOUNT_ON_VOUCHER_AMOUNT = "Descuento Sobre monto de Vales",
+}
+
+export enum TYPE_PAYMENT_SALE {
+    COUNTED = "Contado",
+    CREDIT = "Diferido"
+}
+
+export enum TYPE_DISCOUNT_SALE {
+    PERCENTAGE = "Porcentaje",
+    AMOUNT = "Monto"
+}
+
+export enum STATUS_SALE {
+    AUTORIZADA = 'AUTORIZADA',
+    VALIDADA = 'VALIDADA',
+    CREADA = 'CREADA',
+    RECHAZADA = 'RECHAZADA',
+    IMPRESO = 'IMPRESO',
+    REVERTIDA = 'REVERTIDA'
+}
+
+export enum STATUS_VOUCHER {
+    CREADO = 'CREADO',
+    REVALIDADO = 'REVALIDADO',
+    FRACCIONADO = 'FRACCIONADO',
+    CASTIGADO = 'CASTIGADO',
+    CONSUMIDO = 'CONSUMIDO',
+    ANULADO = 'ANULADO'
+}
+
+export enum DOCUMENT_TYPE_SALE_BILLING {
+    CI = 1,
+    CEX = 2,
+    PAS = 3,
+    OD = 4,
+    NIT = 5
+}
+
+export enum ACCOUNTING_RECORD_SALE {
+    PENDIENTE = 'PENDIENTE',
+    CONTABILIZADO = 'CONTABILIZADO'
+}
+
+export enum STATUS_CONSUMER_VOUCHER {
+    CREADO = 'CREADO',
+    CONTABILIZADO = 'CONTABILIZADO'
+}
+
+export enum TYPE_CORPORATIVE_SALE {
+    AL_PORTADOR = 'AL PORTADOR',
+    NOMINAL = 'NOMINAL'
+}
+
+export enum LOG_WS_APP_REQUEST {
+    APP_CONFIG = 'Configuración',
+    APP_ADMIN = 'Administración',
+    WEB = 'WEB',
+    SAI = 'SAI'
+}

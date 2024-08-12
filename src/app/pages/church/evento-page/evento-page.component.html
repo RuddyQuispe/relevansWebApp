@@ -1,0 +1,255 @@
+<!-- HEADER -->
+<div class="mb-5">
+    <div class="flex align-items-center justify-content-between bg-white border-radius-table-header box-shadow"
+         style="padding: 1.5rem;">
+        <div style="text-align: left">
+            <button
+                    type="button"
+                    pButton
+                    icon="pi pi-plus-circle"
+                    class="btn-primary border-radius-button"
+                    (click)="onClickAddEvento()"
+                    label="Agregar Evento"
+            ></button>
+        </div>
+        <h5 class="m-0 cls_title">EVENTOS</h5>
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input pInputText
+                   type="text"
+                   (input)="dt.filterGlobal($event.target.value, 'contains')"
+                   placeholder="Buscar por nombre..."/>
+        </span>
+    </div>
+</div>
+<!-- ./HEADER -->
+<!-- TABLE -->
+<div class="d-flex justify-content-center">
+    <div class="col-12 lg:col-10">
+        <p-table
+            #dt
+            [value]="eventos"
+            [paginator]="true"
+            [rows]="rowsTables"
+            [responsive]="true"
+            [rowHover]="true"
+            [showCurrentPageReport]="true"
+            [loading]="loading"
+            styleClass="p-datatable-gridlines"
+            currentPageReportTemplate="{first} a {last} de {totalRecords} ministerios">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="cls_center" [pSortableColumn]="'idMinisterio'">
+                        Nro.
+                        <p-sortIcon [field]="'idMinisterio'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center" [pSortableColumn]="'nombre'">
+                        Nombre
+                        <p-sortIcon [field]="'nombre'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center" [pSortableColumn]="'fecha'">
+                        Fecha
+                        <p-sortIcon [field]="'fecha'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center" [pSortableColumn]="'descripcion'">
+                        Descripción
+                        <p-sortIcon [field]="'descripcion'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center" [pSortableColumn]="'descripcion'">
+                        Estado
+                        <p-sortIcon [field]="'descripcion'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center">
+                        # Min. Participantes
+                    </th>
+                    <th style="width: 100px" class="cls_center">Acciones</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-evento let-i="index">
+                <tr>
+                    <td [ngClass]="{'box-shadow': i==evento.length-1}">
+                        {{ evento.idEvento }}
+                    </td>
+                    <td [ngClass]="{'box-shadow': i==evento.length-1}">
+                        {{ evento.nombre }}
+                    </td>
+                    <td [ngClass]="{'box-shadow': i==evento.length-1}">
+                        {{ evento.fecha | date: 'dd/MM/yyyy HH:mm:ss': 'GMT-4': 'es-BO' }}
+                    </td>
+                    <td [ngClass]="{'box-shadow': i==evento.length-1}">
+                        {{ evento.descripcion }}
+                    </td>
+                    <td class="cls_center">
+                        <div class="{{evento.estado? 'status_active':'status_inactive'}}">
+                            {{ evento.estado ? 'HABILITADO' : 'DESHABILITADO' }}
+                        </div>
+                    </td>
+                    <td class="cls_center">
+                        {{ evento.ministerios.length }}
+                    </td>
+                    <td [ngClass]="{'box-shadow': i==evento.length-1}">
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-pencil"
+                                [title]="'Editar usuario'"
+                                class="btn-icon-option"
+                                (click)="onClickShowDialogToEdit(evento)"
+                        ></button>
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-eye"
+                                [title]="'Detalle de usuario'"
+                                (click)="onClickShowDialogToView(evento)"
+                                class="p-button-outlined btn-icon-option-secondary"
+                                style="margin-left: 5px"
+                        ></button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<!-- ./TABLE -->
+<!-- MODAL -->
+<!--<p-dialog-->
+<!--        *ngIf="evento"-->
+<!--        [header]="isView ? 'Detalle evento': (evento.idEvento==null? 'Registrar evento': 'Editar evento')"-->
+<!--        [(visible)]="displayDialog"-->
+<!--        [modal]="true"-->
+<!--        (close)="closeDialog()"-->
+<!--        [style]="{ width: '700px' }">-->
+<!--    <div class="ui-fluid">-->
+<!--        <form #frm="ngForm" (ngSubmit)="onSubmitEvento()">-->
+<!--            <div class="card card-without-box-shadow">-->
+<!--                <div class="grid p-fluid">-->
+<!--                    <div class="col-12">-->
+<!--                        <div class="col-12">-->
+<!--                            <samp class="p-float-label">-->
+<!--                                <input-->
+<!--                                    #nombreEven="ngModel"-->
+<!--                                    type="text"-->
+<!--                                    id="nombreEven"-->
+<!--                                    [(ngModel)]="evento.nombre"-->
+<!--                                    name="nombreEven"-->
+<!--                                    pInputText-->
+<!--                                    required-->
+<!--                                    autocomplete="off"-->
+<!--                                    minlength="4"-->
+<!--                                    maxlength="50"-->
+<!--                                    [readOnly]="isView"/>-->
+<!--                                <label for="nombreEven">Nombre (*)</label>-->
+<!--                            </samp>-->
+<!--                            <div *ngIf="!nombreEven.valid && (nombreEven.dirty || nombreEven.touched)">-->
+<!--                                <p-message *ngIf="nombreEven.hasError('required')"-->
+<!--                                           severity="error"-->
+<!--                                           text="{{ 'cmpReq'|translate }}"></p-message>-->
+<!--                                <p-message *ngIf="nombreEven.errors?.['minlength']"-->
+<!--                                           severity="error"-->
+<!--                                           text="{{ 'cmpMin'|translate }} 4"></p-message>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="col-12">-->
+<!--                            <samp class="p-float-label">-->
+<!--                                <p-calendar #fechaEven="ngModel"-->
+<!--                                            name="fechaEven"-->
+<!--                                            required-->
+<!--                                            id="fechaEven"-->
+<!--                                            [showIcon]="true"-->
+<!--                                            [showTime]="true"-->
+<!--                                            [showSeconds]="true"-->
+<!--                                            [(ngModel)]="evento.fechaDate">-->
+<!--                                </p-calendar>-->
+<!--                                <label for="fechaEven">Fecha (*)</label>-->
+<!--                            </samp>-->
+<!--                            <div *ngIf="!fechaEven.valid && (fechaEven.dirty || fechaEven.touched)">-->
+<!--                                <p-message *ngIf="fechaEven.hasError('required')" severity="error"-->
+<!--                                           [text]="'cmpReq' | translate"></p-message>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="col-12">-->
+<!--                            <samp class="p-float-label">-->
+<!--                            <textarea-->
+<!--                                    [rows]="10"-->
+<!--                                    #descripcionEven="ngModel"-->
+<!--                                    type="text"-->
+<!--                                    [(ngModel)]="evento.descripcion"-->
+<!--                                    minlength="1"-->
+<!--                                    maxlength="400"-->
+<!--                                    id="descripcionEven"-->
+<!--                                    [readOnly]="isView"-->
+<!--                                    required-->
+<!--                                    autocomplete="off"-->
+<!--                                    name="descripcionEven"-->
+<!--                                    pInputTextarea-->
+<!--                            ></textarea>-->
+<!--                                <label for="descripcionEven">Descripción (*)</label>-->
+<!--                            </samp>-->
+<!--                            <div *ngIf="!descripcionEven.valid && (descripcionEven.dirty || descripcionEven.touched)">-->
+<!--                                <p-message *ngIf="descripcionEven.hasError('required')"-->
+<!--                                           severity="error"-->
+<!--                                           text="{{ 'cmpReq' | translate }}"></p-message>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="col-12">-->
+<!--                            <p-pickList [source]="ministeriosOptions" [target]="evento.ministerios"-->
+<!--                                        sourceHeader="Available" targetHeader="Selected" [dragdrop]="true"-->
+<!--                                        [responsive]="true" [sourceStyle]="{'height':'30rem'}"-->
+<!--                                        [targetStyle]="{'height':'30rem'}" filterBy="nombre"-->
+<!--                                        sourceFilterPlaceholder="Busqueda por nombre"-->
+<!--                                        targetFilterPlaceholder="Busqueda por nombre">-->
+<!--                                <ng-template let-ministerio pTemplate="item">-->
+<!--                                    <div class="product-item">-->
+<!--                                        <div class="image-container">-->
+<!--                                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfpQm696EYU_pbFHVZ3Nbo746QUnqP2sx9zA&s"-->
+<!--                                                 [alt]="ministerio.nombre" class="product-image"/>-->
+<!--                                        </div>-->
+<!--                                        <div class="product-list-detail">-->
+<!--                                            <h5 class="mb-2">{{ ministerio.nombre }}</h5>-->
+<!--                                            <i class="pi pi-tag product-category-icon"></i>-->
+<!--                                            <span class="product-category">{{ ministerio.descripcion }}</span>-->
+<!--                                        </div>-->
+<!--                                        &lt;!&ndash;                                        <div class="product-list-action">&ndash;&gt;-->
+<!--                                        &lt;!&ndash;                                            <h6 class="mb-2">${{product.price}}</h6>&ndash;&gt;-->
+<!--                                        &lt;!&ndash;                                            <span [class]="'product-badge status-' + product.inventoryStatus.toLowerCase()">{{product.inventoryStatus}}</span>&ndash;&gt;-->
+<!--                                        &lt;!&ndash;                                        </div>&ndash;&gt;-->
+<!--                                    </div>-->
+<!--                                </ng-template>-->
+<!--                            </p-pickList>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <p-footer>-->
+<!--                <div class="cls_center">-->
+<!--                    <button-->
+<!--                            type="submit"-->
+<!--                            pButton-->
+<!--                            icon="pi pi-check"-->
+<!--                            label="Guardar"-->
+<!--                            [disabled]="!frm.valid"-->
+<!--                            style="margin-right: 0.25em"-->
+<!--                            class="btn-primary"-->
+<!--                    ></button>-->
+<!--                    <button-->
+<!--                            type="button"-->
+<!--                            pButton-->
+<!--                            icon="pi pi-times"-->
+<!--                            (click)="onClickCancelDialog()"-->
+<!--                            label="Cancelar"-->
+<!--                            class="p-button-outlined p-button-outlined-hover"-->
+<!--                    ></button>-->
+<!--                </div>-->
+<!--            </p-footer>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--</p-dialog>-->
+<!-- ./MODAL -->
+<!-- CONFIRM_DIALOG -->
+<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}"
+                 [acceptButtonStyleClass]="'btn-primary'"
+                 [rejectButtonStyleClass]="'btn-secondary'" [acceptLabel]="'yes' | translate"
+                 [rejectLabel]="'not' | translate">
+</p-confirmDialog>
+<!-- ./CONFIRM_DIALOG -->

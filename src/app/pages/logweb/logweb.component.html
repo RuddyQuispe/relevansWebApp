@@ -1,0 +1,256 @@
+<!-- HEADER -->
+<div class="mb-3">
+    <div class="d-flex align-items-center justify-content-center p-4 bg-white border-radius-table-header box-shadow">
+        <h5 class="m-0 cls_title">{{ "log_webservice_title" | translate }}</h5>
+    </div>
+</div>
+<!-- ./HEADER -->
+<!-- FILTER -->
+<div class="my-3 card py-5 border-radius-table-header">
+    <form #formElement="ngForm" (submit)="onFilter()" class="pt-2">
+        <div class="grid p-fluid">
+            <div class="col-12 md:col-3 sm:col-6">
+                <samp class="p-float-label">
+                    <p-dropdown #appRequest="ngModel"
+                                [options]="[
+                                    { label: 'selectList' | translate, value: '' },
+                                    { label: LOG_WS_APP_REQUEST.APP_CONFIG, value: 'APP_CONFIG' },
+                                    { label: LOG_WS_APP_REQUEST.APP_ADMIN, value: 'APP_ADMIN' },
+                                    { label: LOG_WS_APP_REQUEST.WEB, value: LOG_WS_APP_REQUEST.WEB },
+                                    { label: LOG_WS_APP_REQUEST.SAI, value: LOG_WS_APP_REQUEST.SAI }
+                                ]"
+                                id="appRequest"
+                                [(ngModel)]="logWebServiceFilter.appRequest"
+                                name="appRequest"></p-dropdown>
+                    <label for="appRequest">{{ 'log_t_app_request' | translate }}</label>
+                </samp>
+            </div>
+            <div class="col-12 md:col-3 sm:col-6">
+                <samp class="p-float-label">
+                    <input #responseCode="ngModel"
+                           type="text"
+                           id="idresponseCode"
+                           [(ngModel)]="logWebServiceFilter.responseCode"
+                           pInputText
+                           maxlength="100"
+                           autocomplete="off"
+                           name="responseCode">
+                    <label for="idresponseCode">{{ 'log_t_responseCode' | translate }}</label>
+                </samp>
+            </div>
+            <div class="col-12 md:col-3 sm:col-6">
+                <samp class="p-float-label">
+                    <input #idSession="ngModel"
+                           type="text"
+                           id="idsession"
+                           [(ngModel)]="logWebServiceFilter.idSession"
+                           pInputText
+                           maxlength="100"
+                           autocomplete="off"
+                           name="idSession">
+                    <label for="idsession">{{ 'log_t_idSession' | translate }}</label>
+                </samp>
+            </div>
+            <div class="col-12 md:col-3 sm:col-6">
+                <samp class="p-float-label">
+                    <input #type="ngModel"
+                           type="text"
+                           id="idtype"
+                           [(ngModel)]="logWebServiceFilter.type"
+                           pInputText
+                           autocomplete="off"
+                           [maxlength]="200"
+                           name="type">
+                    <label for="idsession">{{ 'log_t_type' | translate }}</label>
+                </samp>
+            </div>
+            <div class="col-12 md:col-3 sm:col-6">
+                <samp class="p-float-label">
+                    <p-calendar #_fechaInicio="ngModel"
+                                name="_fechaInicio"
+                                required
+                                id="idfechaIni"
+                                [showIcon]="true"
+                                [(ngModel)]="logWebServiceFilter.beginDate"
+                                [maxDate]="logWebServiceFilter.endDate"
+                                dateFormat="dd/mm/yy">
+                    </p-calendar>
+                    <label for="idfechaIni">{{ 'date_ini' | translate }}</label>
+                </samp>
+                <div *ngIf="!_fechaInicio.valid && (_fechaInicio.dirty || _fechaInicio.touched)">
+                    <p-message *ngIf="_fechaInicio.hasError('required')" severity="error"
+                               [text]="'cmpReq' | translate"></p-message>
+                </div>
+            </div>
+            <div class="col-12 md:col-3 sm:col-6">
+                <samp class="p-float-label">
+                    <p-calendar #_fechaFin="ngModel"
+                                name="_fechaFin"
+                                id="idfechaFin"
+                                required
+                                [showIcon]="true"
+                                [(ngModel)]="logWebServiceFilter.endDate"
+                                [minDate]="logWebServiceFilter.beginDate"
+                                dateFormat="dd/mm/yy">
+                    </p-calendar>
+                    <label for="idfechaFin">{{ 'date_end' | translate }}</label>
+                </samp>
+                <div *ngIf="!_fechaFin.valid && (_fechaFin.dirty || _fechaFin.touched)">
+                    <p-message *ngIf="_fechaFin.hasError('required')" severity="error"
+                               [text]="'cmpReq' | translate"></p-message>
+                </div>
+            </div>
+            <div class="col-12 md:col-3 sm:col-6">
+                <samp class="p-float-label">
+                    <p-dropdown #ipRequest="ngModel"
+                                [options]="[
+                                    {label: 'selectList' | translate, value: ''},
+                                    {label: 'log_in' | translate, value: 'IN'},
+                                    {label: 'log_out' | translate, value: 'OUT'}
+                                ]"
+                                [(ngModel)]="logWebServiceFilter.ipRequest"
+                                id="idipRequest"
+                                name="ipRequest"></p-dropdown>
+                    <label for="idipRequest">{{ 'log_t_ipRequest' | translate }}</label>
+                </samp>
+            </div>
+            <div class="col-12 md:col-3 sm:col-6">
+                <div class="MarTop-15">
+                    <button type="submit"
+                            pButton
+                            icon="pi pi-filter"
+                            label="{{'filter' | translate}}"
+                            [title]="'filter' | translate"
+                            style="margin-right: 5px; width: 85%;"
+                            class="btn-primary border-radius-button"
+                            [disabled]="!formElement.valid">
+                    </button>
+                    <button type="button"
+                            pButton
+                            icon="pi pi-replay"
+                            (click)="clearFilter()"
+                            [title]="'btn_clean' | translate"
+                            class="p-button-outlined">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- ./FILTER -->
+<!-- TABLE -->
+<div class="d-flex justify-content-center">
+    <div class="col-12">
+        <p-table #dt [value]="logs"
+                 [responsive]="true"
+                 [paginator]="true"
+                 [(rows)]="rowsTables"
+                 [totalRecords]="totalRecords"
+                 [rowHover]="true"
+                 [lazy]="true"
+                 (onLazyLoad)="loadLazy($event)"
+                 [showCurrentPageReport]="true"
+                 [loading]="loading"
+                 currentPageReportTemplate="{first} a {last} de {totalRecords} registros"
+                 styleClass="p-datatable-gridlines">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th [pSortableColumn]="'appRequest'">
+                        {{ 'log_t_app_request' | translate }}
+                        <p-sortIcon [field]="'appRequest'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'idSession'">
+                        {{ 'log_t_idSession' | translate }}
+                        <p-sortIcon [field]="'idSession'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'type'">
+                        {{ 'log_t_type' | translate }}
+                        <p-sortIcon [field]="'type'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'requestDate'">
+                        {{ 'log_t_requestDate' | translate }}
+                        <p-sortIcon [field]="'requestDate'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'responseCode'">
+                        {{ 'log_t_responseCode' | translate }}
+                        <p-sortIcon [field]="'responseCode'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center">
+                        {{ 'log_t_responseDescription' | translate }}
+                    </th>
+                    <th [pSortableColumn]="'responseDate'">
+                        {{ 'log_t_responseDate' | translate }}
+                        <p-sortIcon [field]="'responseDate'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center">
+                        {{ 'log_t_message' | translate }}
+                    </th>
+                    <th style="width: 100px" [pSortableColumn]="'ipRequest'">
+                        {{ 'log_t_ipRequest' | translate }}
+                        <p-sortIcon [field]="'ipRequest'"></p-sortIcon>
+                    </th>
+                    <th style="width: 100px;" class="cls_center">{{ 'actions' | translate }}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData>
+                <tr [pSelectableRow]="rowData">
+                    <td>{{ rowData.appRequest | typeAppRequest }}</td>
+                    <td>{{ rowData.idSession }}</td>
+                    <td>{{ rowData.type }}</td>
+                    <td>{{ rowData.requestDate | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+                    <td>{{ rowData.responseCode }}</td>
+                    <td>{{ rowData.responseDescription }}</td>
+                    <td>{{ rowData.responseDate | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+                    <td>{{ rowData.message }}</td>
+                    <td style="text-align: center;">{{ rowData.ipRequest }}</td>
+                    <td class="cls_center">
+                        <button pButton icon="pi pi-window-maximize"
+                                type="button"
+                                title="{{'log_request' | translate}}"
+                                class="btn-icon-option"
+                                (click)="showDialogToViewRequest($event,rowData)"></button>
+                        <button pButton
+                                icon="pi pi-window-minimize"
+                                type="button"
+                                title="{{'log_response' | translate}}"
+                                (click)="showDialogToViewResponse($event,rowData)"
+                                class="p-button-outlined btn-icon-option-secondary"
+                                style="margin-left: 4px;"></button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<!-- ./TABLE -->
+<!-- DIALOG -->
+<p-dialog *ngIf="logWebServiceSelected"
+          [header]="'detail' | translate"
+          [(visible)]="displayDialog"
+          [responsive]="true"
+          [modal]="true"
+          [style]="{width: '600px'}">
+    <div *ngIf="logWebServiceSelected">
+        <div *ngIf="isRequest">
+            <p-fieldset
+                    legend="{{'log_t_requestDate' | translate}}: {{logWebServiceSelected.requestDate | date:'dd/MM/yyyy HH:mm:ss'}}">
+                    <textarea pInputTextarea
+                              class="cls_content_xml"
+                              [rows]="25"
+                              style="width: 100% !important;"
+                              readonly>{{ logWebServiceSelected.request }}</textarea>
+            </p-fieldset>
+        </div>
+        <div *ngIf="!isRequest">
+            <p-fieldset
+                    legend="{{'log_t_responseDate' | translate}}: {{logWebServiceSelected.responseDate | date:'dd/MM/yyyy HH:mm:ss'}}">
+                    <textarea pInputTextarea
+                              class="cls_content_xml"
+                              [rows]="20"
+                              style="width: 100% !important;"
+                              readonly>{{ logWebServiceSelected.response }}</textarea>
+            </p-fieldset>
+        </div>
+    </div>
+</p-dialog>
+<!-- ./DIALOG -->

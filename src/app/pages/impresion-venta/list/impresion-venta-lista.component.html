@@ -1,0 +1,265 @@
+<!-- HEADER -->
+<div class="mb-1">
+    <div class="d-flex align-items-center justify-content-center p-4 bg-white border-radius-table-header box-shadow">
+        <h5 class="m-0 cls_title">{{ "sales_printer_title" | translate }}</h5>
+    </div>
+</div>
+<!-- ./HEADER -->
+<!-- FILTER_SALE -->
+<div class="row d-flex justify-content-center">
+    <div class="col-11 md:col-10 sm:col-12">
+        <div class="my-3 card " style="padding-top: 2.5rem; padding-bottom: 1rem; border-radius: 20px;">
+            <form class="grid p-fluid justify-content-center" #formElement="ngForm" (ngSubmit)="onSubmitFilterList()">
+                <div class="col-12 md:col-12 lg:col-3 d-grid">
+                    <samp class="p-float-label">
+                        <p-calendar #_fechaInicio="ngModel"
+                                    name="idfechaFin"
+                                    id="idfechaInicio"
+                                    required
+                                    [showIcon]="true"
+                                    [(ngModel)]="filterSale.fechaInicioDate"
+                                    [maxDate]="filterSale.fechaFinDate"
+                                    dateFormat="dd/mm/yy"
+                                    (onSelect)="onSelectInitDateFilter()">
+                        </p-calendar>
+                        <label for="idfechaInicio">{{ "sale_list_init_date_filter" | translate }}</label>
+                    </samp>
+                </div>
+                <div class="col-12 md:col-12 lg:col-3 d-grid">
+                    <samp class="p-float-label">
+                        <p-calendar #_fechaFin="ngModel"
+                                    name="idfechaFin"
+                                    id="idfechaFin"
+                                    required
+                                    [showIcon]="true"
+                                    [(ngModel)]="filterSale.fechaFinDate"
+                                    [minDate]="filterSale.fechaInicioDate"
+                                    dateFormat="dd/mm/yy"
+                                    (onSelect)="onSelectEndDateFilter()">
+                        </p-calendar>
+                        <label for="idfechaFin">{{ "sale_list_end_date_filter" | translate }}</label>
+                    </samp>
+                </div>
+                <div class="col-12 md:col-12 lg:col-3">
+                    <samp class="p-float-label">
+                        <input
+                            #_saleNo="ngModel"
+                            type="number"
+                            id="salesNo"
+                            [(ngModel)]="filterSale.ventaId"
+                            name="salesNo"
+                            autocomplete="off"
+                            placeholder="{{'sale_list_sales_no_filter' | translate}}"
+                            [min]="0"
+                            [max]="9999"
+                            pInputText/>
+                        <label for="salesNo">{{ "sale_list_sales_no_filter" | translate }}&nbsp;
+                            <i class="pi pi-ticket color_primario"></i></label>
+                    </samp>
+                </div>
+                <div class="col-12 md:col-12 lg:col-3">
+                    <samp class="p-float-label">
+                        <input type="text"
+                               id="client"
+                               [(ngModel)]="filterSale.clienteNit"
+                               name="client"
+                               autocomplete="off"
+                               placeholder="{{ 'sale_list_nit_filter' | translate }}"
+                               [maxlength]="20"
+                               pInputText/>
+                        <label for="client">{{ "sale_list_nit_filter" | translate }}&nbsp;
+                            <i class="pi pi-briefcase color_primario"></i></label>
+                    </samp>
+                </div>
+                <!--<div class="col-12 md:col-12 lg:col-3">-->
+                <!--    <samp class="p-float-label">-->
+                <!--        <p-multiSelect-->
+                <!--                [options]="[-->
+                <!--                        {label: STATUS_SALE.VALIDADA, value: STATUS_SALE.VALIDADA},-->
+                <!--                    ]"-->
+                <!--                [(ngModel)]="filterSale.estados"-->
+                <!--                optionLabel="label"-->
+                <!--                optionValue="value"-->
+                <!--                [placeholder]="'state'| translate"-->
+                <!--                id="statusSaleOption"-->
+                <!--                name="statusSaleOption"></p-multiSelect>-->
+                <!--        <label for="statusSaleOption">{{ 'state' | translate }}</label>-->
+                <!--    </samp>-->
+                <!--</div>-->
+                <div class="col-12 md:col-12 lg:col-3">
+                    <samp class="p-float-label">
+                        <p-dropdown #_currentCoinVoucher="ngModel"
+                                    [options]="currentTypesOptions"
+                                    [(ngModel)]="filterSale.moneda"
+                                    id="_currentCoinVoucher"
+                                    name="optionsPaymentType"></p-dropdown>
+                        <label for="_currentCoinVoucher">{{ 'vale_list_filter_current' | translate }}</label>
+                    </samp>
+                </div>
+                <div class="col-12 md:col-12 lg:col-3">
+                    <samp class="p-float-label">
+                        <input
+                                type="text"
+                                id="nombreCliente"
+                                [(ngModel)]="filterSale.clienteNombre"
+                                name="nombreCliente"
+                                autocomplete="off"
+                                placeholder="{{'sale_list_client_name_filter' | translate}}"
+                                [maxlength]="20"
+                                pInputText/>
+                        <label for="nombreCliente">{{ "sale_list_client_name_filter" | translate }}&nbsp;<i
+                                class="pi pi-user color_primario"></i></label>
+                    </samp>
+                </div>
+                <div class="col-12 md:col-12 lg:col-3">
+                    <div class="d-flex justify-content-between">
+                        <div style="width: 90%;">
+                            <samp class="p-float-label">
+                                <input type="text"
+                                       id="nombreUsuario"
+                                       [(ngModel)]="filterSale.nombreUsuario"
+                                       name="nombreUsuario"
+                                       autocomplete="off"
+                                       placeholder="{{'sale_list_user_filter' | translate}}"
+                                       [maxlength]="99999"
+                                       pInputText
+                                       (change)="onChangeInputUserName()"/>
+                                <label for="nombreUsuario">{{ "sale_list_user_filter" | translate }}&nbsp;<i
+                                        class="pi pi-user color_primario"></i></label>
+                            </samp>
+                        </div>
+                        <div style="width: 10%;" class="d-flex justify-content-end">
+                            <button type="button" pButton icon="pi pi-search"
+                                    (click)="onClickShowModalSearchUser()" [disabled]="isViewFilterSearchUser"
+                                    title="{{ 'sale_client_btn_search' | translate }}"
+                                    class="btn-primary border-radius-button"></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3 d-flex">
+                    <button
+                            type="submit"
+                            pButton
+                            style="width: 85%;"
+                            icon="pi pi-filter"
+                            class="btn-primary border-radius-button"
+                            title="{{ 'sale_btn_filter' | translate }}"
+                            label="{{ 'sale_btn_filter' | translate }}">
+                    </button>&nbsp;
+                    <button type="button"
+                            pButton
+                            style="width: 15%;"
+                            icon="pi pi-replay"
+                            (click)="onClickClearFilter()"
+                            class="p-button-outlined border-radius-button">
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- ./FILTER_SALE -->
+<!-- TABLE -->
+<div class="d-flex justify-content-center">
+    <div class="col-10">
+        <p-table
+            #dt
+            [value]="saleResponse.contenido"
+            [globalFilterFields]="['ventaId', 'fechaEmision', 'clienteNombre', 'totalPagar']"
+            [paginator]="true"
+            [rows]="rowsTables"
+            [responsive]="true"
+            [rowHover]="true"
+            [showCurrentPageReport]="true"
+            [loading]="loading"
+            [totalRecords]="sizeOrders"
+            [lazy]="true"
+            (onLazyLoad)="onChangePageTable($event)"
+            styleClass="p-datatable-gridlines"
+            currentPageReportTemplate="{first} a {last} de {totalRecords} ventas">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th [pSortableColumn]="'ventaId'">
+                        {{ "sale_list_sale_header" | translate }}
+                        <p-sortIcon [field]="'ventaId'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'fechaEmision'">
+                        {{ "sale_list_date_header" | translate }}
+                        <p-sortIcon [field]="'fechaEmision'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'clienteNit'">
+                        {{ "sale_list_nit_header" | translate }}
+                        <p-sortIcon [field]="'clienteNit'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'estado'">
+                        {{ "sale_list_status_header" | translate }}
+                        <p-sortIcon [field]="'estado'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'clienteNombre'">
+                        {{ "sale_list_client_header" | translate }}
+                        <p-sortIcon [field]="'clienteNombre'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'totalPagar'">
+                        {{ "sale_list_amount_header" | translate }}
+                        <p-sortIcon [field]="'totalPagar'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'moneda'">
+                        {{ "sale_list_amount_current_type" | translate }}
+                        <p-sortIcon [field]="'moneda'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center">
+                        {{ "sale_list_user_owner" | translate }}
+                    </th>
+                    <th style="width: 100px" class="cls_center">
+                        {{ "actions" | translate }}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData>
+                <tr>
+                    <td>{{ rowData.ventaId }}</td>
+                    <td>{{ rowData.fechaEmision | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+                    <td>{{ rowData.clienteNit }}</td>
+                    <td>{{ rowData.estado }}</td>
+                    <td>{{ rowData.clienteNombre }}</td>
+                    <td>{{ rowData.totalPagar.toFixed(2) }}</td>
+                    <td>{{ rowData.moneda | currentType: currentTypesOptions }}</td>
+                    <td>{{ rowData.nombreUsuarioVenta }}</td>
+                    <td class="cls_center">
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-pencil"
+                                class="btn-icon-option"
+                                [title]="'edit' | translate"
+
+                                (click)="onClickShowDialogToEdit($event, rowData)"
+                        ></button>
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-eye"
+                                [title]="'detail' | translate"
+                                (click)="onClickShowDialogToView($event, rowData)"
+                                class="p-button-outlined btn-icon-option-secondary"
+                                style="margin-left: 5px"
+                        ></button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="9"><b>{{ "sale_list_empty_message" | translate }}</b></td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<!-- ./TABLE -->
+<!-- DIALOG_FIND_USER -->
+<shared-dialog-generic-search [titleDialog]="'shared_dialog_find_user_system_header' | translate"
+                              [typeSearch]="SEARCH_TYPE.SYSTEM_USER" [visible]="isViewFilterSearchUser"
+                              [code]="filterSale.usuarioVenta" [description]="filterSale.nombreUsuario"
+                              (eventClose)="eventCloseDialogFindUsers($event)"
+                              (eventSelectResponse)="eventSelectUser($event)"></shared-dialog-generic-search>
+<!-- ./DIALOG_FIND_USER -->

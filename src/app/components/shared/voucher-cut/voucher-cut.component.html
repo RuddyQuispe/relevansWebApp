@@ -1,0 +1,49 @@
+<fieldset>
+    <legend>
+        <h5 *ngIf="typeCurrent"
+            class="color_primario">{{ "voucher_cut_title" | translate }}{{ voucherCutModel.monto + ' ' + typeCurrent }}</h5>
+    </legend>
+    <div class="col-12 p-0 m-0">
+        <div class="col-12 p-0 m-0">
+            <div *ngIf="loading; else ImageVoucher">
+                <div class="grid p-fluid justify-content-center">
+                    <img src="assets/images/loading-image.gif" alt="loading-image" width="180" height="180">
+                </div>
+            </div>
+            <ng-template #ImageVoucher>
+                <img [src]="imageVoucher" width="100%" height="100%"/>
+            </ng-template>
+        </div>
+    </div>
+    <div class="col-12 p-0 mt-2" *ngIf="showCounterPrinterComponents">
+        <div class="d-flex p-fluid justify-content-between mt-3">
+            <div class="col-12 lg:col-6 d-flex justify-content-start align-items-center p-0">
+                <label class="color_primario"
+                       for="voucher_cut_select_label">{{ "voucher_cut_select_label" | translate }}</label>&nbsp;
+                <p-inputSwitch [(ngModel)]="checkToPrint"
+                               id="voucher_cut_select_label"
+                               [ariaLabel]="'voucher_cut_select_label' | translate"
+                               [ariaLabelledBy]="'voucher_cut_select_label' | translate"
+                               [disabled]="voucherCutModel.cantidad === voucherCutModel.impreso"
+                               (onChange)="onCheckToPrintVoucher()"></p-inputSwitch>
+            </div>
+            <div class="col-12 lg:col-6 d-flex justify-content-end align-items-center p-0">
+                <samp class="p-float-label d-flex">
+                    <input type="text"
+                           class="d-flex"
+                           id="countToPrint"
+                           [(ngModel)]="currentCountVoucherCuts"
+                           [disabled]="!checkToPrint"
+                           (input)="onChangeCountCuts()"
+                           name="countToPrint"
+                           [min]="0"
+                           validateNumeric
+                           [maxLength]="(voucherCutModel.cantidad + voucherCutModel.impreso).toString().length"
+                           pInputText/>
+                    <label class="color_primario"
+                           for="countToPrint">{{ "voucher_cut_select_count_to_print_label" | translate }}</label>&nbsp;
+                </samp>
+            </div>
+        </div>
+    </div>
+</fieldset>

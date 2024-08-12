@@ -1,0 +1,258 @@
+$gutter: 1rem; //for primeflex grid system
+
+@import "../node_modules/primeng/resources/primeng.min.css";
+@import "../node_modules/primeflex/primeflex.scss";
+@import "../node_modules/primeicons/primeicons.css";
+@import "../node_modules/prismjs/themes/prism-coy.css";
+@import "config";
+
+.color_primario {
+  color: $color_primario;
+}
+
+.color_secundario {
+  color: $color_secundario;
+}
+
+.color_terciario {
+  color: $color_terciario;
+}
+
+.color_white {
+  color: $color_white !important;
+}
+
+
+.ColorLabel {
+  padding-left: 10px !important;
+  padding-top: 5px !important;
+  color: $color_primario;
+}
+
+.cls_title {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: $color_primario;
+}
+
+.p-float-label label {
+  color: $color_primario;
+}
+
+
+.H3p {
+  height: 3px !important;
+}
+
+.H5p {
+  height: 5px !important;
+}
+
+.H10p {
+  height: 10px !important;
+}
+
+.W90 {
+  width: 90% !important;
+}
+
+.W70 {
+  width: 70% !important;
+}
+
+.W100 {
+  width: 100% !important;
+}
+
+.DIB {
+  display: inline-block;
+}
+
+.cls_hover {
+  cursor: pointer;
+}
+
+.cls_center {
+  text-align: center !important;
+}
+
+.cls_r {
+  text-align: right !important;
+}
+
+.cls_l {
+  text-align: left !important;
+}
+
+.MT5 {
+  margin-top: 5px !important;
+}
+
+.MT10 {
+  margin-top: 10px !important;
+}
+
+.MT20 {
+  margin-top: 20px !important;
+}
+
+.MT-20 {
+  margin-top: -20px !important;
+}
+
+.MT-15 {
+  margin-top: -15px !important;
+}
+
+.MT-10 {
+  margin-top: -10px !important;
+}
+
+.PT20 {
+  padding-top: 20px !important;
+}
+
+.PB20 {
+  padding-bottom: 20px !important;
+}
+
+.FZ6 {
+  font-size: .6rem;
+}
+
+.FZ7 {
+  font-size: .7rem;
+}
+
+.FZ8 {
+  font-size: .8rem;
+}
+
+.cls_eye {
+  position: absolute;
+  margin-top: 8px;
+  font-size: 1.2rem;
+  padding: 5px;
+  margin-left: -34px;
+}
+
+/* BOOTSTRAP STYLES IMPORT*/
+.mb-1 {
+  margin-bottom: 0.25rem !important;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem !important;
+}
+
+.mb-3 {
+  margin-bottom: 1rem !important;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem !important;
+}
+
+.mb-5 {
+  margin-bottom: 3rem !important;
+}
+
+.pb-1 {
+  padding-bottom: 0.25rem !important;
+}
+
+.pb-2 {
+  padding-bottom: 0.5rem !important;
+}
+
+.pb-3 {
+  padding-bottom: 1rem !important;
+}
+
+.pb-4 {
+  padding-bottom: 1.5rem !important;
+}
+
+.pb-5 {
+  padding-bottom: 3rem !important;
+}
+
+.p-1 {
+  padding: 0.25rem !important;
+}
+
+.p-2 {
+  padding: 0.5rem !important;
+}
+
+.p-3 {
+  padding: 1rem !important;
+}
+
+.p-4 {
+  padding: 1.5rem !important;
+}
+
+.p-5 {
+  padding: 3rem !important;
+}
+
+.position-relative {
+  position: relative !important;
+}
+
+.position-absolute {
+  position: absolute !important;
+}
+
+/* CUSTOM STYLES */
+.border-radius-table-header {
+  border-radius: 20px !important;
+}
+
+.border-radius-button {
+  border-radius: 10px !important;
+}
+
+.box-shadow {
+  box-shadow: 0px 11px 22px -7px rgba(0, 0, 0, 0.3);
+}
+
+.d-flex {
+  display: flex !important;
+}
+
+.d-block {
+  display: block !important;
+}
+
+.d-grid {
+  display: grid !important;
+}
+
+.d-inline {
+  display: inline !important;
+}
+
+.row {
+  --bs-gutter-x: 1.5rem;
+  --bs-gutter-y: 0;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: calc(-1 * 0px);
+  margin-right: calc(-.5 * 1.5rem);
+  margin-left: calc(-.5 * 1.5rem);
+}
+
+.background-transparent {
+  background-color: transparent !important;
+}
+
+.border-none {
+  border: none !important;
+}
+
+.border-primary {
+  border: 1px solid $color_primario !important;
+  border-radius: 20px !important;
+}

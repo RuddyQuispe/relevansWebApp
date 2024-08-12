@@ -1,0 +1,205 @@
+<!-- HEADER -->
+<div class="mb-1">
+    <div class="d-flex align-items-center justify-content-center p-4 bg-white border-radius-table-header box-shadow">
+        <h5 class="m-0 cls_title">{{ "voucher_fractionation_title" | translate }}</h5>
+    </div>
+</div>
+<!-- ./HEADER -->
+
+<!-- FORM -->
+<div class="row d-flex justify-content-center">
+    <div class="col-12 md:col-10 sm:col-12 lg:col-10">
+        <form class="row d-flex" #formVoucher="ngForm" (submit)="onSubmitToDivideVoucher()">
+            <!-- VOUCHER_DETAIL -->
+            <div class="col-12 lg:col-4">
+                <p-fieldset legend="{{'voucher_renovate_detail' | translate}}">
+                    <!-- VOUCHER -->
+                    <div class="col-12">
+                        <fieldset class="fieldset-subtitle">
+                            <legend>
+                                <h4 class="color_primario">{{ "sale_client" | translate }}: &nbsp;</h4>
+                            </legend>
+                            <div class="col-12 p-1 d-flex">
+                                <label class="color_primario">{{ "voucher_renovate_code" | translate }}:&nbsp;</label>
+                                <p>{{ voucherModelEdit.identificadorQR }}</p>
+                            </div>
+                            <div class="col-12 p-1 d-flex">
+                                <label class="color_primario">{{ "voucher_renovate_beneficiary" | translate }}
+                                    :&nbsp;</label>
+                                <p>{{ voucherModelEdit.beneficiario }}</p>
+                            </div>
+                            <div class="col-12 p-1 d-flex">
+                                <label class="color_primario">{{ "voucher_renovate_company" | translate }}
+                                    :&nbsp;</label>
+                                <p>{{ voucherModelEdit.empresa }}</p>
+                            </div>
+                            <div class="col-12 p-1 d-flex">
+                                <label class="color_primario">{{ "voucher_renovate_amount" | translate }}:&nbsp;</label>
+                                <p>{{ voucherModelEdit.monto }} {{ voucherModelEdit.moneda | currentType: currentTypesOptions }}</p>
+                            </div>
+                            <div class="col-12 p-1 d-flex">
+                                <label class="color_primario">{{ "voucher_renovate_status" | translate }}
+                                    :&nbsp;</label>
+                                <p>{{ voucherModelEdit.estado }}</p>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <!-- ./VOUCHER -->
+                    <!-- DATE_VOUCHER -->
+                    <div class="col-12">
+                        <fieldset class="fieldset-subtitle">
+                            <legend>
+                                <h4 class="color_primario">{{ "voucher_renovate_date_header" | translate }}</h4>
+                            </legend>
+                            <div class="col-12 p-1 d-flex">
+                                <label class="color_primario">{{ "voucher_renovate_date_emission" | translate }}
+                                    :&nbsp;</label>
+                                <p>{{ voucherModelEdit.fechaEmision | date: 'dd/MM/yyyy HH:mm:ss' }}</p>
+                            </div>
+                            <div class="col-12 p-1 d-flex">
+                                <label class="color_primario">{{ "voucher_renovate_date_limit" | translate }}
+                                    :&nbsp;</label>
+                                <p>{{ voucherModelEdit.fechaVigencia | date: 'dd/MM/yyyy' }}</p>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <!-- ./DATE_VOUCHER -->
+                </p-fieldset>
+            </div>
+            <!-- ./VOUCHER_DETAIL -->
+            <!-- VOUCHER_CUTS -->
+            <div class="col-12 lg:col-6 p-fluid">
+                <p-fieldset legend="{{'voucher_fractionation_voucher_cuts_header' | translate}}">
+                    <div class="grid p-fluid">
+                        <div class="col-12">
+                            <div style="width: 38%;">
+                                <button type="button" pButton class="btn-primary border-radius-button"
+                                        (click)="onClickOpenDialogAddVoucherCut()" [disabled]="isView"
+                                        label="{{ 'voucher_fractionation_add_voucher' | translate }}"
+                                        title="{{ 'voucher_fractionation_add_voucher' | translate }}">
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <p-table #dt [responsive]="true" [rowHover]="true" [showCurrentPageReport]="true"
+                                     [loading]="loading" [value]="vouchersDivide" [rows]="rowsTables"
+                                     styleClass="p-datatable-gridlines">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th class="cls_center">
+                                            {{ "voucher_renovate_beneficiary" | translate }}
+                                        </th>
+                                        <th class="cls_center">
+                                            {{ "sale_voucher_cuts_amount" | translate }} {{ voucherModelEdit.moneda | currentType: currentTypesOptions }}
+                                        </th>
+                                        <th class="cls_center" style="width: 50px;" *ngIf="!isView">
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                                    <tr>
+                                        <td>{{ rowData.beneficiario }}</td>
+                                        <td>{{ rowData.importe.toFixed(2) }}</td>
+                                        <td *ngIf="!isView">
+                                            <button pButton type="button" icon="pi pi-times" class="btn-icon-option"
+                                                    [title]="'btn_remove' | translate" [disabled]="isView"
+                                                    (click)="onClickRemoveVoucherCut(rowData, rowIndex)"></button>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer">
+                                    <tr>
+                                        <td colspan="1"
+                                            class="text-right border-radius-table-header">{{ "sale_voucher_cuts_total" | translate }}
+                                        </td>
+                                        <td class="border-radius-table-header">{{ getSumTotalVoucherCuts().toFixed(2) }}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </p-fieldset>
+            </div>
+            <!-- ./VOUCHER_CUTS -->
+            <div class="col-12 lg:col-2 mt-4">
+                <div class="d-grid">
+                    <button type="button" pButton class="btn-secondary mb-2 border-radius-button"
+                            (click)="onClickBack()" label="{{ 'btn_back' | translate }}"
+                            title="{{ 'btn_back' | translate }}">
+                    </button>
+                    <button type="submit" pButton class="btn-primary border-radius-button"
+                            label="{{ 'register' | translate }}" title="{{ 'register' | translate }}"
+                            [disabled]="!formVoucher.valid || submitted || isView || this.getSumTotalVoucherCuts()!==voucherModelEdit.monto">
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <a id="iddownloaddocs" href="#" download="{{pdfName}}" style="visibility: hidden;"></a>
+</div>
+<!-- ./FORM -->
+
+<!-- DIALOG_ADD_VOUCHER_CUT -->
+<p-dialog [header]="'register' | translate" [(visible)]="isVisibleDialogOfAddVoucher" [modal]="true"
+          [style]="{ width: '750px' }">
+    <form #newVoucherCutModel="ngForm" (submit)="onClickAddVoucherCut()">
+        <div class="p-fluid mt-1">
+            <div class="row d-flex">
+                <div class="col-12 d-grid">
+                    <samp class="p-float-label">
+                        <input #beneficiaryVoucherCut="ngModel" type="text" id="beneficiaryVoucherCut"
+                               [maxlength]="9999999" [(ngModel)]="newVoucherDivide.beneficiario" [min]="1"
+                               autocomplete="off" required name="beneficiaryVoucherCut" pInputText/>
+                        <label for="beneficiaryVoucherCut">
+                            {{ "voucher_renovate_beneficiary" | translate }} (*)</label>
+                    </samp>
+                    <div *ngIf="!beneficiaryVoucherCut.valid && (beneficiaryVoucherCut.dirty || beneficiaryVoucherCut.touched)">
+                        <p-message *ngIf="beneficiaryVoucherCut.hasError('required')" severity="error"
+                                   text="{{ cmpReq }}"></p-message>
+                        <p-message *ngIf="beneficiaryVoucherCut.errors?.['minlength']" severity="error"
+                                   text="{{ cmpMin }} 1"></p-message>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <samp class="p-float-label">
+                        <input #amountVoucherCut="ngModel" type="number" id="amountVoucherCut"
+                               [(ngModel)]="newVoucherDivide.importe" name="amountVoucherCut" required
+                               autocomplete="off" [min]="1" [max]="(voucherModelEdit.monto - getSumTotalVoucherCuts())"
+                               pInputText validateNumericDecimal/>
+                        <label for="amountVoucherCut">{{ "sale_voucher_cuts_dialog_amount" | translate }} {{ voucherModelEdit.moneda | currentType: currentTypesOptions }}
+                            (*)</label>
+                    </samp>
+                    <div *ngIf="!amountVoucherCut.valid && (amountVoucherCut.dirty || amountVoucherCut.touched)">
+                        <p-message *ngIf="amountVoucherCut.hasError('required')" severity="error"
+                                   text="{{ cmpReq }}"></p-message>
+                        <p-message *ngIf="amountVoucherCut.errors?.['minlength']" severity="error"
+                                   text="{{ cmpMin }} 3"></p-message>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p-footer>
+            <div class="cls_center">
+                <div class="DIB" *ngIf="!isView">
+                    <button pButton type="submit" [disabled]="!newVoucherCutModel.valid || submittedVoucherAdd"
+                            label="{{ 'save' | translate }}" title="{{ 'save' | translate }}" icon="pi pi-check"
+                            class="btn-primary border-radius-button" style="margin-right: 0.25em"></button>
+                </div>
+
+                <div class="DIB">
+                    <button pButton type="button" label="{{ 'cancel' | translate }}" title="{{ 'cancel' | translate }}"
+                            icon="pi pi-times" (click)="onClickCloseDialogAddVoucherCut()"
+                            class="p-button-outlined border-radius-button"></button>
+                </div>
+            </div>
+        </p-footer>
+    </form>
+</p-dialog>
+<!-- DIALOG_ADD_VOUCHER_CUT -->
+
+<!-- CONFIRM_DIALOG -->
+<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}"
+                 [acceptButtonStyleClass]="'btn-primary'" [rejectButtonStyleClass]="'btn-secondary'"
+                 [acceptLabel]="'yes' | translate" [rejectLabel]="'not' | translate">
+</p-confirmDialog>
+<!-- ./CONFIRM_DIALOG -->

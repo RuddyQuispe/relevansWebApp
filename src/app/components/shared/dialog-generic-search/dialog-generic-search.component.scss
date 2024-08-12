@@ -1,0 +1,25 @@
+@import "config";
+
+.p-datatable table {
+  border-collapse: collapse !important;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  border-radius: 0 !important;
+  border: none !important;
+}
+
+
+.row-uncolor-selectable {
+  background: unset !important;
+  color: unset !important;
+}
+
+.row-selected {
+  color: $color_primario !important;
+  background: $color_primario_transparente !important;
+}
+
+.p-datatable .p-datatable-tbody > tr:focus {
+  outline: none !important;
+}

@@ -1,0 +1,26 @@
+<div class="layout-topbar">
+    <a href="#" class="layout-menu-button layout-topbar-icon" (click)="appMain.onMenuButtonClick($event)">
+        <i class="pi pi-bars"></i>
+    </a>
+    <a href="#" class="layout-topbar-logo">
+        <img id="topbar-logo" [src]="'assets/images/logo.png'">
+    </a>
+    <ul class="topbar-menu">
+        <li class="user-profile m-0" [ngClass]="{'active-topmenuitem fadeInDown': appMain.topbarUserMenuActive}">
+            <a href="#" (click)="appMain.onTopbarUserMenuButtonClick($event)" *ngIf="!app.inlineUser">
+                <div class="layout-profile-userinfo">
+                    <span class="layout-profile-name">{{ app.currentUser.user }}</span>
+                    <!--                    <span class="layout-profile-role">{{app.currentUser.rol}}</span>-->
+                </div>
+            </a>
+            <ul class="fadeInDown">
+                <li>
+                    <a href="#" (click)="app.logout()">
+                        <i class="pi pi-fw pi-sign-out"></i>
+                        <span>Cerrar Sesion</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>

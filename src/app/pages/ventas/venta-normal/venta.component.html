@@ -1,0 +1,773 @@
+<!-- HEADER -->
+<div class="mb-3">
+    <div class="d-flex align-items-center justify-content-center p-4 bg-white border-radius-table-header box-shadow">
+        <h5 class="m-0 cls_title">{{ "sale_list_title" | translate }}</h5>
+    </div>
+</div>
+<!-- ./HEADER -->
+<!-- HIDDEN_COMPONENT_FILENAME_SALE_RECEIPT-->
+<a id="iddownloaddocs" href="#" download="{{receiptSaleFileName}}" style="visibility: hidden;"></a>
+<!-- FORM_DATA -->
+<form class="row d-flex justify-content-center" #frm="ngForm" (ngSubmit)="onSubmitSaveOrMergeSale()">
+    <!-- PRIMER_FORM -->
+    <div class="col-12 lg:col-4">
+        <div class="card border-primary">
+            <!-- CLIENTE -->
+            <fieldset class="fieldset-subtitle">
+                <legend>
+                    <h4 class="color_primario">{{ "sale_client" | translate }}</h4>
+                </legend>
+                <div class="grid p-fluid">
+                    <div class="col-12 md:col-6">
+                        <div class="d-flex justify-content-between">
+                            <div style="width: 60%;">
+                                <samp class="p-float-label">
+                                    <input #codeClient="ngModel" type="text" id="codeClient" name="code"
+                                           [(ngModel)]="saleModel.clienteCodigo" minlength="1" required
+                                           autocomplete="off" maxlength="10" [readOnly]="isView" pInputText/>
+                                    <label for="codeClient">{{ "sale_client_code" | translate }} (*)</label>
+                                </samp>
+                                <div *ngIf="!codeClient.valid && (codeClient.dirty || codeClient.touched)">
+                                    <p-message *ngIf="codeClient.hasError('required')" severity="error"
+                                               text="{{ cmpReq }}"></p-message>
+                                    <p-message *ngIf="codeClient.errors?.['minlength']" severity="error"
+                                               text="{{ cmpMin }} 1"></p-message>
+                                </div>
+                            </div>
+                            <div style="width: 35%;">
+                                <button type="button" pButton icon="pi pi-search"
+                                        (click)="onClickShowModalSearchClient()" [disabled]="isView"
+                                        label="{{ 'sale_client_btn_search' | translate }}"
+                                        title="{{ 'sale_client_btn_search_title' | translate }}"
+                                        class="btn-primary border-radius-button"></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 md:col-6">
+                        <samp class="p-float-label">
+                            <input #nameClient="ngModel" type="text" id="nameClient" name="nameClient"
+                                   [(ngModel)]="saleModel.clienteNombre" minlength="4" required autocomplete="off"
+                                   maxlength="50" [readOnly]="isView" pInputText/>
+                            <label for="nameClient">{{ "sale_client_name" | translate }} (*)</label>
+                        </samp>
+                        <div *ngIf="!nameClient.valid && (nameClient.dirty || nameClient.touched)">
+                            <p-message *ngIf="nameClient.hasError('required')" severity="error"
+                                       text="{{ cmpReq }}"></p-message>
+                            <p-message *ngIf="nameClient.errors?.['minlength']" severity="error"
+                                       text="{{ cmpMin }} 4"></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12 md:col-6">
+                        <samp class="p-float-label">
+                            <input #contactClient="ngModel" type="text" id="contactClient" name="contactClient"
+                                   [(ngModel)]="saleModel.clienteContacto" [readOnly]="isView" autocomplete="off"
+                                   maxlength="50" pInputText/>
+                            <label for="contactClient">{{ "sale_client_contact" | translate }}</label>
+                        </samp>
+                        <div *ngIf="!contactClient.valid && (contactClient.dirty || contactClient.touched)">
+                            <p-message *ngIf="contactClient.hasError('required')" severity="error"
+                                       text="{{ cmpReq }}"></p-message>
+                            <p-message *ngIf="contactClient.errors?.['minlength']" severity="error"
+                                       text="{{ cmpMin }} 1"></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12 md:col-6">
+                        <samp class="p-float-label">
+                            <input #phoneClient="ngModel" type="text" id="phoneClient" name="phoneClient"
+                                   [(ngModel)]="saleModel.clienteTelefono" autocomplete="off" maxlength="14"
+                                   [readOnly]="isView" pInputText/>
+                            <label for="phoneClient">{{ "sale_client_phone" | translate }}</label>
+                        </samp>
+                        <div *ngIf="!phoneClient.valid && (phoneClient.dirty || phoneClient.touched)">
+                            <p-message *ngIf="phoneClient.hasError('required')" severity="error"
+                                       text="{{ cmpReq }}"></p-message>
+                            <p-message *ngIf="phoneClient.errors?.['minlength']" severity="error"
+                                       text="{{ cmpMin }} 8"></p-message>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <!-- ./CLIENTE -->
+            <!-- CONTRATO -->
+            <fieldset class="fieldset-subtitle">
+                <legend>
+                    <h4 class="color_primario">{{ "sale_contract" | translate }}</h4>
+                </legend>
+                <div class="grid p-fluid">
+                    <div class="col-12 md:col-6">
+                        <samp class="p-float-label">
+                            <input #noContract="ngModel" type="text" id="noContract" name="noContract"
+                                   [(ngModel)]="saleModel.contratoNumero" autocomplete="off" maxlength="10"
+                                   [readOnly]="isView" pInputText/>
+                            <label for="noContract">{{ "sale_contract_no" | translate }}</label>
+                        </samp>
+                        <div *ngIf="!noContract.valid && (noContract.dirty || noContract.touched)">
+                            <p-message *ngIf="noContract.hasError('required')" severity="error"
+                                       text="{{ cmpReq }}"></p-message>
+                            <p-message *ngIf="noContract.errors?.['minlength']" severity="error"
+                                       text="{{ cmpMin }} 1"></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12 md:col-6">
+                        <samp class="p-float-label">
+                            <input #timeLimitContract="ngModel" type="text" id="timeLimitContract"
+                                   name="timeLimitContract" [(ngModel)]="saleModel.contratoVigencia" autocomplete="off"
+                                   maxlength="50" [readOnly]="isView" pInputText/>
+                            <label for="timeLimitContract">{{ "sale_contract_time_limit" | translate }}</label>
+                        </samp>
+                        <div *ngIf="!timeLimitContract.valid && (timeLimitContract.dirty || timeLimitContract.touched)">
+                            <p-message *ngIf="timeLimitContract.hasError('required')" severity="error"
+                                       text="{{ cmpReq }}"></p-message>
+                            <p-message *ngIf="timeLimitContract.errors?.['minlength']" severity="error"
+                                       text="{{ cmpMin }} 2"></p-message>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <!-- ./CONTRATO -->
+            <!-- DATOS_FACTURACION -->
+            <fieldset class="fieldset-subtitle">
+                <legend>
+                    <h4 class="color_primario">{{ "sale_billing_data" | translate }}</h4>
+                </legend>
+                <div class="grid p-fluid">
+                    <div class="col-12">
+                        <label class="color_primario"
+                               for="typeDocument">{{ "sale_billing_data_business_type_document" | translate }}
+                            (*)</label>
+                        <div class="H3p"></div>
+                        <p-dropdown #typeDocumentOption="ngModel"
+                                    [options]="[
+                                        {label: 'sale_billing_data_business_type_document_selection' | translate, value: null},
+                                        {label: DOCUMENT_TYPE_SALE_BILLING[DOCUMENT_TYPE_SALE_BILLING.CI] | translate, value: DOCUMENT_TYPE_SALE_BILLING.CI},
+                                        {label: DOCUMENT_TYPE_SALE_BILLING[DOCUMENT_TYPE_SALE_BILLING.CEX] | translate, value: DOCUMENT_TYPE_SALE_BILLING.CEX},
+                                        {label: DOCUMENT_TYPE_SALE_BILLING[DOCUMENT_TYPE_SALE_BILLING.PAS] | translate, value: DOCUMENT_TYPE_SALE_BILLING.PAS},
+                                        {label: DOCUMENT_TYPE_SALE_BILLING[DOCUMENT_TYPE_SALE_BILLING.OD] | translate, value: DOCUMENT_TYPE_SALE_BILLING.OD},
+                                        {label: DOCUMENT_TYPE_SALE_BILLING[DOCUMENT_TYPE_SALE_BILLING.NIT] | translate, value: DOCUMENT_TYPE_SALE_BILLING.NIT}]"
+                                    id="typeDocument"
+                                    [(ngModel)]="saleModel.clienteTipoDocumento"
+                                    [readonly]="isView"
+                                    [disabled]="isView"
+                                    [required]="true"
+                                    [filter]="true"
+                                    filterBy="label"
+                                    [showClear]="true"
+                                    name="typeDocument">
+                        </p-dropdown>
+                        <div *ngIf="!typeDocumentOption.valid && (typeDocumentOption.dirty || typeDocumentOption.touched)">
+                            <p-message *ngIf="typeDocumentOption.hasError('required')"
+                                       severity="error" text="{{ 'cmpReq' | translate }}"></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12 md:col-6">
+                        <samp class="p-float-label">
+                            <input #nitBillingData="ngModel" type="text" id="nitBillingData" name="nitBillingData"
+                                   [(ngModel)]="saleModel.clienteNit" minlength="6" required autocomplete="off"
+                                   maxlength="20" [readOnly]="isView" pInputText validateNumeric/>
+                            <label for="nitBillingData">{{
+                                    (!this.saleModel.clienteTipoDocumento || this.saleModel.clienteTipoDocumento == DOCUMENT_TYPE_SALE_BILLING.NIT.toString() ? 'sale_billing_data_nit' :
+                                        this.saleModel.clienteTipoDocumento == DOCUMENT_TYPE_SALE_BILLING.CI.toString() ? 'sale_billing_data_ci' : 'sale_billing_data_unknow')| translate
+                                }} (*)</label>
+                        </samp>
+                        <div *ngIf="!nitBillingData.valid && (nitBillingData.dirty || nitBillingData.touched)">
+                            <p-message *ngIf="nitBillingData.hasError('required')" severity="error"
+                                       text="{{ cmpReq }}"></p-message>
+                            <p-message *ngIf="nitBillingData.errors?.['minlength']" severity="error"
+                                       text="{{ cmpMin }} 6"></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12 md:col-6">
+                        <samp class="p-float-label">
+                            <input #businessName="ngModel" type="text" id="businessName" name="businessName"
+                                   [(ngModel)]="saleModel.clienteRazonSocial" minlength="2" required autocomplete="off"
+                                   maxlength="150" [readOnly]="isView" pInputText/>
+                            <label for="businessName">{{
+                                    (!this.saleModel.clienteTipoDocumento || this.saleModel.clienteTipoDocumento == DOCUMENT_TYPE_SALE_BILLING.NIT.toString() ?
+                                        'sale_billing_data_business_name' : 'sale_billing_data_business_name_ci') | translate
+                                }} (*)</label>
+                        </samp>
+                        <div *ngIf="!businessName.valid && (businessName.dirty || businessName.touched)">
+                            <p-message *ngIf="businessName.hasError('required')" severity="error"
+                                       text="{{ cmpReq }}"></p-message>
+                            <p-message *ngIf="businessName.errors?.['minlength']" severity="error"
+                                       text="{{ cmpMin }} 2"></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12 md:col-6"
+                         *ngIf="this.saleModel.clienteTipoDocumento==DOCUMENT_TYPE_SALE_BILLING.CI.toString()">
+                        <samp class="p-float-label">
+                            <input type="text" id="businessComplement"
+                                   name="businessComplement"
+                                   [(ngModel)]="saleModel.clienteComplemento" autocomplete="off"
+                                   [maxLength]="5"
+                                   [readOnly]="isView" pInputText/>
+                            <label for="businessName">{{ "sale_billing_data_complement" | translate }}</label>
+                        </samp>
+                    </div>
+                </div>
+            </fieldset>
+            <!-- ./DATOS_FACTURACION -->
+            <!-- FORMA_PAGO -->
+            <fieldset class="fieldset-subtitle">
+                <legend>
+                    <h4 class="color_primario">{{ "sale_payment_type" | translate }}</h4>
+                </legend>
+                <div class="grid p-fluid">
+                    <div class="col-12 md:col-6">
+                        <samp class="p-float-label">
+                            <p-dropdown #optionsPaymentType="ngModel" [options]="paymentTypeOptions"
+                                        [(ngModel)]="saleModel.formaPago" id="paymentTypeOptions" required="true"
+                                        [disabled]="true" name="paymentTypeOptions"></p-dropdown>
+                            <label for="paymentTypeOptions">{{ 'sale_payment_type_type' | translate }}</label>
+                        </samp>
+                    </div>
+                    <div class="col-12 md:col-6">
+                        <samp class="p-float-label">
+                            <input #timeLinePaymentType="ngModel" type="text" id="timeLinePaymentType"
+                                   name="timeLinePaymentType" [(ngModel)]="saleModel.formaPagoPlazo" minlength="1"
+                                   [min]="0" [maxLength]="4"
+                                   required autocomplete="off" maxlength="50" [readOnly]="isView" pInputText
+                                   validateNumeric/>
+                            <label for="timeLinePaymentType">{{ "sale_payment_type_timeline" | translate }}(*)</label>
+                        </samp>
+                        <div *ngIf="!timeLinePaymentType.valid && (timeLinePaymentType.dirty || timeLinePaymentType.touched)">
+                            <p-message *ngIf="timeLinePaymentType.hasError('required')" severity="error"
+                                       text="{{ cmpReq }}"></p-message>
+                            <p-message *ngIf="timeLinePaymentType.errors?.['minlength']" severity="error"
+                                       text="{{ cmpMin }} 1"></p-message>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <!-- ./FORMA_PAGO -->
+            <!-- OTHERS_SALE_VOUCHER_CUTS -->
+            <fieldset class="fieldset-subtitle">
+                <div class="grid p-fluid mt-1">
+                    <div class="col-12 md:col-6">
+                        <samp class="p-float-label" style="margin-top: 16px;">
+                            <input #voucherValidity="ngModel" type="number" id="voucherValidity" name="voucherValidity"
+                                   [(ngModel)]="saleModel.vigenciaVales" [min]="1" required autocomplete="off"
+                                   maxlength="10" [readOnly]="isView" pInputText validateNumeric/>
+                            <label for="voucherValidity">{{ "sale_voucher_validity" | translate }} (*)</label>
+                        </samp>
+                        <div *ngIf="!voucherValidity.valid && (voucherValidity.dirty || voucherValidity.touched)">
+                            <p-message *ngIf="voucherValidity.hasError('required')" severity="error"
+                                       text="{{ cmpReq }}"></p-message>
+                            <p-message *ngIf="voucherValidity.errors?.['minlength']" severity="error"
+                                       text="{{ cmpMin }} 1"></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12 lg:col-6">
+                        <label class="ColorLabel" for="sale_coin_type">{{ "sale_coin_type" | translate }} (*)</label>
+                        <p-dropdown #typeCurrentOption="ngModel" [options]="typeCurrent" id="sale_coin_type"
+                                    [(ngModel)]="saleModel.moneda" [readonly]="isView"
+                                    name="sale_coin_type"></p-dropdown>
+                    </div>
+                    <div class="col-12 md:col-6">
+                        <label class="color_primario" for="sale_deadline">{{ "sale_deadline" | translate }} (*)</label>
+                        <p-calendar #sale_deadline="ngModel" name="sale_deadline" id="sale_deadline" required
+                                    [(ngModel)]="saleModel.fechaEntregaDate" [locale]="" [minDate]="DATE_NOW"
+                                    [showIcon]="true" [disabled]="isView" dateFormat="dd/mm/yy">
+                        </p-calendar>
+                    </div>
+                    <div class="col-12 lg:col-6">
+                        <label class="ColorLabel" for="holdInvoice">{{ 'sale_hold_invoice' | translate }} (*)</label>
+                        <p-selectButton #holdInvoice="ngModel" id="holdInvoice" [(ngModel)]="saleModel.retenerFactura"
+                                        [options]="[
+                                                    {label: 'yes' | translate, value: true},
+                                                    {label: 'not' | translate, value: false}
+                                                ]" [disabled]="isView" required name="enabled">
+                        </p-selectButton>
+                        <div *ngIf="!holdInvoice.valid && (holdInvoice.dirty || holdInvoice.touched)">
+                            <p-message *ngIf="holdInvoice.hasError('required')" severity="error"
+                                       text="{{'cmpReq'|translate}}"></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label class="ColorLabel" for="businessUnit">{{ 'sale_business_unit' | translate }} (*)</label>
+                        <div class="H3p"></div>
+                        <p-dropdown [options]="businessUnitOptions" [filter]="true"
+                                    filterBy="label" [showClear]="true"
+                                    [(ngModel)]="saleModel.parametroSaiDto.unidadNegocio" id="businessUnit"
+                                    required="true"
+                                    [disabled]="isView" name="businessUnit">
+                        </p-dropdown>
+                    </div>
+                    <div class="col-12">
+                        <label class="ColorLabel" for="cxc_type">{{ 'sale_type_cxc' | translate }} (*)</label>
+                        <div class="H3p"></div>
+                        <p-dropdown [options]="cxcTypeOptions" [filter]="true"
+                                    filterBy="label" [showClear]="true"
+                                    [(ngModel)]="saleModel.parametroSaiDto.tipoCxC" id="cxc_type" required="true"
+                                    [disabled]="isView" name="cxc_type">
+                        </p-dropdown>
+                    </div>
+                    <div class="col-12">
+                        <label class="ColorLabel" for="typeSaleC">{{ 'sale_type_sale' | translate }} (*)</label>
+                        <p-selectButton #typeSaleCorp="ngModel"
+                                        id="typeSaleC"
+                                        [options]="optionsTypeSaleCorp"
+                                        [(ngModel)]="saleModel.tipoVentaCorporativa"
+                                        [disabled]="isView"
+                                        required
+                                        name="typeSaleC">
+                        </p-selectButton>
+                        <div *ngIf="!typeSaleCorp.valid && (typeSaleCorp.dirty || typeSaleCorp.touched)">
+                            <p-message *ngIf="typeSaleCorp.hasError('required')" severity="error"
+                                       text="{{'cmpReq'|translate}}"></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label class="ColorLabel" for="observation">{{ "sale_observations" | translate }}</label>
+                        <div class="H3p"></div>
+                        <textarea #observation="ngModel" id="observation" name="observation" autocomplete="off"
+                                  style="resize: vertical;"
+                                  [(ngModel)]="saleModel.glosa" [readOnly]="isView" rows="1" pInputTextarea></textarea>
+                        <div *ngIf="!observation.valid && (observation.dirty || observation.touched)">
+                            <p-message *ngIf="observation.hasError('required')" severity="error"
+                                       text="{{ cmpReq }}"></p-message>
+                            <p-message *ngIf="observation.errors?.['minlength']" severity="error"
+                                       text="{{ cmpMin }} 5"></p-message>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <!-- ./OTHERS_SALE_VOUCHER_CUTS -->
+        </div>
+    </div>
+    <!-- ./PRIMER_FORM -->
+    <!-- SEGUNDO_FORM -->
+    <div class="col-12 lg:col-5">
+        <!-- SALE_VOUCHER_CUTS -->
+        <div class="card border-primary">
+            <fieldset class="fieldset-subtitle">
+                <legend>
+                    <h4 class="mb-3 color_primario">{{ "sale_voucher_cuts" | translate }}</h4>
+                </legend>
+                <div class="d-flex justify-content-center flex-column">
+                    <div>
+                        <div class="grid p-fluid">
+                            <div class="col-12">
+                                <div style="width: 38%;">
+                                    <button type="button" pButton class="btn-primary border-radius-button"
+                                            (click)="onClickShowDialogAddVoucherCut()" [disabled]="isView"
+                                            label="{{ 'sale_btn_add_voucher_cut' | translate }}"
+                                            title="{{ 'sale_btn_add_voucher_cut' | translate }}">
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <p-table #dt [responsive]="true" [rowHover]="true" [showCurrentPageReport]="true"
+                                         [loading]="loading" [value]="saleModel.corteVale" [rows]="rowsTables"
+                                         styleClass="p-datatable-gridlines">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th class="cls_center" style="width: 23%;">
+                                                {{ "sale_voucher_cuts_count" | translate }}
+                                            </th>
+                                            <th class="cls_center" style="width: 23%;">
+                                                {{ ("sale_voucher_cuts_amount" | translate) }} {{ saleModel.moneda | currentType: typeCurrent }}
+                                            </th>
+                                            <th class="cls_center" style="width: 23%;">
+                                                {{ ("sale_voucher_cuts_amount_for_discount" | translate) }} {{ saleModel.moneda | currentType: typeCurrent }}
+                                            </th>
+                                            <th class="cls_center" style="width: 23%;">
+                                                {{ ("sale_voucher_cuts_total" | translate) }} {{ saleModel.moneda | currentType: typeCurrent }}
+                                            </th>
+                                            <th class="cls_center" style="width: 50px;" *ngIf="!isView">
+                                            </th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                                        <tr>
+                                            <td [ngClass]="{'discount_application_column': rowData.montoPorDescuento>0}">{{ rowData.cantidad }}</td>
+                                            <td [ngClass]="{'discount_application_column': rowData.montoPorDescuento>0}">{{ rowData.monto.toFixed(2) }}</td>
+                                            <td [ngClass]="{'discount_application_column': rowData.montoPorDescuento>0}">{{ rowData.montoPorDescuento.toFixed(2) }}</td>
+                                            <td [ngClass]="{'discount_application_column': rowData.montoPorDescuento>0}">{{ (rowData.cantidad * (rowData.monto + rowData.montoPorDescuento)).toFixed(2) }}</td>
+                                            <td [ngClass]="{'discount_application_column': rowData.montoPorDescuento>0}"
+                                                *ngIf="!isView">
+                                                <button pButton type="button" icon="pi pi-times" class="btn-icon-option"
+                                                        [title]="'btn_remove' | translate" [disabled]="isView"
+                                                        (click)="onClickRemoveVoucherCut(rowData, rowIndex)"></button>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="emptymessage">
+                                        <tr>
+                                            <td colspan="5"><b>{{ "sale_voucher_cuts_empty" | translate }}</b></td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="footer">
+                                        <tr>
+                                            <td colspan="3" class="text-right"
+                                                style="border-radius: 12px;">{{ "sale_voucher_cuts_total" | translate }} {{saleModel.moneda | currentType: typeCurrent}}
+                                            </td>
+                                            <td style="border-radius: 12px;">{{ (getSumTotalVoucherCuts() + getSumTotalVoucherCutsForAmountForDiscount()).toFixed(2) }}</td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                            <!-- CALCULATE_PARAMS -->
+                            <div class="col-12 md:col-5">
+                                <samp class="p-float-label">
+                                    <input #montoCalc="ngModel" [ngModel]="saleModel.totalVenta.toFixed(2)"
+                                           type="number"
+                                           id="montoCalc"
+                                           name="montoCalc" minlength="1" required autocomplete="off" maxlength="50"
+                                           pInputText
+                                           [disabled]="true"
+                                           [readonly]="true"/>
+                                    <label for="montoCalc">{{ ("sale_calc_amount" | translate) + ' (' + (saleModel.moneda | currentType: typeCurrent) + ')' }}</label>
+                                </samp>
+                                <div *ngIf="!montoCalc.valid && (montoCalc.dirty || montoCalc.touched)">
+                                    <p-message *ngIf="montoCalc.hasError('required')" severity="error"
+                                               text="{{ cmpReq }}"></p-message>
+                                    <p-message *ngIf="montoCalc.errors?.['minlength']" severity="error"
+                                               text="{{ cmpMin }} 1"></p-message>
+                                </div>
+                            </div>
+                            <div class="col-12 md:col-3">
+                                <samp class="p-float-label">
+                                    <input #descuentoCalc="ngModel" [ngModel]="saleModel.totalDescuento.toFixed(2)"
+                                           type="number"
+                                           id="descuentoCalc" name="descuentoCalc" minlength="1" required
+                                           autocomplete="off"
+                                           maxlength="50" pInputText
+                                           [disabled]="true"
+                                           [readonly]="true"/>
+                                    <label for="descuentoCalc">{{ ("sale_calc_discount" | translate) + ' (' + (saleModel.moneda | currentType: typeCurrent) + ')' }}</label>
+                                </samp>
+                                <div *ngIf="!descuentoCalc.valid && (descuentoCalc.dirty || descuentoCalc.touched)">
+                                    <p-message *ngIf="descuentoCalc.hasError('required')" severity="error"
+                                               text="{{ cmpReq }}"></p-message>
+                                    <p-message *ngIf="descuentoCalc.errors?.['minlength']" severity="error"
+                                               text="{{ cmpMin }} 1"></p-message>
+                                </div>
+                            </div>
+                            <div class="col-12 md:col-4">
+                                <samp class="p-float-label">
+                                    <input type="number" id="totalPagarCalc" name="totalPagarCalc" minlength="1"
+                                           required
+                                           [disabled]="true"
+                                           autocomplete="off" maxlength="50" pInputText
+                                           [ngModel]="saleModel.totalPagar.toFixed(2)" [readOnly]="true"/>
+                                    <label for="totalPagarCalc">{{ ("sale_calc_total_payment" | translate) + ' (' + (saleModel.moneda | currentType: typeCurrent) + ')' }}</label>
+                                </samp>
+                            </div>
+                            <!-- ./CALCULATE_PARAMS -->
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <!-- ./SALE_VOUCHER_CUTS -->
+        <!-- DISCOUNT_FORM -->
+        <div class="card border-primary mt-3" [hidden]="accessDiscountEdit">
+            <div class="grid p-fluid d-block p-3">
+                <fieldset class="fieldset-subtitle">
+                    <legend>
+                        <h4 class="color_primario">{{ "sale_discount" | translate }}</h4>
+                    </legend>
+                    <div class="grid p-fluid">
+                        <div class="col-12 lg:col-6">
+                            <samp class="p-float-label">
+                                <p-dropdown #typeDiscount="ngModel" [options]="discountTypeOptions"
+                                            [(ngModel)]="saleModel.descuentoTipo" (onChange)="onChangeDiscountType()"
+                                            required="true" id="typeDiscount" [disabled]="isView"
+                                            name="typeDiscount"></p-dropdown>
+                                <label for="typeDiscount">{{ 'sale_discount_type' | translate }}</label>
+                            </samp>
+                        </div>
+                        <div class="col-12 lg:col-6">
+                            <samp class="p-float-label">
+                                <input #discountValue="ngModel"
+                                       pInputText
+                                       type="number"
+                                       id="discountValue"
+                                       name="discountValue"
+                                       [(ngModel)]="saleModel.descuentoValor" minlength="1"
+                                       required
+                                       autocomplete="off"
+                                       [max]="saleModel.descuentoTipo==='Porcentaje'? 100 : 999999" [min]="0"
+                                       maxlength="50"
+                                       [readOnly]="isView"
+                                       (ngModelChange)="onChangeValueDiscount()"/>
+                                <label for="discountValue">{{ ("sale_discount_value" | translate) + ' ' + getTypeDiscountSymbol() }}
+                                    (*)</label>
+                            </samp>
+                            <div *ngIf="!discountValue.valid && (discountValue.dirty || discountValue.touched)">
+                                <p-message *ngIf="discountValue.hasError('required')" severity="error"
+                                           text="{{ cmpReq }}"></p-message>
+                                <p-message *ngIf="discountValue.errors?.['minlength']" severity="error"
+                                           text="{{ cmpMin }} 1"></p-message>
+                                <p-message *ngIf="discountValue.errors?.['max']" severity="error"
+                                           text="{{ 'max '+(saleModel.descuentoTipo==='Porcentaje'? '100' : '999999') }}"></p-message>
+                            </div>
+                        </div>
+                        <div class="col-12 lg:col-6">
+                            <samp class="p-float-label">
+                                <p-dropdown [(ngModel)]="saleModel.descuentoFormaAplicacion"
+                                            [options]="applyDiscountTypeOptions" [disabled]="isView"
+                                            (ngModelChange)="onChangeDiscountTypeApply()"
+                                            id="discountType"
+                                            name="discountType"></p-dropdown>
+                                <label for="discountType">{{ 'sale_discount_type_apply_discount' | translate }}</label>
+                            </samp>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        <!-- DISCOUNT_FORM -->
+        <!-- REGISTRO_CONTABLE -->
+        <div class="card border-primary mt-3"
+             *ngIf="accountingRecordSale && accountingRecordSale.estado==ACCOUNTING_RECORD_SALE.CONTABILIZADO">
+            <div class="grid p-fluid d-block p-3">
+                <fieldset class="fieldset-subtitle">
+                    <legend>
+                        <h4 class="color_primario">{{ "sale_btn_show_accounting_detail_sale" | translate }}</h4>
+                    </legend>
+                    <div class="grid p-fluid mt-2">
+
+                        <div class="col-12 lg:col-4 md:col-4">
+                            <samp class="p-float-label">
+                                <input [value]="accountingRecordSale.ncxc"
+                                       type="text"
+                                       id="ncxc"
+                                       pInputText
+                                       [disabled]="true"
+                                       [readonly]="true"/>
+                                <label for="ncxc">{{ "sale_accounting_detail_sale_ncxc" | translate }}</label>
+                            </samp>
+                        </div>
+                        <div class="col-12 lg:col-4 md:col-4">
+                            <samp class="p-float-label">
+                                <input [value]="accountingRecordSale.ncxp"
+                                       type="text"
+                                       id="ncxp"
+                                       pInputText
+                                       [disabled]="true"
+                                       [readonly]="true"/>
+                                <label for="ncxp">{{ "sale_accounting_detail_sale_ncxp" | translate }}</label>
+                            </samp>
+                        </div>
+                        <div class="col-12 lg:col-4 md:col-4">
+                            <samp class="p-float-label">
+                                <input [value]="accountingRecordSale.ncob"
+                                       type="text"
+                                       id="ncob"
+                                       pInputText
+                                       [disabled]="true"
+                                       [readonly]="true"/>
+                                <label for="ncob">{{ "sale_accounting_detail_sale_ncob" | translate }}</label>
+                            </samp>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        <!-- ./REGISTRO_CONTABLE -->
+    </div>
+    <!-- ./SEGUNDO_FORM -->
+    <!-- THIRD_FORM -->
+    <div class="col-12 lg:col-2">
+        <div class="d-grid mb-3" style="gap: 1rem;">
+            <button type="button" pButton class="btn-secondary border-radius-button" (click)="onClickBack()"
+                    icon="pi pi-arrow-left"
+                    label="{{ 'btn_back' | translate }}" title="{{ 'btn_back' | translate }}">
+            </button>
+            <button type="submit" pButton class="btn-primary border-radius-button"
+                    label="{{ 'sale_btn_save' | translate }}" icon="pi pi-check"
+                    title="{{ 'sale_btn_save' | translate }}" [disabled]="isView">
+            </button>
+            <button type="button" pButton class="btn-primary border-radius-button" *ngIf="saleModel.ventaId>0"
+                    icon="pi pi-print"
+                    (click)="onDownloadReceiptSale()"
+                    label="{{ 'sale_receipt_sale_download' | translate }}"
+                    title="{{ 'sale_receipt_sale_download' | translate }}">
+            </button>
+        </div>
+    </div>
+    <!-- ./THIRD_FORM -->
+</form>
+<!-- ./FORM_DATA -->
+
+<!-- DIALOG_FIND_CLIENT -->
+<shared-dialog-generic-search [titleDialog]="'shared_dialog_find_clients_header' | translate"
+                              [typeSearch]="SEARCH_TYPE.AGENDA" [visible]="isVisibleDialogFindClients"
+                              [code]="saleModel.clienteCodigo" [description]="saleModel.clienteNombre"
+                              (eventClose)="eventCloseDialogFindClients($event)"
+                              (eventSelectResponse)="eventSelectClient($event)"></shared-dialog-generic-search>
+<!-- ./DIALOG_FIND_CLIENT -->
+
+<!-- DIALOG_ADD_VOUCHER_CUT -->
+<p-dialog [header]="'register' | translate" [(visible)]="isVisibleDialogOfAddVoucher" [modal]="true"
+          [style]="{ width: '750px' }">
+    <form #newVoucherCutModel="ngForm" (submit)="onClickAddVoucherCut()">
+        <div class="card">
+            <div class="grid p-fluid">
+                <div class="col-6">
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input #countVoucherCut="ngModel" type="text" id="countVoucherCut" maxlength="6"
+                                   [(ngModel)]="newVoucherCut.cantidad" min="1" autocomplete="off" required
+                                   name="countVoucherCut" pInputText validateNumeric/>
+                            <label for="countVoucherCut">
+                                {{ "sale_voucher_cuts_dialog_count" | translate }} (*)</label>
+                        </samp>
+                        <div *ngIf="!countVoucherCut.valid && (countVoucherCut.dirty || countVoucherCut.touched)">
+                            <p-message *ngIf="countVoucherCut.hasError('required')" severity="error"
+                                       text="{{ cmpReq }}"></p-message>
+                            <p-message *ngIf="countVoucherCut.errors?.['minlength']" severity="error"
+                                       text="{{ cmpMin }} 1"></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input #amountVoucherCut="ngModel" type="text" id="amountVoucherCut"
+                                   [(ngModel)]="newVoucherCut.monto" name="amountVoucherCut" required autocomplete="off"
+                                   min="1" maxlength="8" pInputText validateNumericDecimal/>
+                            <label for="amountVoucherCut">{{ "sale_voucher_cuts_dialog_amount" | translate }}
+                                (*)</label>
+                        </samp>
+                        <div *ngIf="!amountVoucherCut.valid && (amountVoucherCut.dirty || amountVoucherCut.touched)">
+                            <p-message *ngIf="amountVoucherCut.hasError('required')" severity="error"
+                                       text="{{ cmpReq }}"></p-message>
+                            <p-message *ngIf="amountVoucherCut.errors?.['minlength']" severity="error"
+                                       text="{{ cmpMin }} 3"></p-message>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input type="number" id="totalVoucherCut" name="totalVoucherCut" [disabled]="true" required
+                                   autocomplete="off"
+                                   [value]="(newVoucherCut.cantidad * newVoucherCut.monto).toFixed(2)" [min]="1"
+                                   maxlength="6"
+                                   pInputText/>
+                            <label for="totalVoucherCut">{{ "sale_voucher_cuts_dialog_total" | translate }}</label>
+                        </samp>
+                    </div>
+                </div>
+            </div>
+            <p-footer>
+                <div class="cls_center">
+                    <div class="DIB" *ngIf="!isView">
+                        <button pButton type="submit" [disabled]="!newVoucherCutModel.valid || submittedVoucherAdd"
+                                label="{{ 'save' | translate }}" title="{{ 'save' | translate }}" icon="pi pi-check"
+                                class="btn-primary border-radius-button" style="margin-right: 0.25em"></button>
+                    </div>
+
+                    <div class="DIB">
+                        <button pButton type="button" label="{{ 'cancel' | translate }}"
+                                title="{{ 'cancel' | translate }}" icon="pi pi-times"
+                                (click)="onClickCloseDialogAddVoucherCut()"
+                                class="p-button-outlined border-radius-button"></button>
+                    </div>
+                </div>
+            </p-footer>
+        </div>
+    </form>
+</p-dialog>
+<!-- DIALOG_ADD_VOUCHER_CUT -->
+
+<!-- DIALOG_SET_COUNT_VOUCHER_CUTS_FOR_METHOD_DISCOUNT -->
+<p-dialog [header]="'Agregar corte de vale de descuento'"
+          [(visible)]="isVisibleDialogOfSetCountVouchersForDiscountMethod"
+          [modal]="true"
+          [style]="{ width: '750px' }"
+          (close)="onClickCloseDialogOfSetCountVouchersForDiscountMethod()">
+    <form #newVoucherCutModelToDiscount="ngForm"
+          (submit)="onClickAddVoucherCutForDiscount()">
+        <div class="card">
+            <div class="grid p-fluid">
+                <div class="col-6">
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input #countVoucherCutDiscount="ngModel" type="number" id="countVoucherCutDiscount"
+                                   maxlength="9999999"
+                                   [(ngModel)]="newVoucherCut.cantidad" min="1" autocomplete="off" required
+                                   name="countVoucherCutDiscount" pInputText validateNumeric/>
+                            <label for="countVoucherCutDiscount">
+                                {{ "sale_voucher_cuts_dialog_count" | translate }} (*)</label>
+                        </samp>
+                        <div *ngIf="!countVoucherCutDiscount.valid && (countVoucherCutDiscount.dirty || countVoucherCutDiscount.touched)">
+                            <p-message *ngIf="countVoucherCutDiscount.hasError('required')" severity="error"
+                                       text="{{ cmpReq }}"></p-message>
+                            <p-message *ngIf="countVoucherCutDiscount.errors?.['minlength']" severity="error"
+                                       text="{{ cmpMin }} 1"></p-message>
+                        </div>
+                        <div *ngIf="countVoucherCutDiscount.value*amountVoucherCutDiscount.value!==totalAssignVoucherCutDiscount.value">
+                            <p-message severity="error"
+                                       text="No concuenda valor"></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input #amountVoucherCutDiscount="ngModel" type="number" id="amountVoucherCutDiscount"
+                                   [(ngModel)]="newVoucherCut.montoPorDescuento" name="amountVoucherCutDiscount"
+                                   required
+                                   autocomplete="off"
+                                   min="1" max="99999999" pInputText validateNumericDecimal/>
+                            <label for="amountVoucherCutDiscount">{{ "sale_voucher_cuts_dialog_amount" | translate }}
+                                (*)</label>
+                        </samp>
+                        <div *ngIf="!amountVoucherCutDiscount.valid && (amountVoucherCutDiscount.dirty || amountVoucherCutDiscount.touched)">
+                            <p-message *ngIf="amountVoucherCutDiscount.hasError('required')" severity="error"
+                                       text="{{ cmpReq }}"></p-message>
+                            <p-message *ngIf="amountVoucherCutDiscount.errors?.['minlength']" severity="error"
+                                       text="{{ cmpMin }} 3"></p-message>
+                        </div>
+                        <div *ngIf="countVoucherCutDiscount.value*amountVoucherCutDiscount.value!==totalAssignVoucherCutDiscount.value">
+                            <p-message severity="error"
+                                       text="No concuenda valor"></p-message>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input #totalAssignVoucherCutDiscount="ngModel"
+                                   [(ngModel)]="newVoucherCut.totalMontoAsignado"
+                                   type="number"
+                                   id="totalVoucherCutDiscount"
+                                   name="totalVoucherCutDiscount"
+                                   [disabled]="true"
+                                   required
+                                   autocomplete="off"
+                                   maxlength="10"
+                                   pInputText/>
+                            <label for="totalVoucherCutDiscount">{{ "sale_voucher_cuts_dialog_total" | translate }}</label>
+                        </samp>
+                    </div>
+                </div>
+            </div>
+            <p-footer>
+                <div class="cls_center">
+                    <div class="DIB" *ngIf="!isView">
+                        <button pButton type="submit"
+                                [disabled]="!newVoucherCutModelToDiscount.valid || countVoucherCutDiscount.value*amountVoucherCutDiscount.value!==totalAssignVoucherCutDiscount.value"
+                                label="{{ 'save' | translate }}" title="{{ 'save' | translate }}" icon="pi pi-check"
+                                class="btn-primary border-radius-button" style="margin-right: 0.25em"></button>
+                    </div>
+
+                    <div class="DIB">
+                        <button pButton type="button" label="{{ 'cancel' | translate }}"
+                                title="{{ 'cancel' | translate }}" icon="pi pi-times"
+                                (click)="onClickCloseDialogOfSetCountVouchersForDiscountMethod()"
+                                class="p-button-outlined border-radius-button"></button>
+                    </div>
+                </div>
+            </p-footer>
+        </div>
+    </form>
+</p-dialog>
+<!-- DIALOG_SET_COUNT_VOUCHER_CUTS_FOR_METHOD_DISCOUNT -->
+
+<!-- CONFIRM_DIALOG -->
+<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}"
+                 [acceptButtonStyleClass]="'btn-primary'" [rejectButtonStyleClass]="'btn-secondary'"
+                 [acceptLabel]="'yes' | translate" [rejectLabel]="'not' | translate">
+</p-confirmDialog>
+<!-- ./CONFIRM_DIALOG -->

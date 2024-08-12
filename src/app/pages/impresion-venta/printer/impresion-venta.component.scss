@@ -1,0 +1,29 @@
+@import "config";
+.scrollbar-voucher-cuts {
+  overflow-y: scroll !important;
+  height: 42rem !important;
+  width: 100% !important;
+  //scrollbar-color: $color_primario;
+}
+
+/* SCROLLBAR CUSTOMER */
+/* width */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: $color_primario;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: $color_primario;
+}

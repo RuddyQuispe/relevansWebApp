@@ -1,0 +1,335 @@
+<!-- HEADER -->
+<div class="mb-5">
+    <div class="flex align-items-center justify-content-between p-4 bg-white border-radius-table-header box-shadow"
+         style="padding: 1.5rem;">
+        <div style="text-align: left">
+            <button
+                    type="button"
+                    pButton
+                    icon="pi pi-plus"
+                    class="btn-primary border-radius-button"
+                    (click)="showAdd()"
+                    label="{{ 'btn_add' | translate }}"
+            ></button>
+        </div>
+        <h5 class="m-0 title-center cls_title">{{ "domain_title" | translate }}</h5>
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input pInputText
+                   type="text"
+                   (input)="tt.filterGlobal($event.target.value, 'contains')"
+                   placeholder="{{ 'table_search' | translate }}"
+            />
+        </span>
+    </div>
+</div>
+<!-- ./HEADER -->
+
+<!-- TABLE -->
+<div class="d-flex justify-content-center">
+    <div class="col-12 lg:col-11">
+        <p-table
+            #tt
+            [value]="domains"
+            [globalFilterFields]="['domainTbz', 'domName', 'domValue']"
+            [resizableColumns]="true"
+            [paginator]="true"
+            [rows]="rowsTables"
+            [responsive]="true"
+            [rowHover]="true"
+            [showCurrentPageReport]="true"
+            [loading]="loading"
+            styleClass="p-datatable-gridlines"
+            class="box-shadow"
+            currentPageReportTemplate="{first} a {last} de {totalRecords} dominios">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th [pSortableColumn]="'domainTbz'">
+                        {{ "domain_t_domainTbz" | translate }}
+                        <p-sortIcon [field]="'domainTbz'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'domName'">
+                        {{ "domain_t_domName" | translate }}
+                        <p-sortIcon [field]="'domName'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center">
+                        {{ "domain_t_domValue" | translate }}
+                    </th>
+                    <th class="cls_center">
+                        {{ "domain_t_description" | translate }}
+                    </th>
+                    <th style="width: 90px" class="cls_center">
+                        {{ "domain_t_encrypted" | translate }}
+                    </th>
+                    <th style="width: 100px" class="cls_center">
+                        {{ "actions" | translate }}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData>
+                <tr>
+                    <td>
+                        {{ rowData.domainTbz }}
+                    </td>
+                    <td>
+                        {{ rowData.domName }}
+                    </td>
+                    <td>
+                        {{ rowData.domValue }}
+                    </td>
+                    <td>
+                        {{ rowData.description }}
+                    </td>
+                    <td class="cls_center">
+                        {{ rowData.encrypted ? ("yes" | translate) : ("not" | translate) }}
+                    </td>
+                    <td class="cls_center">
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-pencil"
+                                [title]="'edit' | translate"
+                                class="btn-icon-option"
+                                (click)="showEdit($event, rowData)"
+                        ></button>
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-eye"
+                                [title]="'detail' | translate"
+                                (click)="showView($event, rowData)"
+                                class="p-button-outlined btn-icon-option-secondary"
+                                style="margin-left: 4px"
+                        ></button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<!-- ./TABLE -->
+<!-- MODAL -->
+<p-dialog
+        *ngIf="domainToEdit"
+        [header]="(!isView ? 'edit' : 'detail') | translate"
+        [(visible)]="displayDialog"
+        (onHide)="formElement.reset()"
+        [modal]="true"
+        [style]="{ width: '700px' }"
+>
+    <form #formElement="ngForm" (submit)="onSubmit()">
+        <div class="card" *ngIf="domainToEdit">
+            <div class="grid p-fluid">
+                <div class="col-6">
+                    <div class="col-12" *ngIf="!domainToEdit.domainId">
+                        <samp class="p-float-label">
+                            <input
+                                #donCode="ngModel"
+                                type="text"
+                                id="idDTbz"
+                                [(ngModel)]="domainToEdit.domainTbz"
+                                name="domCode"
+                                required
+                                autocomplete="off"
+                                [readOnly]="isView"
+                                maxlength="50"
+                                pInputText
+                            />
+                            <label for="idDTbz">{{ "domain_t_domCode" | translate }} (*)</label>
+                        </samp>
+                        <div *ngIf="!donCode.valid && (donCode.dirty || donCode.touched)">
+                            <p-message *ngIf="donCode.hasError('required')" severity="error"
+                                       text="{{ 'cmpReq' | translate }}"></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input
+                                #donName="ngModel"
+                                type="text"
+                                id="idname"
+                                [(ngModel)]="domainToEdit.domName"
+                                name="domName"
+                                required
+                                autocomplete="off"
+                                [readOnly]="isView"
+                                maxlength="50"
+                                pInputText
+                            />
+                            <label for="idname"
+                            >{{ "domain_t_domName" | translate }} (*)</label
+                            >
+                        </samp>
+                        <div *ngIf="!donName.valid && (donName.dirty || donName.touched)">
+                            <p-message
+                                    *ngIf="donName.hasError('required')"
+                                    severity="error"
+                                    text="{{ 'cmpReq' | translate }}"
+                            ></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12 MT-15">
+                        <label class="ColorLabel"
+                        >{{ "domain_t_encrypted" | translate }} (*)</label
+                        >
+                        <div class="H3p"></div>
+                        <p-selectButton
+                                [disabled]="isView"
+                                name="encrypted"
+                                [options]="[
+                                    {label: 'yes' | translate, value: true},
+                                    {label: 'not' | translate, value: false}
+                                ]"
+                                [(ngModel)]="domainToEdit.encrypted"
+                        ></p-selectButton>
+                    </div>
+                    <div *ngIf="!domainToEdit.encrypted" class="col-12">
+                        <samp class="p-float-label">
+                            <input
+                                #domValue="ngModel"
+                                type="text"
+                                id="iddomValue"
+                                maxlength="300"
+                                [(ngModel)]="domainToEdit.domValue"
+                                [readOnly]="isView"
+                                required
+                                autocomplete="off"
+                                name="domValue"
+                                pInputText
+                            />
+                            <label for="iddomValue"
+                            >{{ "domain_t_domValue" | translate }} (*)</label
+                            >
+                        </samp>
+                        <div
+                                *ngIf="!domValue.valid && (domValue.dirty || domValue.touched)"
+                        >
+                            <p-message
+                                    *ngIf="domValue.hasError('required')"
+                                    severity="error"
+                                    text="{{ 'cmpReq' | translate }}"
+                            ></p-message>
+                        </div>
+                    </div>
+                    <div *ngIf="domainToEdit.encrypted" class="col-12">
+                        <samp class="p-float-label">
+                            <input
+                                #domValue="ngModel"
+                                type="password"
+                                id="iddomValue2"
+                                maxlength="300"
+                                [(ngModel)]="domainToEdit.domValue"
+                                [readOnly]="isView"
+                                required
+                                autocomplete="off"
+                                name="domValue2"
+                                pInputText
+                            />
+                            <label class="ColorLabel" for="iddomValue2"
+                            >{{ "domain_t_domValue" | translate }} (*)</label
+                            >
+                        </samp>
+                        <div
+                                *ngIf="!domValue.valid && (domValue.dirty || domValue.touched)"
+                        >
+                            <p-message
+                                    *ngIf="domValue.hasError('required')"
+                                    severity="error"
+                                    text="{{ 'cmpReq' | translate }}"
+                            ></p-message>
+                        </div>
+                    </div>
+                    <div *ngIf="domainToEdit.encrypted" class="col-12">
+                        <samp class="p-float-label">
+                            <input
+                                #domValue2="ngModel"
+                                type="password"
+                                maxlength="300"
+                                [(ngModel)]="encryptConfirm"
+                                minlength="1"
+                                [readOnly]="isView"
+                                required
+                                autocomplete="off"
+                                name="valueConfirm"
+                                pInputText
+                            />
+                            <label class="ColorLabel" for="iddomValue"
+                            >{{ "domain_t_domValue2" | translate }} (*)</label
+                            >
+                        </samp>
+                        <div
+                                *ngIf="!domValue2.valid && (domValue2.dirty || domValue2.touched)"
+                        >
+                            <p-message
+                                    *ngIf="domValue2.hasError('required')"
+                                    severity="error"
+                                    text="{{ 'cmpReq' | translate }}"
+                            ></p-message>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <textarea
+                                    [rows]="domainToEdit.encrypted? 13 : 9"
+                                    #descrip="ngModel"
+                                    type="text"
+                                    [(ngModel)]="domainToEdit.description"
+                                    minlength="1"
+                                    maxlength="400"
+                                    id="iddescription"
+                                    [readOnly]="isView"
+                                    required
+                                    autocomplete="off"
+                                    name="description"
+                                    pInputTextarea
+                            ></textarea>
+                            <label for="iddescription">{{ "domain_t_description" | translate }} (*)</label>
+                        </samp>
+                        <div *ngIf="!descrip.valid && (descrip.dirty || descrip.touched)">
+                            <p-message
+                                    *ngIf="descrip.hasError('required')"
+                                    severity="error"
+                                    text="{{ 'cmpReq' | translate }}">
+                            </p-message>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p-footer>
+                <div class="cls_center">
+                    <div class="DIB" *ngIf="!isView">
+                        <button
+                                pButton
+                                type="submit"
+                                [disabled]="!formElement.valid"
+                                label="{{ 'save' | translate }}"
+                                icon="pi pi-check"
+                                class="btn-primary"
+                                style="margin-right: 0.25em"
+                        ></button>
+                    </div>
+                    <div class="DIB">
+                        <button
+                                pButton
+                                type="button"
+                                label="{{ 'cancel' | translate }}"
+                                icon="pi pi-times"
+                                (click)="displayDialog = false"
+                                class="p-button-outlined"
+                        ></button>
+                    </div>
+                </div>
+            </p-footer>
+        </div>
+    </form>
+</p-dialog>
+<!-- ./MODAL -->
+
+<!-- CONFIRM_DIALOG -->
+<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}"
+                 [acceptButtonStyleClass]="'btn-primary'" [rejectButtonStyleClass]="'btn-secondary'"
+                 [acceptLabel]="'yes' | translate" [rejectLabel]="'not' | translate">
+</p-confirmDialog>
+<!-- ./CONFIRM_DIALOG -->

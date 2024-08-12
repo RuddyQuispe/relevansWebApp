@@ -1,0 +1,245 @@
+<!-- HEADER -->
+<div class="mb-5">
+    <div class="flex align-items-center justify-content-between bg-white border-radius-table-header box-shadow"
+         style="padding: 1.5rem;">
+        <div style="text-align: left">
+            <button
+                    type="button"
+                    pButton
+                    icon="pi pi-plus-circle"
+                    class="btn-primary border-radius-button"
+                    (click)="onClickAddPlaylist()"
+                    label="Agregar Playlist"
+            ></button>
+        </div>
+        <h5 class="m-0 cls_title">PLAYLIST</h5>
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input pInputText
+                   type="text"
+                   (input)="dt.filterGlobal($event.target.value, 'contains')"
+                   placeholder="Buscar por nombre..."/>
+        </span>
+    </div>
+</div>
+<!-- ./HEADER -->
+<!-- TABLE -->
+<div class="d-flex justify-content-center">
+    <div class="col-12 lg:col-10">
+        <p-table
+            #dt
+            [value]="playlists"
+            [paginator]="true"
+            [rows]="rowsTables"
+            [responsive]="true"
+            [rowHover]="true"
+            [showCurrentPageReport]="true"
+            [loading]="loading"
+            styleClass="p-datatable-gridlines"
+            currentPageReportTemplate="{first} a {last} de {totalRecords} playlist">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="cls_center" [pSortableColumn]="'idPlaylits'">
+                        Nro.
+                        <p-sortIcon [field]="'idPlaylits'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center" [pSortableColumn]="'name'">
+                        Nombre
+                        <p-sortIcon [field]="'name'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center" [pSortableColumn]="'fechaRegistro'">
+                        Fecha Registro
+                        <p-sortIcon [field]="'fechaRegistro'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center" [pSortableColumn]="'info'">
+                        Info
+                        <p-sortIcon [field]="'info'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center" [pSortableColumn]="'url'">
+                        URL
+                        <p-sortIcon [field]="'url'"></p-sortIcon>
+                    </th>
+                    <th style="width: 100px" class="cls_center">Acciones</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-playlist let-i="index">
+                <tr>
+                    <td [ngClass]="{'box-shadow': i==playlists.length-1}">
+                        {{ playlist.idPlaylits }}
+                    </td>
+                    <td [ngClass]="{'box-shadow': i==playlists.length-1}">
+                        {{ playlist.name }}
+                    </td>
+                    <td [ngClass]="{'box-shadow': i==playlists.length-1}">
+                        {{ playlist.fechaRegistro }}
+                    </td>
+                    <td [ngClass]="{'box-shadow': i==playlists.length-1}">
+                        {{ playlist.info }}
+                    </td>
+                    <td [ngClass]="{'box-shadow': i==playlists.length-1}">
+                        {{ playlist.URL }}
+                    </td>
+                    <td [ngClass]="{'box-shadow': i==playlists.length-1}">
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-pencil"
+                                [title]="'Editar usuario'"
+                                class="btn-icon-option"
+                                (click)="onClickShowDialogToEdit(playlist)"
+                        ></button>
+                        <button
+                                pButton
+                                type="button"
+                                icon="pi pi-eye"
+                                [title]="'Detalle de usuario'"
+                                (click)="onClickShowDialogToView(playlist)"
+                                class="p-button-outlined btn-icon-option-secondary"
+                                style="margin-left: 5px"
+                        ></button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<!-- ./TABLE -->
+<!-- MODAL -->
+<p-dialog
+        *ngIf="playlist"
+        [header]="isView ? 'Detalle playlist': (playlist.idPlaylits==null? 'Registrar playlist': 'Editar playlist')"
+        [(visible)]="displayDialog"
+        [modal]="true"
+        (close)="closeDialog()"
+        [style]="{ width: '700px' }">
+    <div class="ui-fluid">
+        <form #frm="ngForm" (ngSubmit)="onSubmitPlaylist()">
+            <div class="card card-without-box-shadow">
+                <div class="grid p-fluid">
+                    <div class="col-12">
+                        <div class="col-12">
+                            <samp class="p-float-label">
+                                <input
+                                    #nombrePlay="ngModel"
+                                    type="text"
+                                    id="nombrePlay"
+                                    [(ngModel)]="playlist.name"
+                                    name="nombrePlay"
+                                    pInputText
+                                    required
+                                    autocomplete="off"
+                                    minlength="4"
+                                    maxlength="50"
+                                    [readOnly]="isView"/>
+                                <label for="nombrePlay">Nombre (*)</label>
+                            </samp>
+                            <div *ngIf="!nombrePlay.valid && (nombrePlay.dirty || nombrePlay.touched)">
+                                <p-message *ngIf="nombrePlay.hasError('required')"
+                                           severity="error"
+                                           text="{{ 'cmpReq'|translate }}"></p-message>
+                                <p-message *ngIf="nombrePlay.errors?.['minlength']"
+                                           severity="error"
+                                           text="{{ 'cmpMin'|translate }} 4"></p-message>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <samp class="p-float-label">
+                                <input
+                                    #infoPlay="ngModel"
+                                    type="text"
+                                    id="infoPlay"
+                                    [(ngModel)]="playlist.info"
+                                    name="infoPlay"
+                                    pInputText
+                                    required
+                                    autocomplete="off"
+                                    minlength="4"
+                                    maxlength="50"
+                                    [readOnly]="isView"/>
+                                <label for="infoPlay">Info (*)</label>
+                            </samp>
+                            <div *ngIf="!infoPlay.valid && (infoPlay.dirty || infoPlay.touched)">
+                                <p-message *ngIf="infoPlay.hasError('required')"
+                                           severity="error"
+                                           text="{{ 'cmpReq'|translate }}"></p-message>
+                                <p-message *ngIf="infoPlay.errors?.['minlength']"
+                                           severity="error"
+                                           text="{{ 'cmpMin'|translate }} 4"></p-message>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <samp class="p-float-label">
+                                <p-calendar #fechaRegistroPlay="ngModel"
+                                            name="fechaRegistroPlay"
+                                            required
+                                            id="fechaRegistroPlay"
+                                            [showIcon]="true"
+                                            [showTime]="true"
+                                            [showSeconds]="true"
+                                            [(ngModel)]="playlist.fechaRegistro">
+                                </p-calendar>
+                                <label for="fechaRegistroPlay">Fecha (*)</label>
+                            </samp>
+                            <div *ngIf="!fechaRegistroPlay.valid && (fechaRegistroPlay.dirty || fechaRegistroPlay.touched)">
+                                <p-message *ngIf="fechaRegistroPlay.hasError('required')" severity="error"
+                                           [text]="'cmpReq' | translate"></p-message>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <samp class="p-float-label">
+                                <input
+                                    #urlPlay="ngModel"
+                                    type="text"
+                                    id="urlPlay"
+                                    [(ngModel)]="playlist.url"
+                                    name="urlPlay"
+                                    pInputText
+                                    required
+                                    autocomplete="off"
+                                    minlength="4"
+                                    maxlength="50"
+                                    [readOnly]="isView"/>
+                                <label for="urlPlay">URL (*)</label>
+                            </samp>
+                            <div *ngIf="!urlPlay.valid && (urlPlay.dirty || urlPlay.touched)">
+                                <p-message *ngIf="urlPlay.hasError('required')"
+                                           severity="error" text="{{ 'cmpReq'|translate }}"></p-message>
+                                <p-message *ngIf="urlPlay.errors?.['minlength']"
+                                           severity="error" text="{{ 'cmpMin'|translate }} 4"></p-message>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p-footer>
+                <div class="cls_center">
+                    <button
+                            type="submit"
+                            pButton
+                            icon="pi pi-check"
+                            label="Guardar"
+                            [disabled]="!frm.valid"
+                            style="margin-right: 0.25em"
+                            class="btn-primary"
+                    ></button>
+                    <button
+                            type="button"
+                            pButton
+                            icon="pi pi-times"
+                            (click)="onClickCancelDialog()"
+                            label="Cancelar"
+                            class="p-button-outlined p-button-outlined-hover"
+                    ></button>
+                </div>
+            </p-footer>
+        </form>
+    </div>
+</p-dialog>
+<!-- ./MODAL -->
+<!-- CONFIRM_DIALOG -->
+<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}"
+                 [acceptButtonStyleClass]="'btn-primary'"
+                 [rejectButtonStyleClass]="'btn-secondary'" [acceptLabel]="'yes' | translate"
+                 [rejectLabel]="'not' | translate">
+</p-confirmDialog>
+<!-- ./CONFIRM_DIALOG -->

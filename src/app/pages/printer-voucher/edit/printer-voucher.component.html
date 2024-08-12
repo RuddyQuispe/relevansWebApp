@@ -1,0 +1,52 @@
+<!-- HEADER -->
+<div class="mb-1">
+    <div class="d-flex align-items-center justify-content-center p-4 bg-white border-radius-table-header box-shadow">
+        <h5 class="m-0 cls_title">{{ "voucher_printer_title" | translate }}</h5>
+    </div>
+</div>
+<!-- ./HEADER -->
+
+<!-- PRINT_FORM -->
+<div class="row p-fluid justify-content-center">
+    <div class="col-12 md:col-12 sm:col-12 lg:col-6">
+        <form class="row d-flex" #formVoucherPrint="ngForm" (submit)="onSubmitToPrintVoucher()">
+            <div class="col-12 lg:col-9">
+                <shared-voucher-cut *ngIf="voucherModelToPrint.corteId"
+                                    [voucherModel]="voucherModelToPrint"
+                                    [voucherCutModel]="parseVoucherCut(voucherModelToPrint)"
+                                    (eventEmitterChangeVoucherCut)="onEventChangeVoucherCutValue($event)"
+                                    [showCounterPrinterComponents]="false"
+                ></shared-voucher-cut>
+            </div>
+            <div class="col-12 lg:col-3 mt-4">
+                <div class="d-grid">
+                    <button
+                            type="button"
+                            pButton
+                            class="btn-secondary mb-2 border-radius-button"
+                            (click)="onClickBack()"
+                            label="{{ 'btn_back' | translate }}"
+                            title="{{ 'btn_back' | translate }}">
+                    </button>
+                    <button
+                            type="submit"
+                            pButton
+                            class="btn-primary border-radius-button"
+                            label="{{ 'print' | translate }}"
+                            title="{{ 'print' | translate }}"
+                            [disabled]="!formVoucherPrint.valid || isView">
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <a id="iddownloaddocs" href="#" download="{{pdfName}}" style="visibility: hidden;"></a>
+</div>
+<!-- ./PRINT_FORM -->
+
+<!-- CONFIRM_DIALOG -->
+<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}"
+                 [acceptButtonStyleClass]="'btn-primary'"
+                 [rejectButtonStyleClass]="'btn-secondary'" [acceptLabel]="'yes' | translate" [rejectLabel]="'not' | translate">
+</p-confirmDialog>
+<!-- ./CONFIRM_DIALOG -->

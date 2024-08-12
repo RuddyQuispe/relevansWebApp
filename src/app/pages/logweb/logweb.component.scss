@@ -1,0 +1,13 @@
+@import "config";
+
+.cls_content_xml {
+  font-size: 12px;
+  font-family: monospace;
+  white-space: pre;
+  width: 100% !important;
+}
+
+.border-primary {
+  border: 1px solid $color_primario !important;
+  border-radius: 20px !important;
+}

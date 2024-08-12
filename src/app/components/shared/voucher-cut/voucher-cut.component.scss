@@ -1,0 +1,65 @@
+@import "config";
+
+.image-voucher-cut {
+  background: url("/assets/images/voucher-cut-image.png");
+  height: 100%;
+  width: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.text-float-amount {
+  position: relative;
+  top: 70px;
+  left: 81%;
+  color: $color_white;
+  font-weight: bold;
+}
+
+.text-float-date {
+  position: relative;
+  top: 70px;
+  left: 15%;
+  text-align: start;
+  color: black;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.text-float-beneficiary {
+  position: relative;
+  top: 90px;
+  left: 20%;
+  text-align: start;
+  color: black;
+  font-weight: bold;
+}
+
+.text-float-business {
+  position: relative;
+  top: 105px;
+  left: 20%;
+  text-align: start;
+  color: black;
+  font-weight: bold;
+}
+
+.text-float-literal-amount {
+  position: relative;
+  top: 125px;
+  left: 20%;
+  text-align: start;
+  color: black;
+  font-size: smaller;
+  font-weight: bold;
+}
+
+.image-float-qr {
+  position: relative;
+  top: 28%;
+  left: 470px;
+}
+
+.p-checkbox .p-checkbox-box.p-highlight{
+  border-color: $color_primario !important;
+}

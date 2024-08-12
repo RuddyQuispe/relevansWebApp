@@ -1,0 +1,443 @@
+<!-- HEADER -->
+<div class="mb-1">
+    <div class="d-flex align-items-center justify-content-between p-4 bg-white border-radius-table-header box-shadow">
+        <button
+                type="button"
+                pButton
+                icon="pi pi-plus-circle"
+                class="btn-primary border-radius-button"
+                (click)="onClickShowAddAuthorizationProfile()"
+                label="{{ 'btn_add' | translate }}"
+        ></button>
+        <h5 class="m-0 cls_title">{{ "authorization_profile_title" | translate }}</h5>
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input pInputText
+                   type="text"
+                   (input)="dt.filterGlobal($event.target.value, 'contains')"
+                   placeholder="{{ 'authorization_profile_search_name' | translate }}"/>
+        </span>
+    </div>
+</div>
+<!-- ./HEADER -->
+
+<!-- TABLE -->
+<div class="d-flex justify-content-center">
+    <div class="col-12 lg:col-8">
+        <p-table
+            #dt
+            [value]="authorizationProfiles"
+            [globalFilterFields]="['nombre', 'descripcion']"
+            [paginator]="true"
+            [responsive]="true"
+            [rowHover]="true"
+            [showCurrentPageReport]="true"
+            [loading]="loading"
+            [rows]="rowsTables"
+            [totalRecords]="sizeProfiles"
+            [lazy]="true"
+            (onLazyLoad)="onChangePageTableProfiles($event)"
+            styleClass="p-datatable-gridlines"
+            currentPageReportTemplate="{first} a {last} de {totalRecords} perfiles">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="cls_center" [pSortableColumn]="'nombre'">
+                        {{ "authorization_profile_header_name" | translate }}
+                        <p-sortIcon [field]="'nombre'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center" [pSortableColumn]="'descripcion'">
+                        {{ "authorization_profile_header_description" | translate }}
+                        <p-sortIcon [field]="'descripcion'"></p-sortIcon>
+                    </th>
+                    <th class="cls_center">
+                        {{ "actions" | translate }}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-ri="rowIndex">
+                <tr [pEditableRow]="rowData">
+                    <td [ngClass]="{'box-shadow': ri==authorizationProfiles.length-1}">
+                        {{ rowData.nombre }}
+                    </td>
+                    <td [ngClass]="{'box-shadow': ri==authorizationProfiles.length-1}">
+                        {{ rowData.descripcion }}
+                    </td>
+                    <td>
+                        <div class="flex align-items-center justify-content-center gap-2">
+                            <button pButton type="button" icon="pi pi-pencil"
+                                    [title]="'edit' | translate"
+                                    class="btn-icon-option"
+                                    (click)="onClickShowDialogToEdit($event, rowData)"></button>
+                            <button pButton type="button" icon="pi pi-eye"
+                                    [title]="'detail' | translate"
+                                    (click)="onClickShowDialogToView($event, rowData)"
+                                    class="p-button-outlined btn-icon-option-secondary"
+                                    style="margin-left: 5px;"></button>
+                            <button pButton type="button" icon="pi pi-shield"
+                                    [title]="'authorization_profile_permission_title' | translate"
+                                    (click)="onClickShowDialogToManagePermissions($event, rowData)"
+                                    class="p-button-outlined btn-icon-option-secondary"
+                                    style="margin-left: 5px;"></button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<!-- ./TABLE -->
+
+<!-- MODAL_AUTHORIZATION_PROFILE -->
+<p-dialog *ngIf="authorizationProfileModel"
+          [header]="(!isViewDialogAuthorizeProfile? (!authorizationProfileModel.perfilAutorizadorId? 'register': 'edit') : 'detail') | translate"
+          [(visible)]="displayDialogAuthorizeProfile"
+          (onHide)="frmAuthorizeProfile.reset()"
+          (close)="onClickCloseDialogAuthorizationProfile()"
+          [modal]="true"
+          [style]="{width: '767px'}">
+    <form #frmAuthorizeProfile="ngForm" (ngSubmit)="onSubmitAuthorizationProfile()">
+        <div class="card card-without-box-shadow" *ngIf="authorizationProfileModel">
+            <div class="grid p-fluid">
+                <div class="col-12">
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input #name="ngModel"
+                                   type="text"
+                                   id="nameProfile"
+                                   [(ngModel)]="authorizationProfileModel.nombre"
+                                   name="nameProfile"
+                                   pInputText
+                                   required
+                                   autocomplete="off"
+                                   minlength="4"
+                                   maxlength="30"
+                                   [readOnly]="isViewDialogAuthorizeProfile">
+                            <label for="nameProfile">{{ 'authorization_profile_header_name' | translate }} *</label>
+                        </samp>
+                        <div *ngIf="!name.valid && (name.dirty || name.touched)">
+                            <p-message *ngIf="name.hasError('required')" severity="error"
+                                       text="{{'cmpReq'|translate}}"></p-message>
+                            <p-message *ngIf="name.errors?.['minlength']" severity="error"
+                                       text="{{'cmpMin'|translate}} 4"></p-message>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <samp class="p-float-label">
+                            <input #description="ngModel"
+                                   type="text"
+                                   id="description"
+                                   [(ngModel)]="authorizationProfileModel.descripcion"
+                                   name="description"
+                                   required
+                                   pInputText
+                                   minlength="4"
+                                   autocomplete="off"
+                                   validateAlphaNumericSpace
+                                   maxlength="100"
+                                   [readOnly]="isViewDialogAuthorizeProfile">
+                            <label for="description">{{ 'authorization_profile_header_description' | translate }}</label>
+                        </samp>
+                        <div *ngIf="!description.valid && (description.dirty || description.touched)">
+                            <p-message *ngIf="description.errors?.['minlength']" severity="error"
+                                       text="{{'cmpMin'|translate}} 4"></p-message>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p-footer>
+            <div class="cls_center">
+                <div class="DIB" *ngIf="!isViewDialogAuthorizeProfile">
+                    <button type="submit"
+                            pButton
+                            icon="pi pi-check"
+                            label="{{'save' | translate}}"
+                            style="margin-right: .25em"
+                            class="btn-primary"
+                            [disabled]="!frmAuthorizeProfile.valid"></button>
+                </div>
+                <div class="DIB">
+                    <button type="button"
+                            pButton
+                            icon="pi pi-times"
+                            (click)="onClickCloseDialogAuthorizationProfile()"
+                            label="{{'cancel' | translate}}"
+                            class="p-button-outlined p-button-outlined-hover"></button>
+                </div>
+            </div>
+        </p-footer>
+    </form>
+</p-dialog>
+<!-- ./MODAL_AUTHORIZATION_PROFILE -->
+
+<!-- MODAL_LIST_PERMISSION_PROFILE -->
+<p-dialog *ngIf="authorizationProfileModel"
+          [header]="'authorization_profile_permission_title' | translate"
+          [(visible)]="displayDialogPermissionProfile"
+          (onHide)="frmPermission.reset()"
+          [modal]="true"
+          [breakpoints]="{'960px': '75vw'}" [style]="{width: '50vw'}"
+          (close)="onClickCloseDialogPermissionProfile()">
+    <form #frmPermission="ngForm" (ngSubmit)="onSubmitPermissionProfile()">
+        <div class="card card-without-box-shadow" *ngIf="authorizationProfileModel.rangosPorMontoVenta">
+            <div class="grid p-fluid">
+                <div class="col-12 lg:col-3 d-flex justify-content-start">
+                    <button type="button"
+                            pButton
+                            icon="pi pi-plus-circle"
+                            class="btn-primary"
+                            (click)="onClickAddAuthorizationRange()"
+                            label="{{ 'authorization_profile_permission_btn_add_permission' | translate }}"></button>
+                </div>
+                <div class="col-12">
+                    <p-table
+                            [value]="authorizationProfileModel.rangosPorMontoVenta"
+                            [resizableColumns]="true"
+                            [paginator]="true"
+                            [rows]="rowsTables"
+                            [responsive]="true"
+                            [showCurrentPageReport]="true"
+                            [loading]="loadingPermissions"
+                            styleClass="p-datatable-gridlines"
+                            currentPageReportTemplate="{first} a {last} de {totalRecords} rangos de venta">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th [pSortableColumn]="'min'" style="width: 20%;">
+                                    {{ 'authorization_profile_permission_header_min' | translate }}
+                                    <p-sortIcon [field]="'min'"></p-sortIcon>
+                                </th>
+                                <th [pSortableColumn]="'max'" style="width: 20%;">
+                                    {{ 'authorization_profile_permission_header_max' | translate }}
+                                    <p-sortIcon [field]="'max'"></p-sortIcon>
+                                </th>
+                                <th [pSortableColumn]="'moneda'" style="width: 20%;">
+                                    {{ 'authorization_profile_permission_header_current' | translate }}
+                                    <p-sortIcon [field]="'moneda'"></p-sortIcon>
+                                </th>
+                                <th [pSortableColumn]="'requiereAutorizacion'" style="width: 20%;">
+                                    {{ 'authorization_profile_permission_header_authorize' | translate }}
+                                    <p-sortIcon [field]="'requiereAutorizacion'"></p-sortIcon>
+                                </th>
+                                <th [pSortableColumn]="'requiereValidacion'" style="width: 20%;">
+                                    {{ 'authorization_profile_permission_header_validate' | translate }}
+                                    <p-sortIcon [field]="'requiereValidacion'"></p-sortIcon>
+                                </th>
+                                <th [pSortableColumn]="'estado'" style="width: 20%;">
+                                    {{ 'authorization_profile_permission_header_status' | translate }}
+                                    <p-sortIcon [field]="'estado'"></p-sortIcon>
+                                </th>
+                                <th style="width: 20%;" class="cls_center">{{ 'actions' | translate }}</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData>
+                            <tr>
+                                <td>{{ rowData.min.toFixed(2) }}</td>
+                                <td>{{ rowData.max.toFixed(2) }}</td>
+                                <td>{{ rowData.moneda | currentType: currentTypesOptions }}</td>
+                                <td class="cls_center">
+                                    <div class="{{rowData.requiereAutorizacion? 'status_active':'status_inactive'}}">
+                                        {{ (rowData.requiereAutorizacion ? 'yes' : 'not') | translate }}
+                                    </div>
+                                </td>
+                                <td class="cls_center">
+                                    <div class="{{rowData.requiereValidacion? 'status_active':'status_inactive'}}">
+                                        {{ (rowData.requiereValidacion ? 'yes' : 'not') | translate }}
+                                    </div>
+                                </td>
+                                <td class="cls_center">
+                                    <div class="{{rowData.estado? 'status_active':'status_inactive'}}">
+                                        {{ (rowData.estado ? 'yes' : 'not') | translate }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex align-items-center justify-content-center gap-1">
+                                        <button pButton type="button"
+                                                [icon]="'pi pi-pencil'"
+                                                [title]="'edit' | translate"
+                                                class="p-button-outlined btn-icon-option"
+                                                (click)="onClickEditPermissionProfile(rowData)"
+                                        ></button>
+                                        <!-- <button pButton type="button"-->
+                                        <!--         [icon]="'pi pi-pencil'"-->
+                                        <!--         [title]="'edit' | translate"-->
+                                        <!--         class="p-button-outlined btn-icon-option"-->
+                                        <!--         (click)="onClickEditPermissionProfile(rowData)"-->
+                                        <!-- ></button>-->
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="5"><b>{{ "external_system_table_account" | translate }}</b></td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+        <p-footer>
+            <div class="cls_center d-flex justify-content-center" style="column-gap: 1rem;">
+                <button type="button"
+                        pButton
+                        icon="pi pi-times"
+                        (click)="onClickCloseDialogPermissionProfile()"
+                        label="{{'cancel' | translate}}"
+                        class="p-button-outlined p-button-outlined-hover"></button>
+            </div>
+        </p-footer>
+    </form>
+</p-dialog>
+<!-- ./MODAL_LIST_PERMISSION_PROFILE -->
+
+<!-- MODAL_ADD_PERMISSION -->
+<p-dialog *ngIf="authorizationProfileModel"
+          [header]="titleAuthorizationPermission"
+          [(visible)]="displayDialogPermissionAdd"
+          (onHide)="frmPermissionAdd.reset()"
+          [modal]="true"
+          [breakpoints]="{'960px': '75vw'}" [style]="{width: '25vw'}"
+          (close)="onClickCloseDialogPermissionProfile()">
+    <form id="frmPermissionAddAction" #frmPermissionAdd="ngForm" (submit)="onSubmitDisplayDialogPermissionAdd();">
+        <div class="grid p-fluid mt-2">
+            <div class="col-12">
+                <samp class="p-float-label">
+                    <input #minimalValue="ngModel"
+                           type="text"
+                           id="minimalValue"
+                           [(ngModel)]="permissionAuthorizeProfile.min"
+                           name="minimalValue"
+                           [minlength]="0"
+                           [maxlength]="12"
+                           pInputText
+                           validateNumericDecimal
+                           required
+                           autocomplete="off">
+                    <label for="minimalValue">{{ 'authorization_profile_permission_header_min' | translate }}
+                        (*)</label>
+                </samp>
+                <div *ngIf="!minimalValue.valid && (minimalValue.dirty || minimalValue.touched)">
+                    <p-message *ngIf="minimalValue.hasError('required')" severity="error"
+                               text="{{'cmpReq'|translate}}"></p-message>
+                    <p-message *ngIf="minimalValue.errors?.['max']" severity="error"
+                               text="{{'max '+permissionAuthorizeProfile.max}}"></p-message>
+                </div>
+            </div>
+            <div class="col-12">
+                <samp class="p-float-label">
+                    <input #maximalValue="ngModel"
+                           type="text"
+                           id="maximalValue"
+                           [(ngModel)]="permissionAuthorizeProfile.max"
+                           [minlength]="1"
+                           [maxlength]="12"
+                           name="maximalValue"
+                           pInputText
+                           validateNumericDecimal
+                           required
+                           autocomplete="off">
+                    <label for="maximalValue">{{ 'authorization_profile_permission_header_max' | translate }}
+                        (*)</label>
+                </samp>
+                <div *ngIf="!maximalValue.valid && (maximalValue.dirty || maximalValue.touched)">
+                    <p-message *ngIf="maximalValue.hasError('required')" severity="error"
+                               text="{{'cmpReq'|translate}}"></p-message>
+                    <p-message *ngIf="maximalValue.errors?.['min']" severity="error"
+                               text="{{'min '+permissionAuthorizeProfile.min}}"></p-message>
+                </div>
+            </div>
+            <div class="col-12 mt-3">
+                <samp class="p-float-label">
+                    <p-dropdown #_currentCoinVoucher="ngModel"
+                                [options]="currentTypesOptions"
+                                [(ngModel)]="permissionAuthorizeProfile.moneda"
+                                id="_currentCoinVoucherRange"
+                                name="optionsPaymentType"></p-dropdown>
+                    <label for="_currentCoinVoucherRange">{{ 'vale_list_filter_current' | translate }}</label>
+                </samp>
+            </div>
+            <div class="col-12">
+                <label class="ColorLabel">{{ 'authorization_profile_permission_header_authorize' | translate }}
+                    (*)</label>
+                <div class="H3p"></div>
+                <p-selectButton #autorizacionVenta="ngModel"
+                                id="autorizacionVenta"
+                                [options]="[
+                                    {label: 'yes'|translate, value: true},
+                                    {label: 'not'|translate, value: false}
+                                ]"
+                                [(ngModel)]="permissionAuthorizeProfile.requiereAutorizacion"
+                                required
+                                name="autorizacionVenta">
+                </p-selectButton>
+                <div *ngIf="!autorizacionVenta.valid && (autorizacionVenta.dirty || autorizacionVenta.touched)">
+                    <p-message *ngIf="autorizacionVenta.hasError('required')" severity="error"
+                               text="{{'cmpReq'|translate}}"></p-message>
+                </div>
+            </div>
+            <div class="col-12">
+                <label class="ColorLabel">{{ 'authorization_profile_permission_header_validate' | translate }}
+                    (*)</label>
+                <div class="H3p"></div>
+                <p-selectButton #validacionContableVenta="ngModel"
+                                id="validacionContableVenta"
+                                [options]="[
+                                    {label: 'yes'|translate, value: true},
+                                    {label: 'not'|translate, value: false}
+                                ]"
+                                [(ngModel)]="permissionAuthorizeProfile.requiereValidacion"
+                                required
+                                name="validacionContableVenta">
+                </p-selectButton>
+                <div *ngIf="!validacionContableVenta.valid && (validacionContableVenta.dirty || validacionContableVenta.touched)">
+                    <p-message *ngIf="validacionContableVenta.hasError('required')" severity="error"
+                               text="{{'cmpReq'|translate}}"></p-message>
+                </div>
+            </div>
+            <div class="col-12">
+                <label class="ColorLabel">{{ 'authorization_profile_permission_header_status' | translate }}
+                    (*)</label>
+                <div class="H3p"></div>
+                <p-selectButton #estado="ngModel"
+                                id="estado"
+                                [options]="[
+                                    {label: 'yes'|translate, value: true},
+                                    {label: 'not'|translate, value: false}
+                                ]"
+                                [(ngModel)]="permissionAuthorizeProfile.estado"
+                                required
+                                name="estado">
+                </p-selectButton>
+                <div *ngIf="!estado.valid && (estado.dirty || estado.touched)">
+                    <p-message *ngIf="estado.hasError('required')" severity="error"
+                               text="{{'cmpReq'|translate}}"></p-message>
+                </div>
+            </div>
+        </div>
+    </form>
+    <p-footer>
+        <div class="cls_center d-flex justify-content-center" style="column-gap: 1rem;">
+            <button type="submit"
+                    form="frmPermissionAddAction"
+                    pButton
+                    icon="pi pi-check"
+                    [label]="titleAuthorizationPermission"
+                    class="btn-primary"
+                    [disabled]="!frmPermissionAdd.valid"></button>
+            <button type="button"
+                    pButton
+                    icon="pi pi-times"
+                    label="{{'cancel' | translate}}"
+                    (click)="onClickCloseDisplayDialogPermissionAdd()"
+                    class="p-button-outlined p-button-outlined-hover"></button>
+        </div>
+    </p-footer>
+</p-dialog>
+<!-- ./MODAL_ADD_PERMISSION -->
+
+<!-- CONFIRM_DIALOG -->
+<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}"
+                 [acceptButtonStyleClass]="'btn-primary'"
+                 [rejectButtonStyleClass]="'btn-secondary'" [acceptLabel]="'yes' | translate"
+                 [rejectLabel]="'not' | translate"></p-confirmDialog>
+<!-- ./CONFIRM_DIALOG -->

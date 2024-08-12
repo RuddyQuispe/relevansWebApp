@@ -1,0 +1,131 @@
+<!-- HIDDEN_COMPONENT_USE_TO_INPUT_DATA_FROM_SCANNER_DEVICE -->
+<input type="text" class="input-hash" #hashCode (input)="onInputHashCode(hashCode.value)"/>
+<!-- ./HIDDEN_COMPONENT_USE_TO_INPUT_DATA_FROM_SCANNER_DEVICE -->
+<!-- HEADER -->
+<div class="mb-1">
+    <div class="d-flex align-items-center justify-content-center p-4 bg-white border-radius-table-header box-shadow">
+        <div class="cls_center">
+            <h5 class="m-0 cls_title">{{ "voucher_consumer_title" | translate }}</h5>
+        </div>
+    </div>
+</div>
+<!-- ./HEADER -->
+<!-- LEGEND -->
+<div class="row d-flex justify-content-center">
+    <div class="col-12 lg:col-10">
+        <div class="card border-radius-table-header box-shadow">
+            <div class="px-3 row d-flex justify-content-center">
+                <div class="col-12 lg:col-10 d-flex justify-content-start align-items-center">
+                    <div class="d-flex flex-column">
+                        <h3 class="cls_title">{{ 'voucher_consumer_head_legend' | translate }}</h3>
+                        <p class="text-justify" style="font-size: 1.4rem;">
+                            {{ 'voucher_consumer_description_1' | translate }}
+                        </p>
+                    </div>
+                </div>
+                <div class="col-12 lg:col-2">
+                    <div class="d-flex flex-column" style="gap: 1rem;">
+                        <button #buttonRetryScanner
+                                pButton
+                                type="button"
+                                [icon]="'pi pi-refresh'+(isScanning?' pi-spin':'')"
+                                class="btn-secondary border-radius-button"
+                                (click)="onClickRetryScanner()"
+                                [disabled]="isScanning"
+                                [title]="(isScanning? 'voucher_consumer_btn_scanning':'voucher_consumer_btn_scanner') | translate"
+                                label="{{ (isScanning? 'voucher_consumer_btn_scanning':'voucher_consumer_btn_scanner') | translate }}">
+                        </button>
+                        <button pButton
+                                type="button"
+                                icon="pi pi-check"
+                                class="btn-secondary border-radius-button"
+                                [disabled]="!voucherModel"
+                                (click)="onClickConfirmVoucherConsumer()"
+                                [title]="'voucher_consumer_btn_confirm_voucher' | translate"
+                                label="{{ 'voucher_consumer_btn_confirm_voucher' | translate }}">
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ./LEGEND -->
+<!-- FORM_DETAIL -->
+<div class="row d-flex justify-content-center">
+    <div class="col-12 lg:col-4">
+        <div class="card bg-white border-radius-table-header box-shadow row d-flex justify-content-center"
+             *ngIf="isScanning; else noScanning">
+            <img src="assets/images/barcode-scanner.gif" alt="scanner-code" style="width: 40%; height: 40%;">
+        </div>
+        <ng-template #noScanning>
+            <div class="card border-primary" style="height: 100%;" *ngIf="voucherModel">
+                <fieldset class="fieldset-subtitle">
+                    <legend>
+                        <h4 class="color_primario">{{ 'voucher_renovate_detail' | translate }}</h4>
+                    </legend>
+                    <div class="d-block text-justify" style="font-size: 1.1rem;">
+                        <p><span
+                                class="color_primario font-bold">Identificador de vale: </span> {{ this.voucherModel.identificadorQR ?? '-' }}
+                        </p>
+                        <p><span class="color_primario font-bold">Estado vale: </span> {{ this.voucherModel.estado }}
+                        </p>
+                        <p><span
+                                class="color_primario font-bold">ID Transaccion: </span> {{ this.voucherModel.consumoDto?.idTransaccionSE ?? '-' }}
+                        </p>
+                        <p><span
+                                class="color_primario font-bold">Fecha de consumo: </span> {{ this.voucherModel.consumoDto?.fecha | date: 'dd/MM/yyyy HH:mm:ss' ?? '-' }}
+                        </p>
+                        <p><span
+                                class="color_primario font-bold">Caja: </span> {{ this.voucherModel.consumoDto?.caja ?? '-' }}
+                        </p>
+                        <p><span
+                                class="color_primario font-bold">Cajero: </span> {{ this.voucherModel.consumoDto?.cajero ?? '-' }}
+                        </p>
+                        <!--<p style="overflow-wrap: anywhere"><span-->
+                        <!--        class="color_primario font-bold">Hash: </span> {{ this.hashCodeVoucherScannedOriginal }}-->
+                        <!--</p>-->
+                    </div>
+                </fieldset>
+                <fieldset class="fieldset-subtitle"
+                          *ngIf="voucherModel && voucherModel.consumoDto && voucherModel.consumoDto.estado==STATUS_CONSUMER_VOUCHER.CONTABILIZADO">
+                    <legend>
+                        <h4 class="color_primario">{{ 'voucher_consumer_head_register_sai' | translate }}</h4>
+                    </legend>
+                    <div class="d-block text-justify" style="font-size: 1.1rem;">
+                        <p style="overflow-wrap: anywhere"><span
+                                class="color_primario font-bold">{{ 'voucher_consumer_register_sai_via_payment' | translate }}
+                            : </span> {{ this.voucherModel.consumoDto.cvia }}
+                        </p>
+                        <p style="overflow-wrap: anywhere"><span
+                                class="color_primario font-bold">{{ 'voucher_consumer_register_sai_no_payment' | translate }}
+                            : </span> {{ this.voucherModel.consumoDto.npag }}
+                        </p>
+                    </div>
+                </fieldset>
+            </div>
+        </ng-template>
+    </div>
+    <div [className]="voucherModel?'col-12 lg:col-6': 'col-12'">
+        <shared-voucher-cut *ngIf="voucherModel"
+                            [voucherModel]="voucherModel"
+                            [voucherCutModel]="parseVoucherToVoucherCut(voucherModel)"
+                            (eventEmitterChangeVoucherCut)="onChangeVoucher($event)"
+                            [showCounterPrinterComponents]="false"
+        ></shared-voucher-cut>
+    </div>
+</div>
+<!--<div class="row d-flex justify-content-center">-->
+<!--    <div class="col-12 lg:col-10 d-flex justify-content-between">-->
+<!--        -->
+<!--    </div>-->
+<!--</div>-->
+<!-- FORM_DETAIL -->
+<!-- CONFIRM_DIALOG -->
+<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}"
+                 [acceptButtonStyleClass]="'btn-primary'"
+                 [rejectButtonStyleClass]="'btn-secondary'"
+                 [acceptLabel]="'yes' | translate" [rejectLabel]="'not' | translate">
+</p-confirmDialog>
+<!-- ./CONFIRM_DIALOG -->

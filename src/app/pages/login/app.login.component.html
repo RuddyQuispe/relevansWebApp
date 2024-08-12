@@ -1,0 +1,170 @@
+<div class="login-body gradient">
+    <app-loader></app-loader>
+    <div class="flex flex-row flex-wrap align-items-center justify-content-center w-full h-screen">
+        <div class="card login-panel-content" style="width: 20%;">
+            <form #frm="ngForm" (ngSubmit)="onLogin()" class="login-content" id="loginForm">
+                <div class="grid p-fluid login-content">
+                    <div class="col-12 text-center">
+                        <h2 class="guest-sign-in">{{ 'lgn_welcome' | translate }}</h2>
+                    </div>
+                    <!-- USERNAME -->
+                    <div class="col-12 username-container">
+                        <label>{{ 'lgn_user' | translate }}</label>
+                        <div class="login-input">
+                            <input #user="ngModel"
+                                   [(ngModel)]="usu"
+                                   name="usu"
+                                   id="id_usu"
+                                   type="text"
+                                   pInputText
+                                   required
+                                   maxlength="30"
+                                   autocomplete="off"/>
+                        </div>
+                        <div *ngIf="!user.valid && (user.dirty || user.touched)">
+                            <p-message *ngIf="user.hasError('required')" severity="error"
+                                       text="{{cmpReq}}"></p-message>
+                        </div>
+                    </div>
+                    <!-- ./USERNAME -->
+                    <!-- PASSWORD -->
+                    <div class="col-12 password-container">
+                        <label>{{ 'lgn_pass' | translate }}</label>
+                        <div class="login-input">
+                            <input #password="ngModel"
+                                   [(ngModel)]="pass"
+                                   name="pass"
+                                   [type]="eyePass? 'text' : 'password'"
+                                   id="idpass"
+                                   pPassword
+                                   required
+                                   maxlength="30"
+                                   autocomplete="off">
+                            <i *ngIf="eyePass"
+                               (click)="togogleEyePass()"
+                               class="pi pi-eye cls_hover cls_eye"></i>
+                            <i *ngIf="!eyePass"
+                               (click)="togogleEyePass()"
+                               class="pi pi-eye-slash cls_hover cls_eye"></i>
+                        </div>
+                        <div *ngIf="!password.valid && (password.dirty || password.touched)">
+                            <p-message *ngIf="password.hasError('required')" severity="error"
+                                       text="{{cmpReq}}"></p-message>
+                        </div>
+                    </div>
+                    <!-- ./PASSWORD -->
+                </div>
+            </form>
+            <hr>
+            <div class="p-card-footer flex flex-column" style="row-gap: 1rem;">
+                <button pButton pRipple [label]="'Iniciar session'" [type]="'submit'" form="loginForm"
+                        class="border-round"></button>
+                <button pButton pRipple [label]="'Registrar usuario'" [type]="'button'"
+                        class="border-round"></button>
+            </div>
+        </div>
+    </div>
+
+
+    <!--    <div class="card login-panel p-fluid card-login-center-main">-->
+    <!--        &lt;!&ndash; HIPERMAXI_DYNAMIC &ndash;&gt;-->
+    <!--        <div class="card-dynamic-hipermaxi">-->
+    <!--            <app-hiper-card-->
+    <!--                    [heigh]="'28vh'"-->
+    <!--                    [width]="'auto'"-->
+    <!--            ></app-hiper-card>-->
+    <!--        </div>-->
+    <!--        &lt;!&ndash; ./HIPERMAXI_DYNAMIC &ndash;&gt;-->
+    <!--        &lt;!&ndash; LOGIN_FORM &ndash;&gt;-->
+    <!--        <div class="card card-login-content">-->
+    <!--            <div class="login-panel-content">-->
+    <!--                <form #frm="ngForm" (ngSubmit)="onLogin()" class="login-content">-->
+    <!--                    <div class="grid login-content">-->
+    <!--                        <div class="col-12 text-center">-->
+    <!--                            <h2 class="guest-sign-in">{{ 'lgn_welcome' | translate }}</h2>-->
+    <!--                        </div>-->
+    <!--                        &lt;!&ndash; USERNAME &ndash;&gt;-->
+    <!--                        <div class="col-12 username-container">-->
+    <!--                            &lt;!&ndash; <h:panelGroup> &ndash;&gt;-->
+    <!--                            <label>{{ 'lgn_user' | translate }} *</label>-->
+    <!--                            <div class="login-input">-->
+    <!--                                <input #user="ngModel"-->
+    <!--                                       [(ngModel)]="usu"-->
+    <!--                                       name="usu"-->
+    <!--                                       id="id_usu"-->
+    <!--                                       type="text"-->
+    <!--                                       pInputText-->
+    <!--                                       required-->
+    <!--                                       maxlength="30"-->
+    <!--                                       autocomplete="off"/>-->
+    <!--                            </div>-->
+    <!--                            <div *ngIf="!user.valid && (user.dirty || user.touched)">-->
+    <!--                                <p-message *ngIf="user.hasError('required')" severity="error"-->
+    <!--                                           text="{{cmpReq}}"></p-message>-->
+    <!--                            </div>-->
+    <!--                        </div>-->
+    <!--                        &lt;!&ndash; ./USERNAME &ndash;&gt;-->
+    <!--                        &lt;!&ndash; PASSWORD &ndash;&gt;-->
+    <!--                        <div class="col-12 password-container">-->
+    <!--                            <label>{{ 'lgn_pass' | translate }} *</label>-->
+    <!--                            <div class="login-input">-->
+    <!--                                <input #password="ngModel"-->
+    <!--                                       [(ngModel)]="pass"-->
+    <!--                                       name="pass"-->
+    <!--                                       [type]="eyePass? 'text' : 'password'"-->
+    <!--                                       id="idpass"-->
+    <!--                                       pPassword-->
+    <!--                                       required-->
+    <!--                                       maxlength="30"-->
+    <!--                                       autocomplete="off">-->
+    <!--                                <i *ngIf="eyePass"-->
+    <!--                                   (click)="togogleEyePass()"-->
+    <!--                                   class="pi pi-eye cls_hover cls_eye"></i>-->
+    <!--                                <i *ngIf="!eyePass"-->
+    <!--                                   (click)="togogleEyePass()"-->
+    <!--                                   class="pi pi-eye-slash cls_hover cls_eye"></i>-->
+    <!--                            </div>-->
+    <!--                            <div *ngIf="!password.valid && (password.dirty || password.touched)">-->
+    <!--                                <p-message *ngIf="password.hasError('required')" severity="error"-->
+    <!--                                           text="{{cmpReq}}"></p-message>-->
+    <!--                            </div>-->
+    <!--                        </div>-->
+    <!--                        &lt;!&ndash; ./PASSWORD &ndash;&gt;-->
+    <!--                        &lt;!&ndash; SIGN_IN &ndash;&gt;-->
+    <!--                        <div class="col-12">-->
+    <!--                            <button pButton-->
+    <!--                                    [disabled]="!frm.valid"-->
+    <!--                                    type="submit"-->
+    <!--                                    icon="pi pi-check"-->
+    <!--                                    label="{{'lgn_btn_sub' | translate}}">-->
+    <!--                            </button>-->
+    <!--                        </div>-->
+    <!--                        &lt;!&ndash; ./SIGN_IN &ndash;&gt;-->
+    <!--                        &lt;!&ndash; FORGOT_MY_PASSWORD &ndash;&gt;-->
+    <!--                        <div class="col-12 forgetpassword-container btn-forgot">-->
+    <!--                            <a (click)="goChange()"-->
+    <!--                               class="forget-password cls_hover color_primario">{{ 'lgn_forget_pass' | translate }}</a>-->
+    <!--                        </div>-->
+    <!--                        &lt;!&ndash; ./FORGOT_MY_PASSWORD &ndash;&gt;-->
+    <!--                        &lt;!&ndash; LOGO_TESABIZ &ndash;&gt;-->
+    <!--                        &lt;!&ndash;<div class="col-12 sm:col-6 md:col-6 logo-container"&ndash;&gt;-->
+    <!--                        &lt;!&ndash;     style="display: flex; justify-content: center;">&ndash;&gt;-->
+    <!--                        &lt;!&ndash;    <img src="assets/images/logotipo.png"&ndash;&gt;-->
+    <!--                        &lt;!&ndash;         class="W70"/>&ndash;&gt;-->
+    <!--                        &lt;!&ndash;</div>&ndash;&gt;-->
+    <!--                        &lt;!&ndash; ./LOGO_TESABIZ &ndash;&gt;-->
+    <!--                        &lt;!&ndash; LOGO_TESABIZ &ndash;&gt;-->
+    <!--                        <div class="col-12 forgetpassword-container btn-forgot"-->
+    <!--                             style="display: flex; justify-content: center;">-->
+    <!--                            <p class="W90 color_primario">{{ "lgn_copyright" | translate }}</p>-->
+    <!--                        </div>-->
+    <!--                        &lt;!&ndash; ./LOGO_TESABIZ &ndash;&gt;-->
+    <!--                    </div>-->
+    <!--                </form>-->
+    <!--                <div class="cls_center color_secundario FZ6"><i>V-{{ _VERSION }}</i></div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--        &lt;!&ndash; ./LOGIN_FORM &ndash;&gt;-->
+    <!--    </div>-->
+</div>
+<p-toast></p-toast>
